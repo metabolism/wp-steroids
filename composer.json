@@ -1,0 +1,8 @@
+{
+  "name": "metabolism/wp-steroids",
+  "type": "wordpress-plugin",
+  "homepage": "http://www.metabolism.fr",
+  "license": "GPLv3",
+  "description": "Configure Wordpress using yml and add various plugins",
+  "keywords": ["plugin","wordpress"]
+}
