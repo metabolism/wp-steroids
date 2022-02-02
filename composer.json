@@ -5,5 +5,10 @@
   "homepage": "http://www.metabolism.fr",
   "license": "GPLv3",
   "description": "Supercharge Wordpress with YML configuration and more",
-  "keywords": ["plugin","wordpress"]
+  "keywords": ["plugin","wordpress"],
+  "extra": {
+    "branch-alias": {
+      "dev-1.0.x": "1.0.x-dev"
+    }
+  }
 }
