@@ -3,7 +3,7 @@
   "type": "wordpress-plugin",
   "version": "1.0.0",
   "homepage": "http://www.metabolism.fr",
-  "license": "GPLv3",
+  "license": "GPL-3.0-or-later",
   "description": "Supercharge Wordpress with YML configuration and more",
   "keywords": ["plugin","wordpress"],
   "extra": {
