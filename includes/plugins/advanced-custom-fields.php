@@ -120,26 +120,6 @@ class WPS_Advanced_Custom_Fields{
 
 
 	/**
-	 * Add entity return format
-	 * @param $field
-	 * @return array
-	 */
-	public function validateField($field){
-
-        if( $field['name'] == 'return_format'){
-
-	        if( isset($field['choices']['object'] ) )
-		        $field['choices']['link'] = __('Link');
-
-            $field['choices']['entity'] = __('Entity');
-            $field['default_value'] = 'entity';
-        }
-
-		return $field;
-	}
-
-
-	/**
 	 * Change query to replace template by term slug
 	 * @param $args
 	 * @param $field
@@ -192,9 +172,6 @@ class WPS_Advanced_Custom_Fields{
 		add_filter('acf/prepare_field', [$this, 'addTaxonomyTemplates']);
 		add_filter('acf/fields/relationship/query/name=items', [$this, 'filterPostsByTermTemplateMeta'], 10, 3);
 		add_filter('acf/get_image_sizes', [$this, 'getImageSizes'] );
-
-		if( $this->config->get('acf.settings.use_entity', true) )
-            add_filter('acf/validate_field', [$this, 'validateField']);
 
 		// When viewing admin
 		if( is_admin() )

@@ -129,7 +129,7 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .acf-postbox.seamless>.inside { margin-left: -10px !important; margin-right: -10px !important }
 .form-table>tbody>.acf-tab-wrap td{ padding: 0; padding-left: 220px; }
 .form-table>tbody>tr.acf-tab-wrap .acf-tab-group{ padding: 0 }
-.acf-flexible-content .layout{ margin-top: 10px; border-radius: 3px }
+.acf-flexible-content .layout{ margin-top: 10px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(3,63,68,0.02), 0 1px 3px 0 rgba(63,63,68,0.05) }
 .acf-flexible-content .layout .acf-fc-layout-handle{ font-size: 13px }
 .acf-image-uploader .image-wrap img{ border-radius: 3px; max-width: 125px }
 @media screen and (max-width: 782px){

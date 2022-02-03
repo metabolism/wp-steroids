@@ -1,5 +1,6 @@
 <?php
 
+use lloc\Msls\MslsPlugin;
 
 /**
  * Class MSLSProvider
@@ -17,6 +18,7 @@ class WPS_Multisite_Language_Switcher {
 			$current_id = $_GET['post'] ?? get_the_ID();
 
 			if( $current_id ) {
+
 				$path = add_query_arg([
 					'clone' => 'true',
 					'blog_id' => $current_blog->blog_id,
@@ -172,11 +174,17 @@ class WPS_Multisite_Language_Switcher {
 	 */
 	public function __construct(){
 
-		if( is_multisite() ){
+		if( is_multisite() && defined('MSLS_PLUGIN_VERSION') ){
 
 			if( is_admin() ) {
 
                 global $_config;
+
+                add_action( 'init', function (){
+
+                    if ( is_admin_bar_showing() )
+                        add_action( 'admin_bar_menu', [ MslsPlugin::class, 'update_adminbar' ], 999 );
+                } );
 
 				if( $_config->get('multisite.clone_post', false) )
 					$this->setupClone();
