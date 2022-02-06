@@ -95,7 +95,8 @@ div.mce-toolbar-grp, .html-active .switch-html, .tmce-active .switch-tmce { back
     padding: 7px 16px; background: linear-gradient(180deg,#fff,#f9fafb); border: 1px solid #c4cdd5;
     box-shadow: 0 1px 0 0 rgba(22,29,37, 0.05); border-radius: 3px; line-height: 1; color: #212b36;
 }
-.form-wrap p, p.description, p.help, span.description { line-height: 110%; opacity: 0.8 }
+.form-wrap p, p.description, p.help, span.description, .post-attributes-help-text { line-height: 110%; opacity: 0.8 }
+p.help, span.description, .post-attributes-help-text { font-size: 11px }
 .form-table p{ max-width: 600px }
 .form-table p.description{ font-size: 90% }
 input.large-text, textarea.large-text { width: 35.7rem }
@@ -108,6 +109,7 @@ input.large-text, textarea.large-text { width: 35.7rem }
 
 #wp-admin-bar-build .ab-icon:before{ content: "\f111"; top: 2px; display: inline-block }
 #wp-admin-bar-build .loading .ab-icon:before{ animation: rotating 4s linear infinite }
+#msls.postbox .button-secondary{ display: none }
 
 
 /* ACF */
@@ -137,6 +139,7 @@ input.large-text, textarea.large-text { width: 35.7rem }
     .form-table>tbody>.acf-field>.acf-label{ padding: 0; margin: 0; padding-top: 10px }
     .form-table>tbody>.acf-field>.acf-input{ padding: 0 }
 }
+.acf-postbox{ overflow: visible }
 
 /* Fix WP5.5 Contrast */
 .handle-order-higher, .handle-order-lower{ display: none }

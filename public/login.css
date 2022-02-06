@@ -5,3 +5,7 @@
 .forgetmenot label{ opacity: 1 }
 .login input[type=password], .login input[type=text]{ border-radius: 0; border-top: 0; border-left: 0; border-right: 0; font-size: 14px; background: #f9f9f9 }
 .login input[type=password]:focus, .login input[type=text]:focus{ box-shadow: none }
+
+.login .language-switcher { position: absolute; top: 0; right: 0; padding: 10px }
+.login .language-switcher .dashicons-translation{ display: none }
+.login .language-switcher select, .login .language-switcher input{ font-size: 11px }
