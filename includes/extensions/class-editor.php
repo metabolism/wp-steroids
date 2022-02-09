@@ -193,7 +193,7 @@ class WPS_Editor {
         add_action('login_head', [$this, 'addCustomLoginHeader']);
         add_action( 'admin_bar_menu', [$this, 'editBarMenu'], 80);
 
-		if( $this->config->get('optimizations.disable_update', true) )
+		if( $this->config->get('disable_update', true) )
 			$this->disableUpdate();
 	}
 }

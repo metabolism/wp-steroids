@@ -1,8 +1,6 @@
 <?php
 
 
-use Dflydev\DotAccessData\Data;
-
 /**
  * Class 
  */
