@@ -111,6 +111,10 @@ input.large-text, textarea.large-text { width: 35.7rem }
 #wp-admin-bar-build .loading .ab-icon:before{ animation: rotating 4s linear infinite }
 #msls.postbox .button-secondary{ display: none }
 
+.multisite-language-switcher #wp-admin-bar-my-sites{ display: none }
+.multisite-language-switcher #wpadminbar .flag-icon{ width: 1.333em; height: 1em; vertical-align: text-bottom; margin-right: 6px; position: relative; top: -2px }
+.network-admin.multisite-language-switcher #wpadminbar .flag-icon{ display: none }
+
 
 /* ACF */
 .acf-field input[type="text"], .acf-field input[type="password"], .acf-field input[type="date"], .acf-field input[type="datetime"],
