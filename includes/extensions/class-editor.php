@@ -128,9 +128,10 @@ class WPS_Editor {
 	/**
 	 * add Custom css
 	 */
-	function addCustomHeader()
+	function addCustomAdminHeader()
 	{
 		echo '<link rel="stylesheet" href="'.WPS_PLUGIN_URL.'public/admin.css'.'"/>';
+		echo '<link rel="stylesheet" href="'.WPS_PLUGIN_URL.'public/admin_bar.css'.'"/>';
 		echo '<script type="text/javascript" src="'.WPS_PLUGIN_URL.'public/admin.js'.'"></script>';
 	}
 
@@ -175,7 +176,7 @@ class WPS_Editor {
 			add_filter('mce_buttons', [$this, 'TinyMceButtons']);
 			add_action('admin_menu', [$this, 'adminMenu']);
 			add_action('wp_dashboard_setup', [$this, 'disableDashboardWidgets']);
-			add_action('admin_head', [$this, 'addCustomHeader']);
+			add_action('admin_head', [$this, 'addCustomAdminHeader']);
 			add_action('admin_init', [$this, 'adminInit'] );
 
 			add_filter('admin_body_class', function ( $classes ) {
@@ -190,7 +191,14 @@ class WPS_Editor {
 			});
 		}
 
-        add_action('login_head', [$this, 'addCustomLoginHeader']);
+        add_action('init', function (){
+
+            if( is_admin_bar_showing() )
+                wp_enqueue_style('wp_steroid_adminbar', WPS_PLUGIN_URL.'public/admin_bar.css');
+        });
+
+
+        add_action( 'login_head', [$this, 'addCustomLoginHeader']);
         add_action( 'admin_bar_menu', [$this, 'editBarMenu'], 80);
 
 		if( $this->config->get('disable_update', true) )

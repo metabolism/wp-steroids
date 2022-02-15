@@ -179,7 +179,6 @@ class WPS_Multisite_Language_Switcher {
 
     function wp_admin_bar_my_sites_menu( $wp_admin_bar ) {
 
-        $screen = substr($_SERVER['REQUEST_URI'], strrpos($_SERVER['REQUEST_URI'], '/' )+1);
         // Don't show for logged out users or single site mode.
         if ( ! is_user_logged_in() || ! is_multisite() )
             return;
@@ -252,7 +251,7 @@ class WPS_Multisite_Language_Switcher {
 
                 $title = '<span class="flag-icon flag-icon-'.$lang[0].'"></span>'.__( strtoupper($lang[0]) );
 
-                if ( current_user_can( 'read' ) ) {
+                if ( is_admin() ) {
 
                     $wp_admin_bar->add_node(
                         array(
@@ -294,7 +293,6 @@ class WPS_Multisite_Language_Switcher {
 
                 add_action( 'init', function (){
 
-                    remove_action( 'admin_bar_menu', [ MslsPlugin::class, 'update_adminbar' ], 999 );
                     add_filter('msls_metabox_post_select_title', function (){ return __( 'Language Switcher', 'wp-steroids' ); });
                 });
 
@@ -304,13 +302,36 @@ class WPS_Multisite_Language_Switcher {
                     add_action( 'load-post-new.php', [$this, 'load_post_new']);
                 }
 
-                add_action( 'admin_bar_menu', [$this, 'wp_admin_bar_my_sites_menu'], 10 );
+                add_filter('admin_body_class', function ( $classes ) {
+
+                    return $classes.' multisite-language-switcher';
+                });
+            }
+            else{
+
+                add_action( 'init', function (){
+
+                    if( is_admin_bar_showing() ) {
+
+                        $ver = defined('MSLS_PLUGIN_VERSION') ? constant('MSLS_PLUGIN_VERSION') : false;
+                        wp_enqueue_style('msls-flags', MslsPlugin::plugins_url('css-flags/css/flag-icon.min.css'), [], $ver);
+                    }
+                });
+
+                add_filter( 'body_class', function ( $classes ) {
+
+                    $classes[] = 'multisite-language-switcher';
+                    return $classes;
+                });
             }
 
-            add_filter('admin_body_class', function ( $classes ) {
+            add_action( 'init', function (){
 
-                return $classes.' multisite-language-switcher';
+                remove_action( 'admin_bar_menu', [ MslsPlugin::class, 'update_adminbar' ], 999 );
             });
+
+
+            add_action( 'admin_bar_menu', [$this, 'wp_admin_bar_my_sites_menu'], 10 );
 
             //todo: find why $url is buggy
            add_filter( 'mlsl_output_get_alternate_links', function ($url, $blog){
