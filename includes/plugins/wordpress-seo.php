@@ -171,6 +171,14 @@ class WPS_Wordpress_Seo
 		add_action('admin_init', [$this, 'init'] );
 		add_filter('get_the_terms', [$this, 'changeTermsOrder'], 10, 3);
 
+
+        add_filter( 'wpseo_sitemap_exclude_taxonomy', function( $value, $taxonomy ) {
+
+            $taxonomy = get_taxonomy($taxonomy);
+            return !$taxonomy->publicly_queryable;
+
+        }, 10, 2 );
+
 		if( is_admin() ) {
 
 			add_filter('wp_editor_settings', [$this, 'editorSettings'], 10, 2);

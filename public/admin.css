@@ -38,6 +38,7 @@
 .manage-column.num{ text-align: left }
 
 .headless #post-preview, .headless #wp-admin-bar-view{ display: none }
+#wp-admin-bar-debug{ pointer-events: none }
 
 /* Bugfix */
 .js .tmce-active .wp-editor-area { color: inherit!important }

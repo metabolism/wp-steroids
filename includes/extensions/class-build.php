@@ -32,7 +32,7 @@ class WPS_Build {
      */
     public function __construct()
     {
-        if( is_admin() && defined('BUILD_HOOK') )
+        if( is_admin() && defined('BUILD_HOOK') && BUILD_HOOK )
             add_action( 'init', [$this, 'addBuildButton']);
     }
 }

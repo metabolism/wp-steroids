@@ -548,23 +548,6 @@ class WPS_Config {
         });
     }
 
-
-    /**
-     * Set permalink structure
-     */
-    public function setPermalinkStructure()
-    {
-        global $wp_rewrite;
-	    $permalink_structure = $this->config->get('permalink_structure', '/%postname%');
-
-		if( $wp_rewrite->permalink_structure != $permalink_structure ){
-
-		    $wp_rewrite->set_permalink_structure($permalink_structure);
-		    update_option( 'rewrite_rules', FALSE );
-	    }
-    }
-
-
     public function LoadPermalinks()
     {
         $updated = false;
@@ -796,8 +779,6 @@ class WPS_Config {
             $this->addRoles();
 
             if( !HEADLESS || URL_MAPPING ){
-
-                $this->setPermalinkStructure();
 
                 add_filter( 'post_type_link', [$this, 'updatePostTypePermalink'], 10, 2);
                 add_filter( 'term_link', [$this, 'updateTermPermalink'], 10, 2);
