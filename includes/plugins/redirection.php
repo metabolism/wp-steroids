@@ -2,7 +2,7 @@
 
 
 /**
- * Class WPSmartCropProvider
+ * Class
  *
  * @package 
  */

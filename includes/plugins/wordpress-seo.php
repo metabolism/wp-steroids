@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class WPSEOProvider
+ * Class
  *
  * @package 
  */

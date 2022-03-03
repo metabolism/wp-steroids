@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class WPSmartCropProvider
+ * Class
  *
  * @package 
  */

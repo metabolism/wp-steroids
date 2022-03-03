@@ -4,7 +4,7 @@ use lloc\Msls\MslsOptionsPost;
 use lloc\Msls\MslsPlugin;
 
 /**
- * Class MSLSProvider
+ * Class
  *
  * @package 
  */

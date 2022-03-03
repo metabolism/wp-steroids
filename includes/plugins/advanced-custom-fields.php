@@ -1,7 +1,6 @@
 <?php
 
 use Dflydev\DotAccessData\Data;
-use function Env\env;
 
 /**
  * Class 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class 
+ * Class
  */
 class WPS_Contact_Form_7 {
 
