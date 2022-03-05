@@ -647,7 +647,7 @@ class WPS_Config {
             $args = array_merge($default_args, $args);
             $args['menu_icon'] = 'dashicons-'.$args['menu_icon'];
 
-            $table = new WPS_Table($name, $args);
+            $table = new WPS_List_Table($name, $args);
 
             add_action('admin_menu', function() use($name, $table, $args) {
 

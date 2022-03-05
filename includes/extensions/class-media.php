@@ -159,6 +159,66 @@ class WPS_Media {
 	}
 
 
+    /**
+     * update attachment to other blog by reference
+     * @param $attachment_ID
+     * @param $path
+     * @param $new_path
+     * @return void
+     */
+	public function mediaConvert( $attachment_ID, $path, $new_path )
+	{
+        $current_site_id = get_current_blog_id();
+
+        $old_name = basename( $path );
+        $new_name = basename( $new_path );
+        $new_url = wp_get_attachment_url( $attachment_ID );
+
+        $replaces = [$old_name => $new_name];
+
+        $thumbs = wp_get_attachment_metadata( $attachment_ID );
+
+        foreach( $thumbs['sizes'] as $img ){
+
+            $old_thumb = str_replace( $new_name, $old_name, $img['file'] );
+            $replaces[$old_thumb] = $img['file'];
+        }
+
+        global $wpdb;
+
+        foreach ( get_sites() as $site ) {
+
+            if ( (int) $site->blog_id !== $current_site_id ) {
+
+                switch_to_blog( $site->blog_id );
+
+                $results = $wpdb->get_results( "select `post_id` from $wpdb->postmeta where `meta_value` = '$attachment_ID' AND `meta_key` = '_wp_original_attachment_id'", ARRAY_A );
+
+                if( !empty($results) ){
+
+                    $post_id = $results[0]['post_id'];
+                    wp_update_post(['ID' => $post_id, 'post_mime_type' => 'image/jpeg']);
+                    $wpdb->update( $wpdb->posts, ['guid' => $new_url ], ['ID' => $post_id ], ['%s'], ['%d']);
+
+                    $attach_data = wp_generate_attachment_metadata( $post_id, $new_path );
+                    update_post_meta( $post_id, '_wp_attachment_metadata', $attach_data );
+                }
+
+                foreach( $replaces as $old => $new ){
+
+                    $wpdb->query("UPDATE {$wpdb->posts} SET post_content = REPLACE( post_content, '/{$old}', '/{$new}') WHERE post_content LIKE '%/{$old}%'");
+                    $wpdb->query("UPDATE {$wpdb->postmeta} SET meta_value = REPLACE( meta_value, '/{$old}', '/{$new}') WHERE meta_value LIKE '%/{$old}%'");
+                    $wpdb->query("UPDATE {$wpdb->options} SET option_value = REPLACE( option_value, '/{$old}', '/{$new}') WHERE option_value LIKE '%/{$old}%'");
+                }
+
+                do_action('media_replace_value', $attachment_ID, $replaces);
+            }
+        }
+
+        switch_to_blog($current_site_id);
+    }
+
+
 	/**
 	 * add attachment to other blog by reference
 	 * @param $attachment_ID
@@ -274,9 +334,8 @@ class WPS_Media {
 	 */
 	public function editAttachment($post_ID )
 	{
-		if( $this->prevent_recursion ){
+		if( $this->prevent_recursion )
 			return;
-		}
 
 		$this->prevent_recursion = true;
 
@@ -642,6 +701,149 @@ class WPS_Media {
 	}
 
 
+    /**
+     * @param $actions
+     * @param WP_Post $post
+     * @param $detached
+     * @return void
+     */
+    public function mediaRowActions($actions, $post, $detached ){
+
+        if($post->post_mime_type === 'image/png'){
+
+            $actions['convert'] = sprintf(
+                '<a href="%s" class="submitconvert aria-button-if-js"%s aria-label="%s">%s</a>',
+                wp_nonce_url( "post.php?action=convert&amp;post=$post->ID", 'convert-post_' . $post->ID ),
+                '',
+                /* translators: %s: Attachment title. */
+                esc_attr( sprintf( __( 'Convert &#8220;%s&#8221;' ), $post->post_title ) ),
+                __( 'Convert to jpg' )
+            );
+        }
+
+        return $actions;
+    }
+
+    /**
+     * @param $path
+     * @return false|string
+     */
+    public static function convertToJpg($path){
+
+        if( !file_exists($path) || mime_content_type($path) !== 'image/png')
+            return false;
+
+        $img = imagecreatefrompng( $path );
+        $bg = imagecreatetruecolor( imagesx( $img ), imagesy( $img ) );
+
+        imagefill( $bg, 0, 0, imagecolorallocate( $bg, 255, 255, 255 ) );
+        imagealphablending( $bg, 1 );
+        imagecopy( $bg, $img, 0, 0, 0, 0, imagesx( $img ), imagesy( $img ) );
+
+        $i = 1;
+
+        $newPath = substr( $path, 0, -4 ) . '.jpg';
+
+        while( file_exists( $newPath ) ){
+
+            $newPath = substr( $path, 0, -4 ) . '-' . $i . '.jpg';
+            ++$i;
+        }
+
+        if( imagejpeg( $bg, $newPath, 99 ) )
+            return $newPath;
+
+        return false;
+    }
+
+
+    /**
+     * @param $post_id
+     * @return void
+     */
+    public function postActionConvert($post_id){
+
+        if( !$sendback = wp_get_referer() )
+            $sendback = admin_url( 'upload.php' );
+
+        $post = get_post($post_id);
+
+        $path = get_attached_file( $post_id );
+        $url = wp_get_attachment_url( $post_id );
+
+        $stats_before = filesize( $path );
+
+        if( $new_path = self::convertToJpg($path) ){
+
+            $old_name = basename( $path );
+            $new_name = basename( $new_path );
+
+            $new_url = str_replace( $old_name, $new_name, $url );
+
+            if( $stats_before - filesize( $new_path ) > 0 ){
+
+                $old_name_clean = substr( $old_name, 0, -4 );
+                $new_name_clean = substr( $new_name, 0, -4 );
+
+                $replaces = [$old_name => $new_name];
+
+                unlink( $path );
+
+                $thumbs = wp_get_attachment_metadata( $post_id );
+
+                foreach( $thumbs['sizes'] as $img ){
+
+                    $thumb = dirname( $path ) . '/' . $img['file'];
+
+                    if( file_exists( $thumb ) ){
+
+                        $new_thumb = substr( $img['file'], 0, -4 ) . '.jpg';
+
+                        if( $old_name_clean !== $new_name_clean )
+                            $new_thumb = str_replace( $old_name_clean, $new_name_clean, $new_thumb );
+
+                        $replaces[ $img['file'] ] = $new_thumb;
+
+                        unlink( $thumb );
+                    }
+                }
+
+                wp_update_post(['ID' => $post_id, 'post_mime_type' => 'image/jpeg']);
+
+                global $wpdb;
+
+                $wpdb->update( $wpdb->posts, ['guid' => $new_url ], ['ID' => $post_id ], ['%s'], ['%d']);
+
+                $meta = get_post_meta( $post_id, '_wp_attached_file', 1 );
+
+                $meta = str_replace( $old_name, $new_name, $meta );
+                update_post_meta( $post_id, '_wp_attached_file', $meta );
+
+                require_once( ABSPATH . 'wp-admin/includes/image.php' );
+                $attach_data = wp_generate_attachment_metadata( $post_id, $new_path );
+                update_post_meta( $post_id, '_wp_attachment_metadata', $attach_data );
+
+                foreach( $replaces as $old => $new ){
+
+                    $wpdb->query("UPDATE {$wpdb->posts} SET post_content = REPLACE( post_content, '/{$old}', '/{$new}') WHERE post_content LIKE '%/{$old}%'");
+                    $wpdb->query("UPDATE {$wpdb->postmeta} SET meta_value = REPLACE( meta_value, '/{$old}', '/{$new}') WHERE meta_value LIKE '%/{$old}%'");
+                    $wpdb->query("UPDATE {$wpdb->options} SET option_value = REPLACE( option_value, '/{$old}', '/{$new}') WHERE option_value LIKE '%/{$old}%'");
+                }
+
+                do_action('media_replace_value', $post_id, $replaces);
+                do_action('media_convert', $post_id, $path, $new_path);
+            }
+            else{
+
+                unlink($new_path);
+            }
+        }
+
+        wp_redirect( $sendback );
+        exit;
+    }
+
+
 	/**
 	 * Constructor
 	 */
@@ -666,10 +868,30 @@ class WPS_Media {
 			add_action('wpmu_options', [$this, 'wpmuOptions'] );
 			add_action('wp_handle_upload', [$this, 'uploadResize']);
 			add_filter('intermediate_image_sizes_advanced', [$this, 'intermediateImageSizesAdvanced'] );
+			add_filter('media_row_actions', [$this,'mediaRowActions'], 10, 3);
+            add_action('post_action_convert', [$this,'postActionConvert']);
+
+            add_filter('manage_upload_columns', function( $columns ) {
+                $columns['filesize'] = 'File Size';
+                return $columns;
+            });
+
+            add_action('manage_media_custom_column', function ( $column_name, $media_item ){
+
+                if ( 'filesize' != $column_name || !wp_attachment_is_image( $media_item ) )
+                    return;
+
+                $filesize = filesize( get_attached_file( $media_item ) );
+                $filesize = size_format($filesize, 2);
+
+                echo $filesize;
+
+            }, 10, 2 );
 
 			// Replicate media on network
 			if( $this->config->get('multisite.shared_media', false) && is_multisite() )
 			{
+				add_action('media_convert', [$this, 'mediaConvert'], 10, 3);
 				add_action('add_attachment', [$this, 'addAttachment']);
 				add_action('delete_attachment', [$this, 'deleteAttachment']);
 				add_filter('wp_update_attachment_metadata', [$this, 'updateAttachment'], 10, 2);
