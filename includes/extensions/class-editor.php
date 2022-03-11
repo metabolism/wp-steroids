@@ -108,6 +108,8 @@ class WPS_Editor {
 		remove_action( 'update_option_WPLANG', 'wp_clean_update_cache' );
 		remove_action( 'wp_maybe_auto_update', 'wp_maybe_auto_update' );
 		remove_action( 'init', 'wp_schedule_update_checks' );
+
+		add_filter( 'plugins_auto_update_enabled', '__return_false' );
 	}
 	
 
