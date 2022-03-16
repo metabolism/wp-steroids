@@ -13,40 +13,40 @@ class WPS_Query {
     /**
      * Add custom post type for taxonomy archive page
      * @param \WP_Query $query
-     * @return \WP_Query
+     * @return void
      */
     public function pre_get_posts( $query )
     {
         if( !$query->is_main_query() )
-            return $query;
+            return;
 
-        global $wp_query;
-
-        $object = $wp_query->get_queried_object();
+        $object = $query->get_queried_object();
 
         if ( $query->is_archive && is_object($object) )
         {
-            if( get_class($object) == 'WP_Post_Type' ){
+			$class = get_class($object);
 
-                if( $ppp = $this->config->get('post_type.'.$object->name.'.posts_per_page', false) )
-                    $query->set( 'posts_per_page', $ppp );
+	        if( in_array($class, ['WP_Post_Type','WP_Term']) ){
 
-                if( $orderby = $this->config->get('post_type.'.$object->name.'.orderby', false) )
-                    $query->set( 'orderby', $orderby );
+				$class = $class == 'WP_Post_Type' ? 'post_type' : 'taxonomy';
 
-                if( $order = $this->config->get('post_type.'.$object->name.'.order', false) )
-                    $query->set( 'order', $order );
-            }
-            elseif( get_class($object) == 'WP_Term' ){
+		        if( $ppp = $this->config->get($class.'.'.$object->name.'.posts_per_page', false) ){
 
-                if( $ppp = $this->config->get('taxonomy.'.$object->taxonomy.'.posts_per_page', false) )
-                    $query->set( 'posts_per_page', $ppp );
+			        $query->set( 'posts_per_page', $ppp );
+			        $query->query[ 'posts_per_page'] = $ppp;
+		        }
 
-                if( $orderby = $this->config->get('taxonomy.'.$object->name.'.orderby', false) )
-                    $query->set( 'orderby', $orderby );
+                if( $orderby = $this->config->get($class.'.'.$object->name.'.orderby', false) ){
 
-                if( $order = $this->config->get('taxonomy.'.$object->name.'.order', false) )
-                    $query->set( 'order', $order );
+	                $query->set( 'orderby', $orderby );
+	                $query->query[ 'orderby'] = $orderby;
+                }
+
+                if( $order = $this->config->get($class.'.'.$object->name.'.order', false) ){
+
+	                $query->set( 'order', $order );
+	                $query->query[ 'order'] = $order;
+                }
             }
         }
 
@@ -75,9 +75,7 @@ class WPS_Query {
                 $query->query['post_type'] = $post_type[0];
             }
         }
-
-        return $query;
-    }
+	}
 
     public function search_in_meta(){
 
