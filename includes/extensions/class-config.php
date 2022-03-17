@@ -512,8 +512,7 @@ class WPS_Config {
 
     /**
      * Adds User role
-     * @see Taxonomy
-     * see https://codex.wordpress.org/Function_Reference/add_role
+     * https://codex.wordpress.org/Function_Reference/add_role
      */
     public function addRoles()
     {
@@ -552,15 +551,30 @@ class WPS_Config {
     {
         $updated = false;
 
+        add_settings_section('page_rewrite', '', null,'permalink');
+
+	    if( isset( $_POST['page_rewrite_slug'] ) && !empty($_POST['page_rewrite_slug']) )
+	    {
+		    update_option( 'page_rewrite_slug', sanitize_title_with_dashes( $_POST['page_rewrite_slug'] ), true );
+		    $updated = true;
+	    }
+
+	    add_settings_field( 'page_rewrite_slug', 'Page base',function ()
+	    {
+		    $value = get_option( 'page_rewrite_slug' );
+		    echo '<input type="text" value="' . esc_attr( $value ) . '" name="page_rewrite_slug" placeholder="page" id="page_rewrite_slug" class="regular-text" />';
+
+	    }, 'permalink', 'page_rewrite' );
+
         add_settings_section('search_rewrite', '', null,'permalink');
 
         if( isset( $_POST['search_rewrite_slug'] ) && !empty($_POST['search_rewrite_slug']) )
         {
-            update_option( 'search_rewrite_slug', sanitize_title_with_dashes( $_POST['search_rewrite_slug'] ) );
+            update_option( 'search_rewrite_slug', sanitize_title_with_dashes( $_POST['search_rewrite_slug'] ), true );
             $updated = true;
         }
 
-        add_settings_field( 'search_rewrite_slug', 'Search',function ()
+        add_settings_field( 'search_rewrite_slug', 'Search base',function ()
         {
             $value = get_option( 'search_rewrite_slug' );
             echo '<input type="text" value="' . esc_attr( $value ) . '" name="search_rewrite_slug" placeholder="search" id="search_rewrite_slug" class="regular-text" />';
@@ -577,11 +591,11 @@ class WPS_Config {
                 {
                     if( isset( $_POST[$post_type. '_rewrite_'.$type] ) && !empty($_POST[$post_type. '_rewrite_'.$type]) )
                     {
-                        update_option( $post_type. '_rewrite_'.$type, $_POST[$post_type. '_rewrite_'.$type] );
+                        update_option( $post_type. '_rewrite_'.$type, $_POST[$post_type. '_rewrite_'.$type], true );
                         $updated = true;
                     }
 
-                    add_settings_field( $post_type. '_rewrite_'.$type, __( ucfirst(str_replace('_', ' ', $post_type)).' '.$type ),function () use($post_type, $type)
+                    add_settings_field( $post_type. '_rewrite_'.$type, __( ucfirst(str_replace('_', ' ', $post_type)).' base' ),function () use($post_type, $type)
                     {
                         $value = get_option( $post_type. '_rewrite_'.$type );
                         if(empty($value))
@@ -607,11 +621,11 @@ class WPS_Config {
         {
             if( isset( $_POST[$taxonomy. '_rewrite_slug'] ) && !empty($_POST[$taxonomy. '_rewrite_slug']) )
             {
-                update_option( $taxonomy. '_rewrite_slug', $_POST[$taxonomy. '_rewrite_slug'] );
+                update_option( $taxonomy. '_rewrite_slug', $_POST[$taxonomy. '_rewrite_slug'], true );
                 $updated = true;
             }
 
-            add_settings_field( $taxonomy. '_rewrite_slug', __( ucfirst(str_replace('_', ' ', $taxonomy)) ),function () use($taxonomy)
+            add_settings_field( $taxonomy. '_rewrite_slug', __( ucfirst(str_replace('_', ' ', $taxonomy)).' base' ),function () use($taxonomy)
             {
                 $value = get_option( $taxonomy. '_rewrite_slug' );
                 if(empty($value))
@@ -747,8 +761,48 @@ class WPS_Config {
         }
 
         return $term_link;
-
     }
+
+	public function updatePageStructure(){
+
+		$value = get_option( 'page_rewrite_slug' );
+
+		if( !empty($value) ){
+
+			global $wp_rewrite;
+
+			$page_structure = $wp_rewrite->get_page_permastruct();
+			$wp_rewrite->page_structure = $value.'/'.$page_structure;
+
+			if( $value == 'page' && $wp_rewrite->pagination_base == 'page' ){
+
+				$wp_rewrite->pagination_base = 'paged';
+				$wp_rewrite->comments_pagination_base = 'comment-paged';
+			}
+		}
+	}
+
+	public function updateSearchStructure(){
+
+		global $wp_rewrite, $wp_search_base;
+
+		$search_slug = get_option( 'search_rewrite_slug' );
+
+		if( empty($wp_search_base) )
+			$wp_search_base = $wp_rewrite->search_base;
+
+		if( isset($wp_rewrite->search_structure) )
+			unset($wp_rewrite->search_structure);
+
+		if( !empty($search_slug) ){
+
+			$wp_rewrite->search_base = $search_slug;
+		}
+		else{
+
+			$wp_rewrite->search_base = $wp_search_base;
+		}
+	}
 
 
     /**
@@ -761,20 +815,27 @@ class WPS_Config {
         $this->config = $_config;
         $this->support = $this->config->get('support', []);
 
-        if( $jpeg_quality = $this->config->get('jpeg_quality', false) )
+        if( $jpeg_quality = $this->config->get('image.compression', false) )
             add_filter( 'jpeg_quality', function() use ($jpeg_quality){ return $jpeg_quality; });
 
         // Global init action
         add_action( 'init', function()
         {
-            $this->disableFeatures();
+	        global $wp_rewrite;
+
+	        $this->disableFeatures();
 
             $this->addPostTypes();
             $this->addTaxonomies();
             $this->defineThemeSupport();
             $this->addRewriteRules();
 
-            $this->addMenus();
+	        $this->updateSearchStructure();
+	        $this->updatePageStructure();
+
+	        $wp_rewrite->flush_rules();
+
+	        $this->addMenus();
             $this->addSidebars();
             $this->addRoles();
 
