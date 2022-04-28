@@ -106,6 +106,8 @@ class WPS_Security {
 	 */
 	public function cleanHeader()
 	{
+		global $_config;
+
 		remove_action('wp_head', 'feed_links', 2);
 		remove_action('wp_head', 'feed_links_extra', 3 );
 		remove_action('wp_head', 'rsd_link');
@@ -120,11 +122,16 @@ class WPS_Security {
 		remove_action('template_redirect', 'rest_output_link_header', 11 );
 		remove_action('template_redirect', 'wp_shortlink_header', 11 );
 
-		add_action( 'wp_enqueue_scripts', function(){ 
-            wp_dequeue_style( 'wp-block-library' );
-            wp_deregister_script( 'regenerator-runtime' );
-            wp_deregister_script( 'wp-polyfill' );
-        });
+		add_action( 'wp_enqueue_scripts', function(){
+			wp_deregister_script( 'regenerator-runtime' );
+			wp_deregister_script( 'wp-polyfill' );
+		});
+
+		if( !$_config->get('gutenberg', false) ) {
+			add_action( 'wp_enqueue_scripts', function() {
+				wp_dequeue_script('wp-block-library');
+			});
+		}
 
 		add_filter('wp_headers', function($headers) {
 

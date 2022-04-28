@@ -28,10 +28,11 @@ class WPS_Performance
 
             add_filter('option_active_plugins', [$this, 'disablePlugins']);
 
-            if( !$_config->get('gutenberg', false) )
+            if( !$_config->get('gutenberg', false) ) {
                 add_filter('site_option_active_sitewide_plugins', [$this, 'disableSitewidePlugins']);
+                add_action( 'wp_enqueue_scripts', [$this, 'removeBlockLibrary'], 100 );
+            }
 
-            add_action( 'wp_enqueue_scripts', [$this, 'removeBlockLibrary'], 100 );
             remove_action( 'init', 'check_theme_switched', 99 );
 
             add_action('wp_footer', function (){
