@@ -3,7 +3,7 @@
 use Dflydev\DotAccessData\Data;
 
 /**
- * Class 
+ * Class
  */
 class WPS_Advanced_Custom_Fields{
 
@@ -18,11 +18,22 @@ class WPS_Advanced_Custom_Fields{
 	{
 		$acf_settings = $this->config->get('acf.settings', []);
 
-		foreach ($acf_settings as $name=>$value)
-			acf_update_setting($name, $value);
+		foreach ($acf_settings as $name=>$value){
 
-		if( defined('GOOGLE_MAP_API_KEY') )
+            if( acf_get_setting($name) !== $value )
+                acf_update_setting($name, $value);
+        }
+
+		if( defined('GOOGLE_MAP_API_KEY') &&  acf_get_setting('google_api_key') !== GOOGLE_MAP_API_KEY )
             acf_update_setting('google_api_key', GOOGLE_MAP_API_KEY);
+
+        $acf_user_settings = $this->config->get('acf.user_settings', []);
+
+        foreach ($acf_user_settings as $name=>$value){
+
+            if( acf_get_user_setting($name) !== $value )
+                acf_update_user_setting($name, $value);
+        }
 	}
 
 

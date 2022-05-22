@@ -111,7 +111,9 @@ input.large-text, textarea.large-text { width: 35.7rem }
 #wp-admin-bar-build .ab-icon:before{ content: "\f111"; top: 2px; display: inline-block }
 #wp-admin-bar-build .loading .ab-icon:before{ animation: rotating 4s linear infinite }
 #msls.postbox .button-secondary{ display: none }
-
+.wp-media-buttons .insert-media{ padding: 4px 7px }
+.wp-editor-expand #wp-content-editor-tools{ border-bottom-color:#ccd0d4 }
+#post-status-info{ border-color:#ccd0d4!important }
 .network-admin.multisite-language-switcher #wpadminbar .flag-icon{ display: none }
 
 
@@ -129,6 +131,8 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .acf-field{ min-height: auto!important }
 .inside.acf-fields>.acf-field>.acf-label label{ cursor: default }
 .acf-field .acf-label{ margin-bottom: 6px }
+.acf-field.acf-accordion .acf-label{ margin-bottom: 0 }
+.acf-field.acf-accordion{ border-top-color: #eee }
 .acf-fields.-border, .acf-file-uploader .file-wrap{ border-radius: 3px; overflow: hidden }
 .acf-field select{ font-size: 13px }
 .acf-postbox.seamless>.inside { margin-left: -10px !important; margin-right: -10px !important }
@@ -137,12 +141,16 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .acf-flexible-content .layout{ margin-top: 10px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(3,63,68,0.02), 0 1px 3px 0 rgba(63,63,68,0.05) }
 .acf-flexible-content .layout .acf-fc-layout-handle{ font-size: 13px }
 .acf-image-uploader .image-wrap img{ border-radius: 3px; max-width: 125px }
+.acf-field-flexible-content .acf-field .acf-label label{ font-weight: 400; font-size: 12px }
+.acf-field-flexible-content .acf-field .acf-label.acf-accordion-title label{ font-weight: 500 }
+.select2-container.-acf .select2-selection { border-color: #c4cdd5; height: 30px }
 @media screen and (max-width: 782px){
     .form-table>tbody>.acf-tab-wrap td{ padding-left: 0 }
     .form-table>tbody>.acf-field>.acf-label{ padding: 0; margin: 0; padding-top: 10px }
     .form-table>tbody>.acf-field>.acf-input{ padding: 0 }
 }
 .acf-postbox{ overflow: visible }
+.acf-menu-settings .acf-field .acf-label label{ font-weight: 400; opacity: 0.8 }
 
 /* Fix WP5.5 Contrast */
 .handle-order-higher, .handle-order-lower{ display: none }

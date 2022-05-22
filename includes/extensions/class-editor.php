@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class 
+ * Class
  */
 class WPS_Editor {
 
@@ -111,7 +111,7 @@ class WPS_Editor {
 
 		add_filter( 'plugins_auto_update_enabled', '__return_false' );
 	}
-	
+
 
 	/**
 	 * Disable widgets
@@ -185,7 +185,7 @@ class WPS_Editor {
 
 				$data = get_userdata( get_current_user_id() );
 				$caps = [];
-                
+
 				foreach($data->allcaps as $cap=>$value)
 					$caps[] = $value ? $cap : 'no-'.$cap;
 
