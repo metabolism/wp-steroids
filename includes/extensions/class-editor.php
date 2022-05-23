@@ -200,6 +200,7 @@ class WPS_Editor {
         });
 
 
+        add_action( 'password_protected_login_head', [$this, 'addCustomLoginHeader']);
         add_action( 'login_head', [$this, 'addCustomLoginHeader']);
         add_action( 'admin_bar_menu', [$this, 'editBarMenu'], 80);
 
