@@ -3,7 +3,7 @@
 use Dflydev\DotAccessData\Data;
 
 /**
- * Class 
+ * Class
  */
 class WPS_Config {
 
@@ -171,10 +171,18 @@ class WPS_Config {
                                     else{
 
                                         $thumbnail_id = get_post_meta( $post_id, 'thumbnail', true );
-                                        $image = wp_get_attachment_image_src($thumbnail_id);
 
-                                        if( $image && count($image) )
-                                            echo '<a class="attachment-thumbnail-container"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$image[0].'"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$image[0].'"></a>';
+                                        if( is_string($thumbnail_id) ){
+
+                                            echo '<a class="attachment-thumbnail-container"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$thumbnail_id.'"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$thumbnail_id.'"></a>';
+                                        }
+                                        elseif($thumbnail_id){
+
+                                            $image = wp_get_attachment_image_src($thumbnail_id);
+
+                                            if( $image && count($image) )
+                                                echo '<a class="attachment-thumbnail-container"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$image[0].'"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$image[0].'"></a>';
+                                        }
                                     }
                                 }
                                 else{
