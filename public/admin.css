@@ -65,6 +65,7 @@ table.widefat, .widefat thead td, .widefat thead th, .widefat tfoot td, .widefat
 table.widefat{ box-shadow: 0 0 0 1px rgba(63,63,68,0.05), 0 1px 3px 0 rgba(63,63,68,0.15); outline: 1px solid transparent; border-radius: 3px; border: 0 }
 .widefat tfoot td, .widefat th, .widefat thead td{ font-size: 13px }
 .post-state{ font-size: 90%; vertical-align: bottom }
+#edittag{ max-width: none }
 
 .wp-core-ui select{ font-size: 13px }
 .post-php .wrap h1, .post-new-php .wrap h1 { font-size: 16px }
@@ -98,11 +99,10 @@ div.mce-toolbar-grp, .html-active .switch-html, .tmce-active .switch-tmce { back
 }
 .form-wrap p, p.description, p.help, span.description, .post-attributes-help-text { line-height: 110%; opacity: 0.8 }
 p.help, span.description, .post-attributes-help-text { font-size: 11px }
-.form-table p{ max-width: 600px }
-.form-table p.description{ font-size: 90% }
+.form-table p.description{ font-size: 80% }
 input.large-text, textarea.large-text { width: 35.7rem }
 .form-table td fieldset label { margin: .35em 0 1em!important }
-
+.wrap{ max-width: 1350px; margin-left: auto; margin-right: auto }
 @keyframes rotating {
     from { transform: rotate(0deg) }
     to { transform: rotate(360deg) }
@@ -134,12 +134,13 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .acf-field.acf-accordion .acf-label{ margin-bottom: 0 }
 .acf-field.acf-accordion{ border-top-color: #eee }
 .acf-fields.-border, .acf-file-uploader .file-wrap{ border-radius: 3px; overflow: hidden }
-.acf-field select{ font-size: 13px }
+.acf-field select{ font-size: 13px; max-width: none }
 .acf-postbox.seamless>.inside { margin-left: -10px !important; margin-right: -10px !important }
 .form-table>tbody>.acf-tab-wrap td{ padding: 0; padding-left: 220px; }
 .form-table>tbody>tr.acf-tab-wrap .acf-tab-group{ padding: 0 }
-.acf-flexible-content .layout{ margin-top: 10px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(3,63,68,0.02), 0 1px 3px 0 rgba(63,63,68,0.05) }
+.acf-flexible-content .layout{ margin-top: 10px; border-radius: 3px }
 .acf-flexible-content .layout .acf-fc-layout-handle{ font-size: 13px }
+.acf-tab-group { padding: 10px 0 0 }
 .acf-image-uploader .image-wrap img{ border-radius: 3px; max-width: 125px }
 .acf-field-flexible-content .acf-field .acf-label label{ font-weight: 400; font-size: 12px }
 .acf-field-flexible-content .acf-field .acf-label.acf-accordion-title label{ font-weight: 500 }
