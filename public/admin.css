@@ -68,7 +68,7 @@ table.widefat{ box-shadow: 0 0 0 1px rgba(63,63,68,0.05), 0 1px 3px 0 rgba(63,63
 #edittag{ max-width: none }
 
 .wp-core-ui select{ font-size: 13px }
-.post-php .wrap h1, .post-new-php .wrap h1 { font-size: 16px }
+.post-php .wrap h1, .post-new-php .wrap h1, .term-php .wrap h1{ font-size: 16px }
 .post-php .page-title-action{ display: none }
 #comment-link-box, #edit-slug-box{ padding: 0 }
 ul.category-tabs{ margin-bottom: 4px }
@@ -116,6 +116,23 @@ input.large-text, textarea.large-text { width: 35.7rem }
 #post-status-info{ border-color:#ccd0d4!important }
 .network-admin.multisite-language-switcher #wpadminbar .flag-icon{ display: none }
 
+#edittag{ padding-right: 20px }
+.term-php .form-field > td, .term-php .acf-field > td{ margin-bottom: 0 }
+.term-php .form-table td{ font-size: 13px }
+.term-php .form-table, .term-php .form-table > tbody{ display: block }
+.term-php .form-field, .term-php tr.acf-field{ display: block; padding: 10px 0!important }
+.term-php .form-field > th, .term-php .form-field > td,
+.term-php tr.acf-field > th, .term-php tr.acf-field > td{ display: block; padding: 0!important }
+.term-php .form-field > th, .term-php tr.acf-field > th, .term-php .form-field td.acf-label{ margin-bottom: 6px; font-size: 13px }
+.term-php td.acf-label label{ font-size: 13px!important }
+.term-php tr.acf-field.acf-accordion{ margin: 0!important; padding: 0!important; border: 0 }
+.term-php tr.acf-field.acf-accordion{ margin-top: 10px!important }
+.term-php tr.acf-field.acf-accordion+tr.acf-field.acf-accordion{ margin-top: -1px!important }
+.term-php tr.acf-field.acf-accordion > .acf-input{ background: #fff }
+.term-php .form-table>tbody>.acf-tab-wrap{ display: block }
+.term-php .form-table>tbody>.acf-tab-wrap td{ display: block; padding: 10px 10px 0 0 }
+
+.edit-tags-php #acf-term-fields{ display: none }
 
 /* ACF */
 .acf-field input[type="text"], .acf-field input[type="password"], .acf-field input[type="date"], .acf-field input[type="datetime"],
