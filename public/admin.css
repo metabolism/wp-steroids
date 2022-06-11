@@ -102,7 +102,7 @@ p.help, span.description, .post-attributes-help-text { font-size: 11px }
 .form-table p.description{ font-size: 80% }
 input.large-text, textarea.large-text { width: 35.7rem }
 .form-table td fieldset label { margin: .35em 0 1em!important }
-.wrap{ max-width: 1350px; margin-left: auto; margin-right: auto }
+.wrap{ max-width: 1350px; margin-left: auto; margin-right: auto; padding-right: 20px }
 @keyframes rotating {
     from { transform: rotate(0deg) }
     to { transform: rotate(360deg) }
@@ -116,7 +116,6 @@ input.large-text, textarea.large-text { width: 35.7rem }
 #post-status-info{ border-color:#ccd0d4!important }
 .network-admin.multisite-language-switcher #wpadminbar .flag-icon{ display: none }
 
-#edittag{ padding-right: 20px }
 .term-php .form-field > td, .term-php .acf-field > td{ margin-bottom: 0 }
 .term-php .form-table td{ font-size: 13px }
 .term-php .form-table, .term-php .form-table > tbody{ display: block }
