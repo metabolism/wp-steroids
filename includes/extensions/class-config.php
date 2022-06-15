@@ -260,13 +260,24 @@ class WPS_Config {
 
 
     /**
+     * Add post type support
+     */
+    public function addPostTypeSupport()
+    {
+        $support = $this->config->get('post_type_support', []);
+
+        foreach ($support as $post_type=>$feature)
+            add_post_type_support( $post_type, $feature);
+    }
+
+    /**
      * Add theme support
      */
     public function defineThemeSupport()
     {
-        $excluded = ['template', 'page', 'post', 'tag', 'category'];
+        $support = $this->config->get('theme_support', []);
 
-        foreach ($this->support as $feature){
+        foreach ($support as $feature){
 
             if( $feature == 'post_thumbnails' || $feature == 'post_thumbnail' || $feature == 'thumbnail')
                 $feature = 'post-thumbnails';
@@ -276,22 +287,21 @@ class WPS_Config {
                 $key = array_keys($feature)[0];
                 $params = $feature[$key];
 
-                if( !in_array($key, $excluded) )
-                    @add_theme_support( $key, $params);
+                @add_theme_support( $key, $params);
             }
-            elseif( !in_array($feature, $excluded) ){
+            else{
 
                 @add_theme_support( $feature );
             }
         }
 
         $disabled = ['disable-custom-colors'];
+
         foreach ($disabled as $feature){
 
             if( !in_array($feature, $this->support) )
                 add_theme_support($feature);
         }
-
     }
 
 
@@ -836,6 +846,7 @@ class WPS_Config {
             $this->addPostTypes();
             $this->addTaxonomies();
             $this->defineThemeSupport();
+            $this->addPostTypeSupport();
             $this->addRewriteRules();
 
 	        $this->updateSearchStructure();
