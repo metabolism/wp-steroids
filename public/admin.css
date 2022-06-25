@@ -119,7 +119,7 @@ input.large-text, textarea.large-text { width: 35.7rem }
 
 .term-php .form-field > td, .term-php .acf-field > td{ margin-bottom: 0 }
 .term-php .form-table td{ font-size: 13px }
-.term-php .form-table, .term-php .form-table > tbody{ display: block }
+.term-php .form-table, .term-php .form-table > tbody{ display: block; margin-bottom: 1em }
 .term-php .form-field, .term-php tr.acf-field{ display: block; padding: 10px 0!important }
 .term-php .form-field > th, .term-php .form-field > td,
 .term-php tr.acf-field > th, .term-php tr.acf-field > td{ display: block; padding: 0!important }
