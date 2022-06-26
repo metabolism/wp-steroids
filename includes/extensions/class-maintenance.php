@@ -4,7 +4,7 @@ use Dflydev\DotAccessData\Data;
 
 
 /**
- * Class 
+ * Class
  */
 class WPS_Maintenance {
 
@@ -20,9 +20,9 @@ class WPS_Maintenance {
         {
             add_action( 'admin_init', function(){
 
-                add_settings_field('maintenance_field', __('Maintenance'), function(){
+                add_settings_field('maintenance_field', __('Maintenance', 'wp-steroids'), function(){
 
-                    echo '<input type="checkbox" id="maintenance_field" name="maintenance_field" value="1" ' . checked( 1, get_option('maintenance_field'), false ) . ' />'.__('Enable');
+                    echo '<input type="checkbox" id="maintenance_field" name="maintenance_field" value="1" ' . checked( 1, get_option('maintenance_field'), false ) . ' />'.__('Enable', 'wp-steroids');
 
                 }, 'general');
 
@@ -36,7 +36,7 @@ class WPS_Maintenance {
             {
                 $args = [
                     'id' => 'maintenance',
-                    'title' => '<span style="position: fixed; left: 0; top: 0; width: 100%; background: #ff7600; height: 2px; z-index: 99999"></span>'.__('Maintenance'),
+                    'title' => '<span style="position: fixed; left: 0; top: 0; width: 100%; background: #ff7600; height: 2px; z-index: 99999"></span>'.__('Maintenance', 'wp-steroids'),
                     'href'  => get_admin_url( null, '/options-general.php#maintenance_field' )
                 ];
 

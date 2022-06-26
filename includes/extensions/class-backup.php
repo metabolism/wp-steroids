@@ -3,7 +3,7 @@
 use Ifsnop\Mysqldump as IMysqldump;
 
 /**
- * Class 
+ * Class
  */
 class WPS_Backup {
 
@@ -242,11 +242,11 @@ class WPS_Backup {
 
         echo '<table id="backup" class="form-table">
 			<tbody><tr>
-				<th scope="row"><h2>'.__('Backup').'</h2></th>
+				<th scope="row"><h2>'.__('Backup', 'wp-steroids').'</h2></th>
 				<td>
-				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=all">'.__('Download All').'</a>
-				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=sql">'.__('Download SQL').'</a>
-				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=uploads">'.__('Download Uploads').'</a>
+				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=all">'.__('Download All', 'wp-steroids').'</a>
+				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=sql">'.__('Download SQL', 'wp-steroids').'</a>
+				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=uploads">'.__('Download Uploads', 'wp-steroids').'</a>
 				</td>
 			</tr>
 		</tbody></table>';
@@ -267,15 +267,15 @@ class WPS_Backup {
         if( isset($_GET['download_mu_backup']) )
             $this->download(true, $_GET['type'] ?? 'all');
 
-        add_settings_field('download_backup', __('Database'), function(){
+        add_settings_field('download_backup', __('Database', 'wp-steroids'), function(){
 
-            echo '<a class="button button-primary" href="'.get_admin_url().'?download_backup&type=sql">'.__('Download backup').'</a> ';
+            echo '<a class="button button-primary" href="'.get_admin_url().'?download_backup&type=sql">'.__('Download backup', 'wp-steroids').'</a> ';
 
         }, 'general');
 
-        add_settings_field('download_backup', __('Uploads'), function(){
+        add_settings_field('download_backup', __('Uploads', 'wp-steroids'), function(){
 
-            echo '<a class="button button-primary" href="'.get_admin_url().'?download_backup&type=uploads">'.__('Download backup').'</a>';
+            echo '<a class="button button-primary" href="'.get_admin_url().'?download_backup&type=uploads">'.__('Download backup', 'wp-steroids').'</a>';
 
         }, 'media');
     }

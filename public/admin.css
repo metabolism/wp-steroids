@@ -116,6 +116,7 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .wp-editor-expand #wp-content-editor-tools{ border-bottom-color:#ccd0d4 }
 #post-status-info{ border-color:#ccd0d4!important }
 .network-admin.multisite-language-switcher #wpadminbar .flag-icon{ display: none }
+#postexcerpt .inside > p{ display: none }
 
 .term-php .form-field > td, .term-php .acf-field > td{ margin-bottom: 0 }
 .term-php .form-table td{ font-size: 13px }

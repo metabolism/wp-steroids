@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class 
+ * Class
  */
 class WPS_Build {
 
@@ -18,7 +18,7 @@ class WPS_Build {
         {
             $args = [
                 'id'    => 'build',
-                'title' => '<span class="ab-icon"></span>'.__('Build'),
+                'title' => '<span class="ab-icon"></span>'.__('Build', 'wp-steroids'),
                 'href'  => BUILD_HOOK
             ];
 

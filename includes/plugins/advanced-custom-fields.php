@@ -44,7 +44,7 @@ class WPS_Advanced_Custom_Fields{
 	{
 		if( function_exists('acf_add_options_page') )
 		{
-			$args = ['autoload' => true, 'page_title' => __('Options', 'acf'), 'menu_slug' => 'acf-options'];
+			$args = ['autoload' => true, 'page_title' => __('Options', 'wp-steroids'), 'menu_slug' => 'acf-options'];
 
 			acf_add_options_page($args);
 
@@ -58,7 +58,7 @@ class WPS_Advanced_Custom_Fields{
  				if( is_array($args) )
 				    $args['autoload'] = true;
  				else
-				    $args = ['page_title'=>$args, 'autoload'=>true];
+				    $args = ['page_title'=>__t($args), 'menu_slug'=>sanitize_title($args), 'autoload'=>true];
 
 			    acf_add_options_sub_page($args);
 		    }
@@ -96,7 +96,7 @@ class WPS_Advanced_Custom_Fields{
 					$all_templates['template_'.$type.':'.$key] = ucfirst(str_replace('_', ' ', $type)).' : '.$name;
 				}
 			}
-			$field['choices'][__('Template').' (template)'] = $all_templates;
+			$field['choices'][__('Template', 'wp-steroids')] = $all_templates;
 		}
 
 		return $field;
@@ -168,6 +168,26 @@ class WPS_Advanced_Custom_Fields{
 		return $args;
 	}
 
+    public function load_fields($fields){
+
+        foreach ($fields as &$field){
+
+            if( $field['type'] == 'flexible_content'){
+
+                $field['button_label'] = __t($field['button_label']);
+
+                foreach ($field['layouts'] as &$layout)
+                    $layout['label'] = __t($layout['label']);
+            }
+            elseif( $field['type'] == 'tab'){
+
+                $field['label'] = __t($field['label']);
+            }
+        }
+
+        return $fields;
+    }
+
 
 	/**
 	 * ACFPlugin constructor.
@@ -182,6 +202,9 @@ class WPS_Advanced_Custom_Fields{
 		add_filter('acf/prepare_field', [$this, 'addTaxonomyTemplates']);
 		add_filter('acf/fields/relationship/query/name=items', [$this, 'filterPostsByTermTemplateMeta'], 10, 3);
 		add_filter('acf/get_image_sizes', [$this, 'getImageSizes'] );
+
+        add_filter('acf/get_field_label', [WPS_Translation::class, 'translate'], 9);
+        add_filter('acf/load_fields', [$this, 'load_fields'], 9);
 
 		// When viewing admin
 		if( is_admin() )

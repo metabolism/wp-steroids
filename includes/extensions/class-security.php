@@ -3,7 +3,7 @@
 use Dflydev\DotAccessData\Data;
 
 /**
- * Class 
+ * Class
  */
 class WPS_Security {
 
@@ -99,7 +99,7 @@ class WPS_Security {
 		wp_redirect( get_admin_url(null, 'options-media.php' ));
 		exit;
 	}
-	
+
 
 	/**
 	 * Clean WP Head
@@ -160,9 +160,9 @@ class WPS_Security {
 		if( isset($_GET['permissions']) )
 			$this->permissions($_GET['type'] ?? 'all');
 
-		add_settings_field('fix_permissions', __('Permissions'), function(){
+		add_settings_field('fix_permissions', __('Permissions', 'wp-steroids'), function(){
 
-			echo '<a class="button button-primary" href="'.get_admin_url().'?permissions&type=uploads">'.__('Try to fix it').'</a>';
+			echo '<a class="button button-primary" href="'.get_admin_url().'?permissions&type=uploads">'.__('Try to fix it', 'wp-steroids').'</a>';
 
 		}, 'media');
 	}
@@ -191,7 +191,7 @@ class WPS_Security {
 
         //hide login error
 		add_filter( 'login_errors', function(){
-			return __('Something is wrong!');
+			return __('Something is wrong!', 'wp-steroids');
 		} );
 
 		if( is_admin() )

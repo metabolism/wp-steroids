@@ -81,6 +81,9 @@ class WPS_Config {
                 else
                     $args['labels'] = $labels;
 
+                foreach ( $args['labels'] as $key=>$value )
+                    $args['labels'][$key] = __t($value);
+
                 if( isset($args['menu_icon']) )
                     $args['menu_icon'] = 'dashicons-'.$args['menu_icon'];
 
@@ -211,7 +214,7 @@ class WPS_Config {
 
                             $args = [
                                 'page_title' 	=> ucfirst($name).' archive options',
-                                'menu_title' 	=> __('Archive options'),
+                                'menu_title' 	=> __('Archive options', 'wp-steroids'),
                                 'autoload'   	=> true
                             ];
                         }
@@ -317,7 +320,7 @@ class WPS_Config {
         foreach ($this->config->get($config, []) as $location => $description)
         {
             $location = str_replace('-', '_', sanitize_title($location));
-            register_nav_menu($location, __($description, 'wordpress-bundle'));
+            register_nav_menu($location, __t($description));
         }
     }
 
@@ -393,6 +396,9 @@ class WPS_Config {
                     $args['labels'] = array_merge($labels, $args['labels']);
                 else
                     $args['labels'] = $labels;
+
+                foreach ( $args['labels'] as $key=>$value )
+                    $args['labels'][$key] = __t($value);
 
                 if (isset($args['object_type'])) {
 
@@ -613,7 +619,7 @@ class WPS_Config {
                         $updated = true;
                     }
 
-                    add_settings_field( $post_type. '_rewrite_'.$type, __( ucfirst(str_replace('_', ' ', $post_type)).' base' ),function () use($post_type, $type)
+                    add_settings_field( $post_type. '_rewrite_'.$type, __t( ucfirst(str_replace('_', ' ', $post_type)).' base' ),function () use($post_type, $type)
                     {
                         $value = get_option( $post_type. '_rewrite_'.$type );
                         if(empty($value))
@@ -643,7 +649,7 @@ class WPS_Config {
                 $updated = true;
             }
 
-            add_settings_field( $taxonomy. '_rewrite_slug', __( ucfirst(str_replace('_', ' ', $taxonomy)).' base' ),function () use($taxonomy)
+            add_settings_field( $taxonomy. '_rewrite_slug', __t( ucfirst(str_replace('_', ' ', $taxonomy)).' base' ),function () use($taxonomy)
             {
                 $value = get_option( $taxonomy. '_rewrite_slug' );
                 if(empty($value))

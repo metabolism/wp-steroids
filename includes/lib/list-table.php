@@ -63,7 +63,7 @@ class WPS_List_Table extends \WP_List_Table {
 	 */
 	function registerTableDataEraser($erasers ) {
 		$erasers[$this->table.'-eraser'] = array(
-			'eraser_friendly_name' => __( $this->args['page_title'].' eraser' ),
+			'eraser_friendly_name' => __t( $this->args['page_title'].' eraser' ),
 			'callback'  => function( $email ) {
 
 				if ( !is_email($email) )
@@ -88,7 +88,7 @@ class WPS_List_Table extends \WP_List_Table {
 	function registerTableDataExporter($exporters ) {
 
 		$exporters[$this->table.'-exporter'] = [
-			'exporter_friendly_name' => __( $this->args['page_title'] . ' exporter' ),
+			'exporter_friendly_name' => __t( $this->args['page_title'] . ' exporter' ),
 			'callback' => function( $email ) {
 
 				if( !is_email($email) )
@@ -112,7 +112,7 @@ class WPS_List_Table extends \WP_List_Table {
 
 					$data[] = [
 						'group_id'    => $this->table,
-						'group_label' => __( $this->args['page_title'] ),
+						'group_label' => __t( $this->args['page_title'] ),
 						'item_id'     => $row['id'],
 						'data'        => $entry
 					];
@@ -167,7 +167,7 @@ class WPS_List_Table extends \WP_List_Table {
 	function extra_tablenav($which ) {
 
 		if( $this->args['export'] && $this->total_items )
-			echo '<a class="button button-primary" href="'.sprintf('?page=%s&action=export', $_REQUEST['page']).'" style="display: inline-block;float: right;margin-left: 10px;margin-right: 0;margin-bottom: 10px;">'.__('Export all').'</a>';
+			echo '<a class="button button-primary" href="'.sprintf('?page=%s&action=export', $_REQUEST['page']).'" style="display: inline-block;float: right;margin-left: 10px;margin-right: 0;margin-bottom: 10px;">'.__('Export all', 'wp-steroids').'</a>';
 	}
 
 
@@ -195,10 +195,10 @@ class WPS_List_Table extends \WP_List_Table {
 
 		$actions = [];
 
-		$actions['delete'] = sprintf('<a href="?page=%s&action=%s&id=%s" target="_blank">'.__('Delete').'</a>', $_REQUEST['page'], 'delete', $item['id']);
+		$actions['delete'] = sprintf('<a href="?page=%s&action=%s&id=%s" target="_blank">'.__('Delete', 'wp-steroids').'</a>', $_REQUEST['page'], 'delete', $item['id']);
 
 		if( $this->args['export'] )
-			$actions['export'] = sprintf('<a href="?page=%s&action=%s&id=%s" target="_blank">'.__('Export').'</a>', $_REQUEST['page'], 'export', $item['id']);
+			$actions['export'] = sprintf('<a href="?page=%s&action=%s&id=%s" target="_blank">'.__('Export', 'wp-steroids').'</a>', $_REQUEST['page'], 'export', $item['id']);
 
 		$value = [];
 
@@ -227,7 +227,7 @@ class WPS_List_Table extends \WP_List_Table {
 
 	function get_columns()
 	{
-		return array_merge(['cb' => '<input type="checkbox" />', 'title'=>__($this->column_title)], $this->args['columns']);
+		return array_merge(['cb' => '<input type="checkbox" />', 'title'=>__t($this->column_title)], $this->args['columns']);
 	}
 
 
@@ -246,10 +246,10 @@ class WPS_List_Table extends \WP_List_Table {
 
 	function get_bulk_actions()
 	{
-		$actions = ['delete' => __('Delete')];
+		$actions = ['delete' => __('Delete', 'wp-steroids')];
 
 		if( $this->args['export'] )
-			$actions['export'] = __('Export');
+			$actions['export'] = __('Export', 'wp-steroids');
 
 		return $actions;
 	}

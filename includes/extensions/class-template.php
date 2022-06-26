@@ -50,7 +50,7 @@ class WPS_Template {
         $type = get_term_meta($tag->term_id, 'template', true);
 
         ?><tr class="form-field">
-        <th scope="row" valign="top"><label for="term_template"><?=__('Template')?></label></th>
+        <th scope="row" valign="top"><label for="term_template"><?=__('Template', 'wp-steroids')?></label></th>
         <td>
             <select name="term_template" id="term_template">
                 <option value="default"><?php _e('None'); ?></option>

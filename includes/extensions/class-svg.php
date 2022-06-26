@@ -3,7 +3,7 @@
 use enshrined\svgSanitize\Sanitizer;
 
 /**
- * Class 
+ * Class
  */
 class WPS_SVG {
 
@@ -154,7 +154,7 @@ class WPS_SVG {
 
 		if ( $file && isset($file['type']) && ($file['type'] === 'image/svg+xml' || $file['type'] === 'image/svg' )) {
 			if ( ! $this->sanitize( $file['tmp_name'] ) ) {
-				$file['error'] = __( "Sorry, this file couldn't be sanitized so for security reasons wasn't uploaded", 'wordpress-bundle' );
+				$file['error'] = __( "Sorry, this file couldn't be sanitized so for security reasons wasn't uploaded", 'wp-steroids' );
 			}
 		}
 

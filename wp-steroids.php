@@ -104,6 +104,9 @@ class WPS{
         if( !defined('WPS_YAML_FILE') )
             die('WPS_YAML_FILE is not defined');
 
+        if( !defined('WPS_YAML_TRANSLATION_FILES') )
+            define('WPS_YAML_TRANSLATION_FILES', WP_LANG_DIR);
+
         define('WPS_PATH', __DIR__);
         define('WPS_PLUGIN_URL', plugin_dir_url(__FILE__));
 

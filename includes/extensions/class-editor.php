@@ -34,7 +34,7 @@ class WPS_Editor {
 
 			$args = [
 				'id'    => 'edit',
-				'title' => __('Edit '.$object->label),
+				'title' => __t('Edit '.$object->label),
 				'href'  => get_admin_url( null, '/edit.php?post_type='.$object->name ),
 				'meta'   => ['class' => 'ab-item']
 			];

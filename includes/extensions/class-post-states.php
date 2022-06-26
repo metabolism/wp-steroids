@@ -23,10 +23,10 @@ class WPS_Post_States {
             if( isset($_POST['page_on_'.$post_state]) ){
 
                 update_option( 'page_on_'.$post_state, $_POST['page_on_'.$post_state] );
-                $this->post_states[$_POST['page_on_'.$post_state]] = $label;
+                $this->post_states[$_POST['page_on_'.$post_state]] = __t($label);
             }
             else{
-                $this->post_states[get_option( 'page_on_'.$post_state)] = $label;
+                $this->post_states[get_option( 'page_on_'.$post_state)] = __t($label);
             }
         }
     }
@@ -40,9 +40,8 @@ class WPS_Post_States {
      */
     public function addPostState($post_states, $post) {
 
-        if( is_array($this->post_states) && in_array($post->ID, array_keys($this->post_states)) ) {
+        if( is_array($this->post_states) && in_array($post->ID, array_keys($this->post_states)) )
             $post_states[] = $this->post_states[$post->ID];
-        }
 
         return $post_states;
     }
@@ -58,7 +57,7 @@ class WPS_Post_States {
         if( empty($post_states) )
             return;
 
-        add_settings_field('page_states', __('Page states'), function() use($post_states){
+        add_settings_field('page_states', __('Page states', 'wp-steroids'), function() use($post_states){
 
             foreach ($post_states as $post_state=>$label){
 
@@ -88,8 +87,7 @@ class WPS_Post_States {
         global $_config;
         $this->config = $_config;
 
-        $this->getPostStates();
-
+        add_action( 'admin_init', [$this, 'getPostStates'] );
         add_filter( 'display_post_states', [$this, 'addPostState'], 10, 2 );
         add_action( 'admin_init', [$this, 'addReadingOptions'] );
     }

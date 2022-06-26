@@ -3,7 +3,7 @@
 use Dflydev\DotAccessData\Data;
 
 /**
- * Class 
+ * Class
  */
 class WPS_Media {
 
@@ -396,13 +396,13 @@ class WPS_Media {
 			echo '<h2>Images</h2>';
 			echo '<table id="thumbnails" class="form-table"><tbody>';
 			echo '<tr>
-				<th scope="row">'.__('Generated thumbnails').'</th>
+				<th scope="row">'.__('Generated thumbnails', 'wp-steroids').'</th>
 				<td><a class="button button-primary" href="'.get_admin_url().'?clear_all_thumbnails">Remove '.count($thumbnails).' images</a></td>
 			</tr>';
 
 			if( $this->config->get('multisite.shared_media', false) )
 				echo '<tr>
-				<th scope="row">'.__('Multisite').'</th>
+				<th scope="row">'.__('Multisite', 'wp-steroids').'</th>
 				<td><a class="button button-primary" href="'.get_admin_url().'?syncronize_images">Synchronize images</a></td>
 			</tr>';
 
@@ -418,7 +418,7 @@ class WPS_Media {
 	{
 		if( !current_user_can('administrator') )
 			return;
-		
+
 		if( isset($_GET['clear_thumbnails']) )
 			$this->clearThumbnails();
 
@@ -429,14 +429,14 @@ class WPS_Media {
 			$this->syncMedia();
 
 		// Remove generated thumbnails option
-		add_settings_field('clean_image_thumbnails', __('Generated thumbnails'), function(){
+		add_settings_field('clean_image_thumbnails', __('Generated thumbnails', 'wp-steroids'), function(){
 
 			$thumbnails = $this->getThumbnails();
 
 			if( count($thumbnails) )
-				echo '<a class="button button-primary" href="'.get_admin_url().'?clear_thumbnails">'.__('Remove').' '.count($thumbnails).' images</a>';
+				echo '<a class="button button-primary" href="'.get_admin_url().'?clear_thumbnails">'.__('Remove', 'wp-steroids').' '.count($thumbnails).' images</a>';
 			else
-				echo __('Nothing to remove');
+				echo __('Nothing to remove', 'wp-steroids');
 
 		}, 'media');
 	}
@@ -505,7 +505,7 @@ class WPS_Media {
 		if ( current_user_can('administrator') && is_super_admin() )
 		{
 			set_time_limit(0);
-			
+
 			$main_site_id = get_main_network_id();
 			$current_site_id = get_current_blog_id();
 
@@ -637,7 +637,7 @@ class WPS_Media {
 
 		$arr['url'] = str_replace('edition/../', '', $arr['url']);
 		$arr['baseurl'] = str_replace('edition/../', '', $arr['baseurl']);
-		
+
 		$arr['relative'] = str_replace(get_home_url(null,'','http'), '', $arr['baseurl']);
 		$arr['relative'] = str_replace(get_home_url(null,'','https'), '', $arr['relative']);
 
@@ -716,8 +716,8 @@ class WPS_Media {
                 wp_nonce_url( "post.php?action=convert&amp;post=$post->ID", 'convert-post_' . $post->ID ),
                 '',
                 /* translators: %s: Attachment title. */
-                esc_attr( sprintf( __( 'Convert &#8220;%s&#8221;' ), $post->post_title ) ),
-                __( 'Convert to jpg' )
+                esc_attr( sprintf( __( 'Convert &#8220;%s&#8221;', 'wp-steroids' ), $post->post_title ) ),
+                __( 'Convert to jpg', 'wp-steroids' )
             );
         }
 
