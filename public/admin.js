@@ -7,17 +7,23 @@
 
 	function initGoogleTranslate(){
 
-		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside').append('<a class="google-translate" title="Translate with Google"></a>')
+		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label').append('<a class="google-translate" title="Translate with Google"></a>')
 		$('#tag-post-content #name').wrap('<div class="input-wrapper"></div>')
 		$('#tag-post-content #name').after('<a class="google-translate" title="Translate with Google"></a>')
+		$('#menu-to-edit span.description').remove()
 
 		$(document).on('click', '.google-translate', function (){
 
 			var $self = $(this);
 			var $inputs = $(this).parent().find('.acf-input-wrap > input, > textarea, textarea.wp-editor-area, .field, #title, #name, #excerpt')
 
-			if( !$inputs.length )
-				return;
+			if( !$inputs.length ){
+
+				$inputs = $(this).prev('input, textarea')
+
+				if( !$inputs.length )
+					return;
+			}
 
 			var $input = $inputs.first()
 			var wysiwyg = $input.hasClass('wp-editor-area');
