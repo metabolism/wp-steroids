@@ -5,6 +5,46 @@
 		$('.acf-flexible-content .ui-sortable-handle').removeAttr( "title" );
 	}
 
+	function initGoogleTranslate(){
+
+		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside').append('<a class="google-translate" title="Translate with Google"></a>')
+		$('#tag-post-content #name').wrap('<div class="input-wrapper"></div>')
+		$('#tag-post-content #name').after('<a class="google-translate" title="Translate with Google"></a>')
+
+		$(document).on('click', '.google-translate', function (){
+
+			var $self = $(this);
+			var $inputs = $(this).parent().find('.acf-input-wrap > input, > textarea, textarea.wp-editor-area, .field, #title, #name, #excerpt')
+
+			if( !$inputs.length )
+				return;
+
+			var $input = $inputs.first()
+			var wysiwyg = $input.hasClass('wp-editor-area');
+			var value = wysiwyg ? tinymce.editors[$input.attr('id')].getContent() : $input.val();
+
+			if( value.length <= 2)
+				return;
+
+			$self.addClass('loading')
+
+			$.post('https://translation.googleapis.com/language/translate/v2?key='+window.google_translate_key, {q:value, format:(wysiwyg?'html':'text'), target:document.documentElement.lang.split('-')[0]}, function (response){
+
+				$self.removeClass('loading')
+
+				if( response.data.translations.length ){
+
+					var translations = response.data.translations[0].translatedText;
+
+					if( wysiwyg )
+						tinymce.editors[$input.attr('id')].setContent(translations)
+					else
+						$input.val(translations)
+				}
+			})
+		})
+	}
+
 	$(document).ready(function(){
 
 		if( $('body').hasClass('no-acf_edit_layout') ){
@@ -43,6 +83,9 @@
 				setTimeout(window.location.reload, 500);
 			})
 		})
+
+		if( window.enable_translation )
+			initGoogleTranslate();
 	});
 
 

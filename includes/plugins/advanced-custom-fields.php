@@ -188,6 +188,14 @@ class WPS_Advanced_Custom_Fields{
         return $fields;
     }
 
+    public function render_field($field) {
+
+        if( in_array($field['type'], ['text','textarea','wysiwyg']) )
+            echo '<a class="google-translate" title="'.__('Translate with Google', 'wp-steroids').'"></a>';
+
+        return $field;
+    }
+
 
 	/**
 	 * ACFPlugin constructor.
@@ -216,6 +224,9 @@ class WPS_Advanced_Custom_Fields{
 			add_filter( 'acf/settings/show_admin', function() {
 				return current_user_can('administrator');
 			});
+
+            if( defined('GOOGLE_TRANSLATE_KEY') )
+                add_filter('acf/render_field', [$this, 'render_field']);
 		}
 	}
 }

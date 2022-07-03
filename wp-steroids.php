@@ -77,8 +77,18 @@ class WPS{
          */
         foreach ($_config->get('define', []) as $constant=>$value){
 
-            if( !defined(strtoupper($constant)) )
-                define( strtoupper($constant), $value);
+            if( !defined(strtoupper($constant)) ){
+
+                if( substr($value, 0, 5) === '%env(' ){
+
+                    $value = substr($value, 5, strlen($value)-7);
+                    define( strtoupper($constant), $_ENV[$value]??false);
+                }
+                else{
+
+                    define( strtoupper($constant), $value);
+                }
+            }
         }
 
         if( !defined('HEADLESS') )
