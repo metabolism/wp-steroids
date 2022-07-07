@@ -613,6 +613,9 @@ class WPS_Config {
 
         foreach ( get_post_types(['public'=> true, '_builtin' => false], 'objects') as $post_type=>$args )
         {
+            if( !$args->publicly_queryable )
+                continue;
+
             foreach( ['slug', 'archive'] as $type)
             {
                 if( $type == 'slug' || ($type == 'archive' && $args->has_archive ))
@@ -647,6 +650,9 @@ class WPS_Config {
 
         foreach ( get_taxonomies(['public'=> true, '_builtin' => false], 'objects') as $taxonomy=>$args )
         {
+            if( !$args->publicly_queryable )
+                continue;
+
             if( isset( $_POST[$taxonomy. '_rewrite_slug'] ) && !empty($_POST[$taxonomy. '_rewrite_slug']) )
             {
                 update_option( $taxonomy. '_rewrite_slug', $_POST[$taxonomy. '_rewrite_slug'], true );
@@ -743,7 +749,7 @@ class WPS_Config {
 
                     $terms = get_the_terms( $post, $taxonomy );
 
-                    if( !is_wp_error($terms) && count($terms) )
+                    if( !is_wp_error($terms) && is_array($terms) && count($terms) )
                         $post_link = str_replace( '{'.$taxonomy.'}', $terms[0]->slug, $post_link );
                     else
                         $post_link = str_replace( '{'.$taxonomy.'}', 'default', $post_link );
