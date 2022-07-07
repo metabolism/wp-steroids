@@ -447,7 +447,11 @@ class WPS_Config {
     private function getSlugs($taxonomy){
 
         $taxonomy = str_replace('{', '', str_replace('}', '', $taxonomy));
+
         $terms = get_terms($taxonomy);
+
+        if( is_wp_error($terms) )
+            return ['default'];
 
         $slugs = [];
 
@@ -520,8 +524,8 @@ class WPS_Config {
 
                     if( substr($slug, 0, 1) == '{' && $i==0 ){
 
-                        $slugs = $this->getSlugs($tok);
-                        $rule = str_replace($tok, '('.implode('|', $slugs).')', $rule);
+                        if( $slugs = $this->getSlugs($tok) )
+                            $rule = str_replace($tok, '('.implode('|', $slugs).')', $rule);
                     }
                     else{
 
@@ -739,7 +743,7 @@ class WPS_Config {
 
                     $terms = get_the_terms( $post, $taxonomy );
 
-                    if( is_array($terms) && count($terms) && is_object($terms[0]) )
+                    if( !is_wp_error($terms) && count($terms) )
                         $post_link = str_replace( '{'.$taxonomy.'}', $terms[0]->slug, $post_link );
                     else
                         $post_link = str_replace( '{'.$taxonomy.'}', 'default', $post_link );

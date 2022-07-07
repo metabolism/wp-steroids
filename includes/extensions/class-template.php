@@ -21,6 +21,9 @@ class WPS_Template {
         {
             add_filter( 'theme_'.$post_type.'_templates', function($post_templates) use($template){
 
+                foreach ($template as $key=>&$label)
+                    $label = __t($label);
+
                 return array_merge($post_templates, $template);
             });
         }
@@ -56,7 +59,7 @@ class WPS_Template {
                 <option value="default"><?php _e('None'); ?></option>
                 <?php
                 foreach ($types as $value=>$label){
-                    echo '<option value="'.$value.'" '.($type==$value?'selected':'').'>'.$label.'</option>';
+                    echo '<option value="'.$value.'" '.($type==$value?'selected':'').'>'.__t($label).'</option>';
                 }
                 ?>
             </select>

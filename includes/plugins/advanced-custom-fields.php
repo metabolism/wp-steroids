@@ -183,6 +183,11 @@ class WPS_Advanced_Custom_Fields{
 
                 $field['label'] = __t($field['label']);
             }
+            elseif( $field['type'] == 'select'){
+
+                foreach($field['choices'] as $key=>&$value)
+                    $value = __t($value);
+            }
         }
 
         return $fields;
@@ -225,7 +230,7 @@ class WPS_Advanced_Custom_Fields{
 				return current_user_can('administrator');
 			});
 
-            if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY )
+            if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY && !is_main_site() )
                 add_filter('acf/render_field', [$this, 'render_field']);
 		}
 	}

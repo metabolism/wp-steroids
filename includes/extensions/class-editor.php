@@ -136,7 +136,7 @@ class WPS_Editor {
 		echo '<link rel="stylesheet" href="'.WPS_PLUGIN_URL.'public/admin_bar.css'.'"/>';
 		echo '<script type="text/javascript" src="'.WPS_PLUGIN_URL.'public/admin.js'.'"></script>';
 
-        if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY ){
+        if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY && !is_main_site() ){
 
             echo '<script type="text/javascript">'.
                 'window.enable_translation = "google";'.
