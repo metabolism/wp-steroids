@@ -2,7 +2,7 @@
 
 
 /**
- * Class 
+ * Class
  */
 class WPS_Url {
 
@@ -14,30 +14,6 @@ class WPS_Url {
 		global $wp_admin_bar;
 		$wp_admin_bar->remove_menu('view-site');
 		$wp_admin_bar->remove_menu('site-name');
-	}
-
-
-	/**
-	 * Remove link when there is no template support
-	 * @param $url
-	 * @return string
-	 */
-	public function makePostRelative($url){
-
-		$make_relative = apply_filters('wp-bundle/make_post_link_relative', true);
-		return $make_relative ? wp_make_link_relative($url) : $url;
-	}
-
-
-	/**
-	 * Remove link when there is no template support
-	 * @param $url
-	 * @return string
-	 */
-	public function makeAttachmentRelative($url){
-
-		$make_relative = apply_filters('wp-bundle/make_attachment_link_relative', true);
-		return $make_relative ? wp_make_link_relative($url) : $url;
 	}
 
 
@@ -94,38 +70,5 @@ class WPS_Url {
 		}
 
 		$this->redirectAdmin();
-
-		add_action('init', function()
-		{
-			if( apply_filters('wp_make_url_relative', true) ){
-
-                $filters = array(
-                    'post_link',
-                    'post_type_link',
-                    'page_link',
-                    'get_shortlink',
-                    'post_type_archive_link',
-                    'get_pagenum_link',
-                    'author_link',
-                    'get_comments_pagenum_link',
-                    'term_link',
-                    'search_link',
-                    'day_link',
-                    'month_link',
-                    'year_link'
-                );
-
-                foreach ( $filters as $filter )
-                    add_filter( $filter, [$this, 'makePostRelative'] );
-
-                $filters = array(
-                    'attachment_link',
-                    'wp_get_attachment_url'
-                );
-
-                foreach ( $filters as $filter )
-                    add_filter( $filter, [$this, 'makeAttachmentRelative'] );
-            }
-        });
     }
 }

@@ -175,21 +175,22 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .acf-postbox{ overflow: visible }
 .acf-menu-settings .acf-field .acf-label label{ font-weight: 400; opacity: 0.8 }
 
-.google-translate{ cursor: pointer; width: 26px; height: 26px; display: none; background: url("google_translate.svg") no-repeat center; background-size: contain; position: absolute; right: 5px; top: 50%; transform: translateY(-50%) }
-.google-translate.loading{ background-image: url("loader.svg") }
-#tag-post-content .google-translate, .term-meta-text-field+.google-translate{ right: 14px }
-#tag-post-content #wp-advanced_description-wrap .google-translate, #tag-post-content .input-wrapper .google-translate{ right: 2px }
-#tag-post-content .acf-field-textarea .google-translate{ bottom: 10px }
-#tag-post-content .acf-field-wysiwyg .google-translate{ bottom: 37px }
-.wp-link-text-field:hover .google-translate{ right: 11%; top: 58% }
-#tag-post-content .acf-field-text .google-translate{ margin-top: 4px }
-.acf-field-wysiwyg .google-translate, #wp-content-wrap .google-translate, #wp-advanced_description-wrap .google-translate{ transform: none; top: auto; bottom: 22px }
-.acf-field-textarea .google-translate, .input-wrapper--textarea .google-translate{ bottom: 5px; transform: none; top: auto }
-textarea.term-meta-text-field+.google-translate{ bottom: 16px; transform: none; top: auto }
-#postexcerpt .google-translate{ bottom: 12px; transform: none; top: auto; right: 14px }
-#menu-to-edit label .google-translate{ bottom: 2px; transform: none; top: auto; right: 2px }
-#menu-to-edit label textarea+.google-translate{ bottom: 4px }
-.acf-input:hover > .google-translate, .wp-link-text-field:hover .google-translate, #menu-to-edit label:hover .google-translate, #wp-content-wrap:hover .google-translate, .input-wrapper:hover .google-translate, #titlewrap:hover .google-translate, #wp-advanced_description-wrap:hover .google-translate, #postexcerpt .inside:hover .google-translate{ display: inline-block }
+.wps-translate{ cursor: pointer; display: none; background: no-repeat center; background-size: contain; position: absolute; right: 5px; top: 50%; transform: translateY(-50%) }
+.wps-translate--google{ background-image: url("google_translate.svg"); width: 26px; height: 26px }
+.wps-translate.loading{ background-image: url("loader.svg") }
+#tag-post-content .wps-translate, .term-meta-text-field+.wps-translate{ right: 14px }
+#tag-post-content #wp-advanced_description-wrap .wps-translate, #tag-post-content .input-wrapper .wps-translate{ right: 2px }
+#tag-post-content .acf-field-textarea .wps-translate{ bottom: 10px }
+#tag-post-content .acf-field-wysiwyg .wps-translate{ bottom: 37px }
+.wp-link-text-field:hover .wps-translate{ right: 11%; top: 58% }
+#tag-post-content .acf-field-text .wps-translate{ margin-top: 4px }
+.acf-field-wysiwyg .wps-translate, #wp-content-wrap .wps-translate, #wp-advanced_description-wrap .wps-translate{ transform: none; top: auto; bottom: 22px }
+.acf-field-textarea .wps-translate, .input-wrapper--textarea .wps-translate{ bottom: 5px; transform: none; top: auto }
+textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top: auto }
+#postexcerpt .wps-translate{ bottom: 12px; transform: none; top: auto; right: 14px }
+#menu-to-edit label .wps-translate{ bottom: 2px; transform: none; top: auto; right: 2px }
+#menu-to-edit label textarea+.wps-translate{ bottom: 4px }
+.acf-input:hover > .wps-translate, .wp-link-text-field:hover .wps-translate, #menu-to-edit label:hover .wps-translate, #wp-content-wrap:hover .wps-translate, .input-wrapper:hover .wps-translate, #titlewrap:hover .wps-translate, #wp-advanced_description-wrap:hover .wps-translate, #postexcerpt .inside:hover .wps-translate{ display: inline-block }
 #poststuff #titlewrap,  #menu-to-edit label, .wp-link-text-field label{ position: relative; display: block }
 
 #menu-to-edit label input, #menu-to-edit label textarea{ margin-top: 5px }

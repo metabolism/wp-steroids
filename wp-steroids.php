@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name: Wordpress on Steroids
- * Description: Configure Wordpress using yml and add various plugins
+ * Description: Configure Wordpress using yml and add amazing features
  * Version: 1.0.0
- * Author: Metabolism
- * Author URI: http://www.metabolism.fr
+ * Author: Akhela
+ * Author URI: http://www.akhela.fr
  */
 
 use Dallgoot\Yaml;

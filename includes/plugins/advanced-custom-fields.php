@@ -191,7 +191,7 @@ class WPS_Advanced_Custom_Fields{
     public function render_field($field) {
 
         if( in_array($field['type'], ['text','textarea','wysiwyg']) )
-            echo '<a class="google-translate" title="'.__('Translate with Google', 'wp-steroids').'"></a>';
+            echo '<a class="wps-translate wps-translate--google" title="'.__('Translate with Google', 'wp-steroids').'"></a>';
 
         return $field;
     }
@@ -225,7 +225,7 @@ class WPS_Advanced_Custom_Fields{
 				return current_user_can('administrator');
 			});
 
-            if( defined('GOOGLE_TRANSLATE_KEY') )
+            if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY )
                 add_filter('acf/render_field', [$this, 'render_field']);
 		}
 	}

@@ -5,14 +5,14 @@
 		$('.acf-flexible-content .ui-sortable-handle').removeAttr( "title" );
 	}
 
-	function initGoogleTranslate(){
+	function initTranslation(){
 
-		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label').append('<a class="google-translate" title="Translate with Google"></a>')
+		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label').append('<a class="wps-translate wps-translate--'+window.enable_translation+'" title="Translate with '+window.enable_translation+'"></a>')
 		$('#tag-post-content #name').wrap('<div class="input-wrapper"></div>')
-		$('#tag-post-content #name').after('<a class="google-translate" title="Translate with Google"></a>')
+		$('#tag-post-content #name').after('<a class="wps-translate wps-translate--'+window.enable_translation+'" title="Translate with '+window.enable_translation+'"></a>')
 		$('#menu-to-edit span.description').remove()
 
-		$(document).on('click', '.google-translate', function (){
+		$(document).on('click', '.wps-translate', function (){
 
 			var $self = $(this);
 			var $inputs = $(this).parent().find('.acf-input-wrap > input, > textarea, textarea.wp-editor-area, .field, #title, #name, #excerpt')
@@ -34,7 +34,7 @@
 
 			$self.addClass('loading')
 
-			$.post('https://translation.googleapis.com/language/translate/v2?key='+window.google_translate_key, {q:value, format:(wysiwyg?'html':'text'), target:document.documentElement.lang.split('-')[0]}, function (response){
+			$.post('https://translation.googleapis.com/language/translate/v2?key='+window.translate_key, {q:value, format:(wysiwyg?'html':'text'), target:document.documentElement.lang.split('-')[0]}, function (response){
 
 				$self.removeClass('loading')
 
@@ -91,7 +91,7 @@
 		})
 
 		if( window.enable_translation )
-			initGoogleTranslate();
+			initTranslation();
 	});
 
 

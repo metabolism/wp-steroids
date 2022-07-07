@@ -136,12 +136,13 @@ class WPS_Editor {
 		echo '<link rel="stylesheet" href="'.WPS_PLUGIN_URL.'public/admin_bar.css'.'"/>';
 		echo '<script type="text/javascript" src="'.WPS_PLUGIN_URL.'public/admin.js'.'"></script>';
 
-        if( defined('GOOGLE_TRANSLATE_KEY') )
-            echo '<script type="text/javascript">'.
-                'window.enable_translation = true;'.
-                'window.google_translate_key = "'.GOOGLE_TRANSLATE_KEY.'";'.
-                '</script>'."\n";
+        if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY ){
 
+            echo '<script type="text/javascript">'.
+                'window.enable_translation = "google";'.
+                'window.translate_key = "'.GOOGLE_TRANSLATE_KEY.'";'.
+                '</script>'."\n";
+        }
     }
 
 
