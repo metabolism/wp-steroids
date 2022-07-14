@@ -868,7 +868,7 @@ class WPS_Config {
 	        $this->updateSearchStructure();
 	        $this->updatePageStructure();
 
-	        $wp_rewrite->flush_rules();
+	        $wp_rewrite->flush_rules(false);
 
 	        $this->addMenus();
             $this->addSidebars();
