@@ -315,7 +315,7 @@ class WPS_Config {
     public function addMenus()
     {
         $register = $this->config->get('menu.register');
-	    $register = $register ?: $this->config->get('menu');
+	    $register = $register ? 'menu.register' : 'menu';
 
         foreach ($this->config->get($register, []) as $location => $description)
         {
