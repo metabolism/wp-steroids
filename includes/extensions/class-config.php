@@ -314,10 +314,10 @@ class WPS_Config {
      */
     public function addMenus()
     {
-        $version = $this->config->get('version', 0);
-        $config = $version>=1?'menu.register':'menu';
+        $register = $this->config->get('menu.register');
+	    $register = $register ?: $this->config->get('menu');
 
-        foreach ($this->config->get($config, []) as $location => $description)
+        foreach ($this->config->get($register, []) as $location => $description)
         {
             $location = str_replace('-', '_', sanitize_title($location));
             register_nav_menu($location, __t($description));

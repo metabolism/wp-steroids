@@ -69,7 +69,7 @@ class WPS{
             wp_die(basename($resource).' loading error: '.$e->getMessage());
         }
 
-        $_config = new Data($config);
+        $_config = new Data($config['wordpress']??$config);
 
 
         /**
