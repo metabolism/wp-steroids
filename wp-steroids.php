@@ -79,9 +79,9 @@ class WPS{
 
             if( !defined(strtoupper($constant)) ){
 
-                if( substr($value, 0, 5) === '%env(' ){
+                if( substr($value, 0, 4) === 'env(' ){
 
-                    $value = substr($value, 5, strlen($value)-7);
+                    $value = substr($value, 4, strlen($value)-6);
                     define( strtoupper($constant), $_ENV[$value]??false);
                 }
                 else{
