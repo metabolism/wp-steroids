@@ -1,6 +1,6 @@
 # WP Steroids
 
-Supercharge Wordpress with :
+Supercharge WordPress with :
 
 * Wordpress YML configuration
 * Permalink configuration for custom post type and taxonomy
@@ -13,7 +13,7 @@ Supercharge Wordpress with :
 * Multisite images sync ( for multisite as multilangue )
 * SVG Support
 * Better Performance
-* Wordpress Bugfix
+* WordPress Bugfix
 * CSS Fix
 * Relative urls
 * Multisite post deep copy ( with multisite-language-switcher plugin )

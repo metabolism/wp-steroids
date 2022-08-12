@@ -41,7 +41,7 @@ class WPS_Translation {
 
     public function shutdown(){
 
-        if( !empty(self::$missing_translations) )
+        if( !empty(self::$missing_translations) && !wp_doing_ajax() && WP_DEBUG )
             echo "<!--\nMissing translations:\n\n".implode("\n", array_unique(self::$missing_translations))."\n-->";
     }
 

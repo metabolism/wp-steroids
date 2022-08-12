@@ -1,8 +1,8 @@
 {
   "name": "metabolism/wp-steroids",
   "type": "wordpress-plugin",
-  "version": "1.0.0",
-  "homepage": "http://www.metabolism.fr",
+  "version": "1.0.1",
+  "homepage": "http://www.akhela.fr",
   "license": "GPL-3.0-or-later",
   "description": "Supercharge Wordpress with YML configuration and more",
   "keywords": ["plugin","wordpress"],

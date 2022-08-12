@@ -4,7 +4,7 @@
 use Dflydev\DotAccessData\Data;
 
 /**
- * Class 
+ * Class
  */
 class WPS_GUID {
 
@@ -56,21 +56,21 @@ class WPS_GUID {
 	/**
 	 * Update UUID
 	 * @param $post_ID
-	 * @param null $post
-	 * @param bool $update
 	 */
-	public function update($post_ID, $post = null, $update = false){
+	public function update($post_ID){
 
-		if ( !$update ) {
+		global $wpdb;
 
-			global $wpdb;
+		$guid = get_the_guid($post_ID);
 
-			$where = ['ID' => $post_ID];
+		if( substr($guid, 0, 9) === 'urn:uuid:')
+			return;
 
-			$wpdb->update( $wpdb->posts, array(
-				'guid' => 'urn:uuid:' . $this->uuid( WP_HOME.'?p='.$post_ID ),
-			), $where );
-		}
+		$where = ['ID' => $post_ID];
+
+		$wpdb->update( $wpdb->posts, array(
+			'guid' => 'urn:uuid:' . $this->uuid( WP_HOME.'?p='.$post_ID ),
+		), $where );
 	}
 
 
@@ -80,5 +80,6 @@ class WPS_GUID {
 	public function __construct(){
 
 		add_action( 'save_post', [$this, 'update'], 10, 3 );
+		add_action( 'add_attachment', [$this, 'update'], 10, 3 );
 	}
 }

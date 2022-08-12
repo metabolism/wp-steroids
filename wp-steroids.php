@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Wordpress on Steroids
- * Description: Configure Wordpress using yml and add amazing features
- * Version: 1.0.0
+ * Plugin Name: WordPress on Steroids
+ * Description: Configure WordPress using yml and add amazing features
+ * Version: 1.0.1
  * Author: Akhela
  * Author URI: http://www.akhela.fr
  */
