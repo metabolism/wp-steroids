@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class 
+ * Class
  */
 class WPS_Performance
 {
@@ -12,26 +12,12 @@ class WPS_Performance
         'multisite-clone-duplicator'=>'multisite-clone-duplicator/multisite-clone-duplicator.php'
     ];
 
-    public function removeBlockLibrary(){
-
-        wp_dequeue_style( 'wp-block-library' );
-        wp_dequeue_style( 'wp-block-library-theme' );
-        wp_dequeue_style( 'wc-block-style' ); // REMOVE WOOCOMMERCE BLOCK CSS
-        wp_dequeue_style( 'global-styles' ); // REMOVE THEME.JSON
-    }
-
     public function __construct()
     {
         if ( !is_admin() ){
 
-            global $_config;
-
             add_filter('option_active_plugins', [$this, 'disablePlugins']);
-
-            if( !$_config->get('gutenberg', false) ) {
-                add_filter('site_option_active_sitewide_plugins', [$this, 'disableSitewidePlugins']);
-                add_action( 'wp_enqueue_scripts', [$this, 'removeBlockLibrary'], 100 );
-            }
+	        add_filter('site_option_active_sitewide_plugins', [$this, 'disableSitewidePlugins']);
 
             remove_action( 'init', 'check_theme_switched', 99 );
 

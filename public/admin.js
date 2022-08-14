@@ -5,6 +5,21 @@
 		$('.acf-flexible-content .ui-sortable-handle').removeAttr( "title" );
 	}
 
+	function allowInterfaceResize(){
+
+		if( $('.interface-interface-skeleton__sidebar').length ) {
+
+			$('.interface-interface-skeleton__sidebar').width(localStorage.getItem('toast_rs_personal_sidebar_width'))
+			$('.interface-interface-skeleton__sidebar').resizable({
+				handles: 'w',
+				resize: function (event, ui) {
+					$(this).css({'left': 0});
+					localStorage.setItem('toast_rs_personal_sidebar_width', $(this).width());
+				}
+			});
+		}
+	}
+
 	function initTranslation(){
 
 		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label').append('<a class="wps-translate wps-translate--'+window.enable_translation+'" title="Translate with '+window.enable_translation+'"></a>')
@@ -52,6 +67,8 @@
 	}
 
 	$(document).ready(function(){
+
+		setInterval(allowInterfaceResize, 500);
 
 		if( $('body').hasClass('no-acf_edit_layout') ){
 

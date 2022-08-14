@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WordPress on Steroids
  * Description: Configure WordPress using yml and add amazing features
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Akhela
  * Author URI: http://www.akhela.fr
  */
@@ -103,10 +103,6 @@ class WPS{
      *
      * Sets up the Meta Steroids
      *
-     * @date    28/09/13
-     * @since   5.0.0
-     *
-     * @param   void
      * @return  void
      */
     function initialize() {

@@ -2,7 +2,6 @@
 
 /**
  * Class TermsPlugin
- * @package Metabolism\WordpressBundle\Plugin
  */
 class WPS_Terms{
 

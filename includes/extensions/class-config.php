@@ -33,6 +33,59 @@ class WPS_Config {
     }
 
     /**
+     * Adds Gutenberg blocks
+     * @see https://www.advancedcustomfields.com/resources/acf_register_block_type/
+     */
+    public function addBlocks()
+    {
+		if( !class_exists('ACF') )
+			return;
+
+	    foreach ( $this->config->get('block', []) as $name => $args )
+	    {
+		    $block = [
+			    'name'              => $name,
+			    'title'             => __t($args['title']??$name),
+			    'description'       => __t($args['description']??''),
+			    'render_template'   => $args['render_template']??'',
+			    'category'          => $args['category']??'layout',
+			    'icon'              => $args['icon']??'admin-comments',
+			    'align'             => $args['align']??'',
+			    'align_text'        => $args['align_text']??'',
+			    'align_content'     => $args['align_content']??'',
+			    'mode'              => $args['mode']??'preview',
+			    'keywords'          => $args['keywords']??[],
+			    'post_types'        => $args['post_types']??[]
+		    ];
+
+		    $block['render_callback'] = apply_filters('block_render_callback', false);
+
+		    $block['supports'] = [
+				'align'=>boolval($args['align']??false),
+			    'align_text'=>boolval($args['align_text']??false),
+			    'align_content'=>boolval($args['align_content']??false)
+		    ];
+
+			if( substr($args['icon']??'', -4) == '.svg' )
+				$block['icon'] = file_get_contents(ABSPATH.'/'.$args['icon']);
+
+			if( $args['preview_image']??false ){
+
+				$block['example'] = [
+					'attributes' => [
+						'mode' => 'preview',
+						'data' => [
+							'_preview_image' => 'uploads/blocks/'.$name.'.png',
+						]
+					]
+				];
+			}
+
+		    acf_register_block_type($block);
+	    }
+    }
+
+    /**
      * Adds specific post types here
      * @see CustomPostType
      */
@@ -859,6 +912,7 @@ class WPS_Config {
 
 	        $this->disableFeatures();
 
+            $this->addBlocks();
             $this->addPostTypes();
             $this->addTaxonomies();
             $this->defineThemeSupport();

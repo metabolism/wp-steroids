@@ -88,30 +88,6 @@ class WPS_Editor {
 		}
 	}
 
-	/**
-	 * Disable wordpress auto update and check
-	 */
-	protected function disableUpdate(){
-
-		remove_action( 'admin_init', '_maybe_update_core' );
-		remove_action( 'wp_version_check', 'wp_version_check' );
-		remove_action( 'load-plugins.php', 'wp_update_plugins' );
-		remove_action( 'load-update.php', 'wp_update_plugins' );
-		remove_action( 'load-update-core.php', 'wp_update_plugins' );
-		remove_action( 'admin_init', '_maybe_update_plugins' );
-		remove_action( 'wp_update_plugins', 'wp_update_plugins' );
-		remove_action( 'load-themes.php', 'wp_update_themes' );
-		remove_action( 'load-update.php', 'wp_update_themes' );
-		remove_action( 'load-update-core.php', 'wp_update_themes' );
-		remove_action( 'admin_init', '_maybe_update_themes' );
-		remove_action( 'wp_update_themes', 'wp_update_themes' );
-		remove_action( 'update_option_WPLANG', 'wp_clean_update_cache' );
-		remove_action( 'wp_maybe_auto_update', 'wp_maybe_auto_update' );
-		remove_action( 'init', 'wp_schedule_update_checks' );
-
-		add_filter( 'plugins_auto_update_enabled', '__return_false' );
-	}
-
 
 	/**
 	 * Disable widgets
@@ -132,6 +108,8 @@ class WPS_Editor {
 	 */
 	function addCustomAdminHeader()
 	{
+		wp_enqueue_script( 'jquery-ui-resizable');
+
 		echo '<link rel="stylesheet" href="'.WPS_PLUGIN_URL.'public/admin.css'.'"/>';
 		echo '<link rel="stylesheet" href="'.WPS_PLUGIN_URL.'public/admin_bar.css'.'"/>';
 		echo '<script type="text/javascript" src="'.WPS_PLUGIN_URL.'public/admin.js'.'"></script>';
@@ -211,8 +189,5 @@ class WPS_Editor {
         add_action( 'password_protected_login_head', [$this, 'addCustomLoginHeader']);
         add_action( 'login_head', [$this, 'addCustomLoginHeader']);
         add_action( 'admin_bar_menu', [$this, 'editBarMenu'], 80);
-
-		if( $this->config->get('disable_update', true) )
-			$this->disableUpdate();
 	}
 }

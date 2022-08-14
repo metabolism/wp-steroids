@@ -2,7 +2,7 @@
 
 Supercharge WordPress with :
 
-* Wordpress YML configuration
+* WordPress configuration using yml
 * Permalink configuration for custom post type and taxonomy
 * Maintenance mode
 * Backup download in dev mode
@@ -30,6 +30,7 @@ YML file allows to configure :
 * Menu
 * Custom Post type
 * Custom Taxonomy
+* Block
 * Page, post, taxonomy templates
 * Page states
 * Post format
