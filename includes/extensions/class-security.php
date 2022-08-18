@@ -122,11 +122,6 @@ class WPS_Security {
 		remove_action('template_redirect', 'rest_output_link_header', 11 );
 		remove_action('template_redirect', 'wp_shortlink_header', 11 );
 
-		add_action( 'wp_enqueue_scripts', function(){
-			wp_deregister_script( 'regenerator-runtime' );
-			wp_deregister_script( 'wp-polyfill' );
-		});
-
 		add_filter('wp_headers', function($headers) {
 
 			if(isset($headers['X-Pingback']))
