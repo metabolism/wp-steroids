@@ -41,13 +41,16 @@ class WPS_Config {
 		if( !class_exists('ACF') )
 			return;
 
+		$render_template = $this->config->get('gutenberg.render_template');
+		$preview_image = $this->config->get('gutenberg.preview_image');
+
 	    foreach ( $this->config->get('block', []) as $name => $args )
 	    {
 		    $block = [
 			    'name'              => $name,
 			    'title'             => __t($args['title']??$name),
 			    'description'       => __t($args['description']??''),
-			    'render_template'   => $args['render_template']??'',
+			    'render_template'   => $args['render_template']??str_replace('{name}', $name, $render_template),
 			    'category'          => $args['category']??'layout',
 			    'icon'              => $args['icon']??'admin-comments',
 			    'align'             => $args['align']??'',
@@ -69,7 +72,7 @@ class WPS_Config {
 			if( substr($args['icon']??'', -4) == '.svg' )
 				$block['icon'] = file_get_contents(ABSPATH.'/'.$args['icon']);
 
-			if( $args['preview_image']??false ){
+			if( $args['preview_image']??$preview_image ){
 
 				$block['example'] = [
 					'attributes' => [

@@ -59,7 +59,7 @@
 h1, h2, h3, h4, h5, h6, #adminmenu .wp-submenu li.current, #adminmenu .wp-submenu li.current a, #adminmenu .wp-submenu li.current a:hover,
 #comment-status-display, #dashboard_right_now .versions .b, #ed_reply_toolbar #ed_reply_strong,
 #pass-strength-result.short, #pass-strength-result.strong, #post-status-display, #post-visibility-display,
-.feature-filter .feature-name, .item-controls .item-order a, .media-item .percent, .plugins .name, b, strong, .row-title{ font-weight: 500 }
+.feature-filter .feature-name, .item-controls .item-order a, .media-item .percent, .plugins .name, .row-title{ font-weight: 500 }
 
 table.widefat, .widefat thead td, .widefat thead th, .widefat tfoot td, .widefat tfoot th{ border-color: #e0e0e0 }
 table.widefat{ box-shadow: 0 0 0 1px rgba(63,63,68,0.05), 0 1px 3px 0 rgba(63,63,68,0.15); outline: 1px solid transparent; border-radius: 3px; border: 0 }
@@ -203,6 +203,14 @@ textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top
 #wpfooter{ display: none }
 .form-table th{ font-weight: normal }
 #side-sortables .acf-gallery-sort{ display: none }
+
+/* Fix Gutenberg ACF */
+.components-panel .edit-post-meta-boxes-area #poststuff h2.hndle{
+    padding: 0 16px; font-size: 13px; color: #1e1e1e; font-weight: 500; cursor: pointer;
+}
+.components-panel .edit-post-meta-boxes-area .postbox-header{ border-top: 0 }
+.components-panel #side-sortables .acf-fields>.acf-field{ width: auto!important }
+.components-panel .postbox{ box-shadow: none!important; border-radius: 0 }
 
 /* Interface resize */
 .interface-interface-skeleton__sidebar .interface-complementary-area{width:100%;}

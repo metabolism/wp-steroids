@@ -45,14 +45,15 @@ class WPS_Gutenberg
 	/**
 	 * @return void
 	 */
-	function addBlockEditorStyle() {
+	function addBlockEditorAssets() {
 
 		global $_config;
 
-		wp_enqueue_style(
-			'block_editor_style',
-			get_home_url().$_config->get('gutenberg.block_editor_style', false)
-		);
+		if ( $block_editor_style = $_config->get('gutenberg.block_editor_style', false) )
+			wp_enqueue_style('block_editor_style',get_home_url().$block_editor_style);
+
+		if ( $block_editor_script = $_config->get('gutenberg.block_editor_script', false) )
+			wp_enqueue_script('block_editor_script',get_home_url().$block_editor_script);
 	}
 
 
@@ -68,13 +69,12 @@ class WPS_Gutenberg
 			if ( $_config->get('gutenberg.remove_core_block', false) )
 				add_filter( 'allowed_block_types_all', [$this, 'removeCoreBlock'], 25, 2 );
 
-			if ( $_config->get('gutenberg.block_editor_style', false) )
-				add_action( 'enqueue_block_assets', [$this, 'addBlockEditorStyle'] );
+			add_action( 'enqueue_block_assets', [$this, 'addBlockEditorAssets'] );
 		}
 		else{
 
 			if ( $_config->get('gutenberg.remove_block_library', true) )
-				add_action( 'wp_enqueue_scripts', [$this, 'removeEditorBlockLibrary'], 100 );
+				add_action( 'wp_enqueue_scripts', [$this, 'removeBlockLibrary'], 100 );
 		}
     }
 }
