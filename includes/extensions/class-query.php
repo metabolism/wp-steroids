@@ -4,7 +4,7 @@
 use Dflydev\DotAccessData\Data;
 
 /**
- * Class 
+ * Class
  */
 class WPS_Query {
 
@@ -17,8 +17,16 @@ class WPS_Query {
      */
     public function pre_get_posts( $query )
     {
-        if( !$query->is_main_query() )
+        if( !$query->is_main_query() ){
+
+	        if( !$query->get('post_status') && current_user_can('administrator') ){
+
+		        $query->set('post_status', ['publish','draft']);
+		        $query->query['post_status'] =  ['publish','draft','pending','private'];
+	        }
+
             return;
+        }
 
         $object = $query->get_queried_object();
 

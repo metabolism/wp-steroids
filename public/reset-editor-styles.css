@@ -7,3 +7,4 @@
 .block-editor-block-list__layout{ background: #fff; padding: 1px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.05) }
 .block-editor-inserter__preview-container{ width: 400px }
 .block-list-appender{ margin-top: 40px }
+.acf-block-preview > *{ pointer-events: none }
