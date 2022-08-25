@@ -211,6 +211,9 @@ textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top
 .components-panel .edit-post-meta-boxes-area .postbox-header{ border-top: 0 }
 .components-panel #side-sortables .acf-fields>.acf-field{ width: auto!important }
 .components-panel .postbox{ box-shadow: none!important; border-radius: 0 }
+.edit-post-meta-boxes-area .postbox .handlediv{ width: 56px }
+.meta-box-sortables .postbox .handlediv .toggle-indicator::before{ content: url("./arrow.svg" ); transform: scaleY(-1) }
+.meta-box-sortables .postbox.closed .handlediv .toggle-indicator::before{ content: url("./arrow.svg" ); transform: none }
 
 /* Interface resize */
 .interface-interface-skeleton__sidebar .interface-complementary-area{width:100%;}
