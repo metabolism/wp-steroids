@@ -97,6 +97,9 @@ class WPS_Config {
         $default_args = [
             'public' => true,
             'has_archive' => true,
+            'rewrite' => [
+				'pages'=>false
+            ],
             'supports' => [],
             'menu_position' => 25,
             'map_meta_cap' => null,
@@ -149,7 +152,7 @@ class WPS_Config {
                 $slug = $this->getSlug( $post_type );
 
                 if(!empty($slug))
-                    $args['rewrite'] = ['slug'=>$slug];
+                    $args['rewrite']['slug'] = $slug;
 
                 if( $args['has_archive'] ){
 
@@ -682,7 +685,7 @@ class WPS_Config {
                         $updated = true;
                     }
 
-                    add_settings_field( $post_type. '_rewrite_'.$type, __t( ucfirst(str_replace('_', ' ', $post_type)).' base' ),function () use($post_type, $type)
+                    add_settings_field( $post_type. '_rewrite_'.$type, __t( ucfirst(str_replace('_', ' ', $post_type)).' '.$type ),function () use($post_type, $type)
                     {
                         $value = get_option( $post_type. '_rewrite_'.$type );
                         if(empty($value))
