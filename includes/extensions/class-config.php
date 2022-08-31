@@ -58,16 +58,15 @@ class WPS_Config {
 			    'align_content'     => $args['align_content']??'',
 			    'mode'              => $args['mode']??'preview',
 			    'keywords'          => $args['keywords']??[],
-			    'post_types'        => $args['post_types']??[]
+			    'post_types'        => $args['post_types']??[],
+			    'supports'        => $args['supports']??[]
 		    ];
 
 		    $block['render_callback'] = apply_filters('block_render_callback', false);
 
-		    $block['supports'] = [
-				'align'=>boolval($args['align']??false),
-			    'align_text'=>boolval($args['align_text']??false),
-			    'align_content'=>boolval($args['align_content']??false)
-		    ];
+		    $block['supports']['align'] = boolval($args['supports']['align']??false);
+		    $block['supports']['align_text'] = boolval($args['supports']['align_text']??false);
+		    $block['supports']['align_content'] = boolval($args['supports']['align_content']??false);
 
 			if( substr($args['icon']??'', -4) == '.svg' )
 				$block['icon'] = file_get_contents(ABSPATH.'/'.$args['icon']);

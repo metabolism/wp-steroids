@@ -25,7 +25,7 @@ class WPS_Query {
 		        $query->query['post_status'] =  ['publish','draft','pending','private'];
 	        }
 
-            return;
+	        return;
         }
 
         $object = $query->get_queried_object();

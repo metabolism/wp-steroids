@@ -201,6 +201,41 @@ class WPS_Advanced_Custom_Fields{
         return $field;
     }
 
+	/**
+	 * @param $block_editor_context
+	 * @param $editor_context
+	 * @return array|bool
+	 */
+	public function allowedBlockTypes($block_editor_context, $editor_context) {
+
+	    if ( ! empty( $editor_context->post ) ) {
+
+		    $blocks = acf_get_store( 'block-types' )->get();
+		    $field_groups = acf_get_field_groups();
+
+		    $block_editor_context = [];
+
+			foreach ($blocks as $name=>$block){
+
+				foreach ($field_groups as $index=>$field_group){
+
+					if(($field_group['location'][0][0]['value']??'') == $name){
+
+						unset($field_groups[$index]);
+
+						if( acf_get_field_group_visibility($field_group, ['block'=>$name]) )
+							$block_editor_context[] = $name;
+
+						break;
+					}
+				}
+			}
+	    }
+
+
+	    return $block_editor_context;
+    }
+
 
 	/**
 	 * ACFPlugin constructor.
@@ -229,6 +264,8 @@ class WPS_Advanced_Custom_Fields{
 			add_filter( 'acf/settings/show_admin', function() {
 				return current_user_can('administrator');
 			});
+
+			add_filter( 'allowed_block_types_all', [$this, 'allowedBlockTypes'], 99, 2 );
 
             if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY && !is_main_site() )
                 add_filter('acf/render_field', [$this, 'render_field']);
