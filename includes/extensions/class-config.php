@@ -484,22 +484,6 @@ class WPS_Config {
                 wp_die($taxonomy. ' is not allowed, reserved keyword');
             }
         }
-
-        $roles = array('editor','administrator');
-
-        // Loop through each role and assign capabilities
-        foreach($roles as $the_role) {
-
-            $role = get_role($the_role);
-
-            foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ){
-
-                foreach (($args['capabilities']??[]) as $type=>$capability){
-
-                    $role->add_cap( $capability );
-                }
-            }
-        }
     }
 
     private function getSlugs($taxonomy){
