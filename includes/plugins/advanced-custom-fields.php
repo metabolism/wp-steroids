@@ -168,6 +168,10 @@ class WPS_Advanced_Custom_Fields{
 		return $args;
 	}
 
+	/**
+	 * @param $fields
+	 * @return mixed
+	 */
     public function load_fields($fields){
 
         foreach ($fields as &$field){
@@ -193,6 +197,10 @@ class WPS_Advanced_Custom_Fields{
         return $fields;
     }
 
+	/**
+	 * @param $field
+	 * @return mixed
+	 */
     public function render_field($field) {
 
         if( in_array($field['type'], ['text','textarea','wysiwyg']) )
@@ -222,19 +230,50 @@ class WPS_Advanced_Custom_Fields{
 					if(($field_group['location'][0][0]['value']??'') == $name){
 
 						unset($field_groups[$index]);
+						unset($blocks[$name]);
 
-						if( acf_get_field_group_visibility($field_group, ['block'=>$name]) )
+						if( acf_get_field_group_visibility($field_group, ['block'=>$name, 'post_id'=>get_the_ID()]) )
 							$block_editor_context[] = $name;
 
 						break;
 					}
 				}
 			}
+
+		    $block_editor_context = array_merge($block_editor_context, array_keys($blocks));
 	    }
 
 
 	    return $block_editor_context;
     }
+
+	/**
+	 * @param $result
+	 * @param $rule
+	 * @param $screen
+	 * @param $field_group
+	 * @return false|mixed
+	 */
+	public function matchRules($result, $rule, $screen, $field_group){
+
+		if(isset($screen['block'])){
+
+			$has_block = false;
+			foreach($field_group['location'][0] as $location){
+
+				if( $location['param'] == 'block'){
+
+					$has_block = true;
+					break;
+				}
+			}
+
+			if( !$has_block )
+				return false;
+		}
+
+		return $result;
+	}
 
 
 	/**
@@ -263,6 +302,16 @@ class WPS_Advanced_Custom_Fields{
 			add_action( 'init', [$this, 'addOptionPages'] );
 			add_filter( 'acf/settings/show_admin', function() {
 				return current_user_can('administrator');
+			});
+
+			add_filter( 'acf/location/match_rule', [$this, 'matchRules'], 10, 4);
+
+			add_filter( 'acf/location/screen', function($screen) {
+
+				if( !isset($screen['post_id']) && isset($screen['block']) && $post_id = get_the_ID())
+					$screen['post_id'] = $post_id;
+
+				return $screen;
 			});
 
 			add_filter( 'allowed_block_types_all', [$this, 'allowedBlockTypes'], 99, 2 );
