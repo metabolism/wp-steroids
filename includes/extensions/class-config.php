@@ -41,8 +41,8 @@ class WPS_Config {
 		if( !class_exists('ACF') )
 			return;
 
-		$render_template = $this->config->get('gutenberg.render_template');
-		$preview_image = $this->config->get('gutenberg.preview_image');
+		$render_template = $this->config->get('gutenberg.render_template', '');
+		$preview_image = $this->config->get('gutenberg.preview_image', false);
 
 	    foreach ( $this->config->get('block', []) as $name => $args )
 	    {
