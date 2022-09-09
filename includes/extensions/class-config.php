@@ -934,7 +934,9 @@ class WPS_Config {
 
         add_action('switch_blog', function($new_blog_id, $prev_blog_id){
 
-            if( $new_blog_id != $prev_blog_id )
+			global $wp_rewrite;
+
+            if( $new_blog_id != $prev_blog_id && $wp_rewrite )
                 $this->reload();
 
         }, 10, 2);
