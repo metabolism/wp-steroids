@@ -53,9 +53,6 @@ class WPS_Config {
 			    'render_template'   => $args['render_template']??str_replace('{name}', $name, $render_template),
 			    'category'          => $args['category']??'layout',
 			    'icon'              => $args['icon']??'admin-comments',
-			    'align'             => $args['align']??'',
-			    'align_text'        => $args['align_text']??'',
-			    'align_content'     => $args['align_content']??'',
 			    'mode'              => $args['mode']??'preview',
 			    'keywords'          => $args['keywords']??[],
 			    'post_types'        => $args['post_types']??[],
@@ -97,7 +94,7 @@ class WPS_Config {
             'public' => true,
             'has_archive' => true,
             'rewrite' => [
-				'pages'=>false
+				'pages'=>true
             ],
             'supports' => [],
             'menu_position' => 25,
@@ -157,8 +154,13 @@ class WPS_Config {
 
                     $archive = get_option( $post_type. '_rewrite_archive' );
 
-                    if(!empty($archive))
+                    if( !empty($archive) ){
+
                         $args['has_archive'] = $archive;
+
+						if( !isset($args['rewrite']['pages']) )
+							$args['rewrite']['pages'] = true;
+					}
                 }
 
                 if( HEADLESS && !URL_MAPPING ){
