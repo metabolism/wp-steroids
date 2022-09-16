@@ -8,3 +8,6 @@
 .block-editor-inserter__preview-container{ width: 400px }
 .block-list-appender{ margin-top: 40px }
 .acf-block-preview > *{ pointer-events: none }
+.wp-core-ui input[type="checkbox"], .wp-core-ui input[type="radio"]{ width: 15px; height: 15px; margin: -1px 0 0 0 }
+.wp-core-ui input[type="radio"]:checked::before{ width: 7px; height: 7px; margin: 3px }
+.wp-core-ui input[type="checkbox"]:checked::before{ width: 13px; height: 13px; margin: 0 }
