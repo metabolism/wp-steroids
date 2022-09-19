@@ -19,7 +19,7 @@ class WPS_Smart_Crop
 				if( class_exists('WP_Smart_Crop') ){
 
 					$instance = \WP_Smart_Crop::Instance();
-					remove_action('wp_enqueue_scripts', array($instance, 'wp_enqueue_scripts'));
+					remove_action('wp_enqueue_scripts', [$instance, 'wp_enqueue_scripts']);
 				}
 			});
 		}
