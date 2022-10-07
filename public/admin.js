@@ -20,11 +20,15 @@
 		}
 	}
 
+	function ucfirst(string) {
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+
 	function initTranslation(){
 
-		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label').append('<a class="wps-translate wps-translate--'+window.enable_translation+'" title="Translate with '+window.enable_translation+'"></a>')
+		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label').append('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
 		$('#tag-post-content #name').wrap('<div class="input-wrapper"></div>')
-		$('#tag-post-content #name').after('<a class="wps-translate wps-translate--'+window.enable_translation+'" title="Translate with '+window.enable_translation+'"></a>')
+		$('#tag-post-content #name').after('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
 		$('#menu-to-edit span.description').remove()
 
 		$(document).on('click', '.wps-translate', function (){
@@ -49,20 +53,27 @@
 
 			$self.addClass('loading')
 
-			$.post('https://translation.googleapis.com/language/translate/v2?key='+window.translate_key, {q:value, format:(wysiwyg?'html':'text'), target:document.documentElement.lang.split('-')[0]}, function (response){
+			if( wps.enable_translation ){
 
-				$self.removeClass('loading')
+				$.post(wps.ajax_url, {action: 'translate', q:value, format:(wysiwyg?'html':'text')}, function (response){
 
-				if( response.data.translations.length ){
+					$self.removeClass('loading')
 
-					var translations = response.data.translations[0].translatedText;
+					if( response.text.length ){
 
-					if( wysiwyg )
-						tinymce.editors[$input.attr('id')].setContent(translations)
-					else
-						$input.val(translations)
-				}
-			})
+						var translations = response.text;
+
+						if( wysiwyg )
+							tinymce.editors[$input.attr('id')].setContent(translations)
+						else
+							$input.val(translations)
+					}
+				}).fail(function(response) {
+
+					alert( response.message )
+					$self.removeClass('loading')
+				})
+			}
 		})
 	}
 
@@ -107,7 +118,7 @@
 			})
 		})
 
-		if( window.enable_translation )
+		if( wps.enable_translation )
 			initTranslation();
 	});
 

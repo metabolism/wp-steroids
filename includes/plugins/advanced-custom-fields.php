@@ -203,8 +203,13 @@ class WPS_Advanced_Custom_Fields{
 	 */
     public function render_field($field) {
 
-        if( in_array($field['type'], ['text','textarea','wysiwyg']) )
-            echo '<a class="wps-translate wps-translate--google" title="'.__('Translate with Google', 'wp-steroids').'"></a>';
+	    if( in_array($field['type'], ['text','textarea','wysiwyg']) ){
+
+			if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY )
+				echo '<a class="wps-translate wps-translate--google" title="'.__('Translate with Google', 'wp-steroids').'"></a>';
+	        elseif( defined('DEEPL_KEY') && DEEPL_KEY )
+		        echo '<a class="wps-translate wps-translate--deepl" title="'.__('Translate with Deepl', 'wp-steroids').'"></a>';
+        }
 
         return $field;
     }
@@ -316,7 +321,7 @@ class WPS_Advanced_Custom_Fields{
 
 			add_filter( 'allowed_block_types_all', [$this, 'allowedBlockTypes'], 99, 2 );
 
-            if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY && !is_main_site() )
+            if( !is_main_site() )
                 add_filter('acf/render_field', [$this, 'render_field']);
 		}
 	}

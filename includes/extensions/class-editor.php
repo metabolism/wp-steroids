@@ -108,20 +108,25 @@ class WPS_Editor {
 	 */
 	function addCustomAdminHeader()
 	{
-		wp_enqueue_script( 'jquery-ui-resizable');
+		wp_enqueue_script('wps-admin', WPS_PLUGIN_URL.'public/admin.js', ['jquery', 'jquery-ui-resizable'], WPS_VERSION, true);
+		wp_enqueue_style('wps-admin-bar', WPS_PLUGIN_URL.'public/admin_bar.css', [], WPS_VERSION, false);
+		wp_enqueue_style('wps-admin', WPS_PLUGIN_URL.'public/admin.css', [], WPS_VERSION, false);
 
-		echo '<link rel="stylesheet" href="'.WPS_PLUGIN_URL.'public/admin.css'.'"/>';
-		echo '<link rel="stylesheet" href="'.WPS_PLUGIN_URL.'public/admin_bar.css'.'"/>';
-		echo '<script type="text/javascript" src="'.WPS_PLUGIN_URL.'public/admin.js'.'"></script>';
+		$object = [
+			'ajax_url' => admin_url( 'admin-ajax.php' ),
+			'enable_translation' => false
+		];
 
-        if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY && !is_main_site() ){
+        if( !is_main_site() ){
 
-            echo '<script type="text/javascript">'.
-                'window.enable_translation = "google";'.
-                'window.translate_key = "'.GOOGLE_TRANSLATE_KEY.'";'.
-                '</script>'."\n";
+			if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY )
+				$object['enable_translation'] = "google";
+			elseif( defined('DEEPL_KEY') && DEEPL_KEY )
+				$object['enable_translation'] = "deepl";
         }
-    }
+
+		wp_localize_script( 'wps-admin', 'wps', $object );
+	}
 
 
 	/**
