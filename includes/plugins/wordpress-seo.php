@@ -181,6 +181,7 @@ class WPS_Wordpress_Seo
 		if( is_admin() ) {
 
 			add_filter('wp_editor_settings', [$this, 'editorSettings'], 10, 2);
+			add_filter('wpseo_metabox_prio', function (){ return 'low'; });
 		}
         else{
 
