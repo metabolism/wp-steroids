@@ -149,6 +149,21 @@ class WPS_Editor {
 
 	}
 
+	/**
+	 * @param $actions
+	 * @param $post
+	 * @return mixed
+	 */
+	public function rowActions($actions, $post ) {
+
+		$post_type_object = get_post_type_object(get_post_type($post));
+
+		if (!$post_type_object->query_var)
+			unset($actions['view']);
+
+		return $actions;
+	}
+
 
 	/**
 	 * Editor constructor.
@@ -171,6 +186,10 @@ class WPS_Editor {
 			add_action('wp_dashboard_setup', [$this, 'disableDashboardWidgets']);
 			add_action('admin_head', [$this, 'addCustomAdminHeader']);
 			add_action('admin_init', [$this, 'adminInit'] );
+
+
+			add_filter( 'post_row_actions', [$this, 'rowActions'], 10, 2);
+			add_filter( 'page_row_actions', [$this, 'rowActions'], 10, 2);
 
 			add_filter('admin_body_class', function ( $classes ) {
 

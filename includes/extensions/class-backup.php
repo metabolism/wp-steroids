@@ -164,13 +164,8 @@ class WPS_Backup {
                     wp_die( $db->get_error_message() );
             }
 
-            if( $type == 'all' || $type == 'uploads'){
-
-                $uploads = $this->dumpFolder($rootPath, ['wpallimport', 'cache', 'wpcf7_uploads', 'acf-thumbnails', 'wp-personal-data-exports'], '/(?!.*150x150).*-[0-9]+x[0-9]+(-c-default|-c-center)?\.[a-z]{3,4}$/');
-
-                if( is_wp_error($uploads) )
-                    wp_die( $uploads->get_error_message() );
-            }
+            if( $type == 'all' || $type == 'uploads')
+                $this->dumpFolder($rootPath, ['wpallimport', 'cache', 'wpcf7_uploads', 'acf-thumbnails', 'wp-personal-data-exports'], '/(?!.*150x150).*-[0-9]+x[0-9]+(-c-default|-c-center)?\.[a-z]{3,4}$/');
 
             $this->close();
 
@@ -292,29 +287,5 @@ class WPS_Backup {
         add_action( 'admin_init', [$this, 'adminInit'] );
         add_action( 'wpmu_options', [$this, 'wpmuOptions'] );
     }
-}
-
-
-/**
- * @param $source_folder
- * @param $zip_file
- * @param array $exclude_folders
- * @param bool $exclude_pattern
- * @return bool|WP_Error|ZipArchive
- */
-function wp_backup($source_folder, $zip_file, $exclude_folders = [], $exclude_pattern=false)
-{
-    $backup = new WPS_Backup();
-    $status = $backup->init($zip_file);
-
-    if( is_wp_error($status))
-        return $status;
-
-    $status = $backup->dumpFolder($source_folder, $exclude_folders, $exclude_pattern);
-
-    if( is_wp_error($status))
-        return $status;
-
-    return $backup->close();
 }
 

@@ -23,13 +23,16 @@ class WPS_Config {
 
 
     /**
-     * Reload configuration
+     * setup configuration
      */
-    public function reload()
+    public function configureContentType()
     {
-        $this->addPostTypes();
-        $this->addTaxonomies();
-        $this->addRewriteRules();
+	    $this->addPostTypes();
+	    $this->addTaxonomies();
+	    $this->addRewriteRules();
+
+	    $this->updateSearchStructure();
+	    $this->updatePageStructure();
     }
 
     /**
@@ -187,9 +190,9 @@ class WPS_Config {
 
                 if( isset($args['publicly_queryable']) && !$args['publicly_queryable'] ){
 
-                    $args['query_var'] = false;
-                    $args['exclude_from_search'] = false;
-                    $args['rewrite'] = false;
+                    $args['query_var'] = $args['query_var']??false;
+                    $args['exclude_from_search'] = $args['exclude_from_search']??false;
+                    $args['rewrite'] = $args['rewrite']??false;
                 }
 
                 register_post_type($post_type, $args);
@@ -885,6 +888,18 @@ class WPS_Config {
 		}
 	}
 
+	public function filterSitemap(){
+
+		add_filter( 'wp_sitemaps_post_types', function ($post_types){
+
+			foreach ($post_types as $slug=>$post_type){
+
+				if( !$post_type->query_var )
+					unset($post_types[$slug]);
+			}
+		});
+	}
+
 
     /**
      * ConfigPlugin constructor.
@@ -907,20 +922,17 @@ class WPS_Config {
 	        $this->disableFeatures();
 
             $this->addBlocks();
-            $this->addPostTypes();
-            $this->addTaxonomies();
             $this->defineThemeSupport();
             $this->addPostTypeSupport();
-            $this->addRewriteRules();
 
-	        $this->updateSearchStructure();
-	        $this->updatePageStructure();
+	        $this->configureContentType();
 
 	        $wp_rewrite->flush_rules(false);
 
 	        $this->addMenus();
             $this->addSidebars();
             $this->addRoles();
+            //$this->filterSitemap();
 
             if( !HEADLESS || URL_MAPPING ){
 
@@ -942,7 +954,7 @@ class WPS_Config {
 			global $wp_rewrite;
 
             if( $new_blog_id != $prev_blog_id && $wp_rewrite )
-                $this->reload();
+                $this->configureContentType();
 
         }, 10, 2);
 

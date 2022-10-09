@@ -147,16 +147,17 @@ class WPS_Wordpress_Seo
 
                 foreach ($sites as $site){
 
-                    $base_url = get_home_url($site->blog_id);
-                    $output .= "Sitemap: $base_url/sitemap_index.xml\n";
+					if( !is_main_site($site->blog_id) ){
+
+						$base_url = get_home_url($site->blog_id);
+						$output .= "Sitemap: $base_url/sitemap_index.xml\n";
+					}
                 }
             }
-            else{
-
-                $base_url = get_home_url();
-                $output .= "Sitemap: $base_url/sitemap_index.xml\n";
-            }
 		}
+
+		$output = str_replace("# START YOAST BLOCK\n# ---------------------------\n", '', $output);
+		$output = str_replace("# ---------------------------\n# END YOAST BLOCK", '', $output);
 
 		return $output;
 	}
@@ -187,13 +188,7 @@ class WPS_Wordpress_Seo
 
             add_filter('wpseo_debug_markers', '__return_false' );
             add_filter('wpseo_canonical', [$this, 'filterCanonical']);
-
-            add_filter('wpseo_opengraph_url', function($url){
-
-                return trim(home_url('/'), '/').$url;
-            });
-
-            add_filter('robots_txt', [$this, 'sitemapToRobots'], 9999, 1 );
+            add_filter('robots_txt', [$this, 'sitemapToRobots'], 999999, 1 );
 		}
 	}
 }
