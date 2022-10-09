@@ -162,7 +162,6 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .form-table>tbody>tr.acf-tab-wrap .acf-tab-group{ padding: 0 }
 .acf-flexible-content .layout{ margin-top: 10px; border-radius: 3px }
 .acf-flexible-content .layout .acf-fc-layout-handle{ font-size: 13px }
-.acf-tab-group { padding: 10px 0 0 }
 .acf-image-uploader .image-wrap img{ border-radius: 3px; max-width: 125px }
 .acf-field-flexible-content .acf-field .acf-label label{ font-weight: 400; font-size: 12px }
 .acf-field-flexible-content .acf-field .acf-label.acf-accordion-title label{ font-weight: 500 }
@@ -244,3 +243,8 @@ textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top
 .ui-resizable-sw{cursor:sw-resize; width:9px; height:9px; left:-5px; bottom:-5px}
 .ui-resizable-nw{cursor:nw-resize; width:9px; height:9px; left:-5px; top:-5px}
 .ui-resizable-ne{cursor:ne-resize; width:9px; height:9px; right:-5px; top:-5px}
+
+/* Yoast SEO */
+.wpseo-meta-section, .wpseo-meta-section-react, .wpseo-metabox-content{ max-width: none }
+.wpseo-metabox-menu ul{ padding-left: 1px }
+.wpseo-metabox-menu ul li{ box-shadow: none }
