@@ -158,7 +158,7 @@ class WPS_Editor {
 
 		$post_type_object = get_post_type_object(get_post_type($post));
 
-		if (!$post_type_object->query_var)
+		if (!$post_type_object->query_var && !$post_type_object->_builtin)
 			unset($actions['view']);
 
 		return $actions;
