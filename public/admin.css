@@ -165,7 +165,7 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .acf-image-uploader .image-wrap img{ border-radius: 3px; max-width: 125px }
 .acf-field-flexible-content .acf-field .acf-label label{ font-weight: 400; font-size: 12px }
 .acf-field-flexible-content .acf-field .acf-label.acf-accordion-title label{ font-weight: 500 }
-.select2-container.-acf .select2-selection { border-color: #c4cdd5; height: 30px }
+.select2-container.-acf .select2-selection { border-color: #c4cdd5; min-height: 30px }
 @media screen and (max-width: 782px){
     .form-table>tbody>.acf-tab-wrap td{ padding-left: 0 }
     .form-table>tbody>.acf-field>.acf-label{ padding: 0; margin: 0; padding-top: 10px }
