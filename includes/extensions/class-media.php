@@ -12,10 +12,7 @@ class WPS_Media {
 
     protected $prevent_recursion;
 
-	private static $cache=[
-		'upload_dir'=>[],
-		'relative_upload_dir'=>[]
-	];
+	private static $upload_dir;
 
 	/**
 	 * Quickly upload file
@@ -545,103 +542,63 @@ class WPS_Media {
 
 
 	/**
-	 * Redefine upload dir
-	 * @param $dirs
-	 * @return mixed
+	 * This function is to replace PHP's extremely buggy realpath().
+	 * @param string $path The original path, can be relative etc.
+	 * @param string $separator The separator.
+	 * @return string The resolved path, it might not exist.
 	 */
-	public function uploadDir($dirs)
-	{
-		$key = $dirs['subdir'];
+	private function realpath($path, $separator=DIRECTORY_SEPARATOR){
 
-		if( isset(self::$cache['upload_dir'][$key]) )
-			return self::$cache['upload_dir'][$key];
+		$paths = explode($separator, $path);
 
-		$dirs['baseurl'] = str_replace($dirs['relative'],'/uploads', $dirs['baseurl']);
-
-		$paths = explode('/', str_replace($dirs['relative'],'/uploads', $dirs['basedir']));
 		foreach ($paths as $key=>$path){
 			if( $path == '..'){
 				unset($paths[$key-1]);
 				unset($paths[$key]);
 			}
 		}
-		$dirs['basedir'] = implode('/', $paths);
 
-		$dirs['url']  = str_replace($dirs['relative'],'/uploads', $dirs['url']);
-
-		$paths = explode('/', str_replace($dirs['relative'],'/uploads', $dirs['path']));
-		foreach ($paths as $key=>$path){
-			if( $path == '..'){
-				unset($paths[$key-1]);
-				unset($paths[$key]);
-			}
-		}
-		$dirs['path'] = implode('/', $paths);
-
-		$dirs['relative'] = '/uploads';
-
-		self::$cache['upload_dir'][$key] = $dirs;
-
-		return $dirs;
+		return implode($separator, $paths);
 	}
-
-
-	/**
-	 * Redefine attachment url
-	 * @param $url
-	 * @return string
-	 */
-	public function attachmentUrl($url)
-	{
-		$wp_upload_dir = wp_upload_dir();
-
-		return $wp_upload_dir['relative'].str_replace($wp_upload_dir['baseurl'], '', $url);
-	}
-
 
 	/**
 	 * Add relative key
 	 * @param $arr
 	 * @return mixed
 	 */
-	public static function add_relative_upload_dir_key( $arr )
+	public function uploadDir( $arr )
 	{
-		if (DIRECTORY_SEPARATOR === '\\') {
+		if( self::$upload_dir )
+			return self::$upload_dir;
 
-			$arr['path'] = str_replace('\\', '/', $arr['path']);
-			$arr['basedir'] = str_replace('\\', '/', $arr['basedir']);
+		$home_url = get_home_url();
+
+		$arr['path'] = $this->realpath($arr['path']);
+		$arr['basedir'] = $this->realpath($arr['basedir']);
+
+		$arr['url'] =  $this->realpath($arr['url'], '/');
+		$arr['baseurl'] =  $this->realpath($arr['baseurl'], '/');
+
+		$arr['relative'] = str_replace($home_url, '', $arr['baseurl']);
+
+		if( $this->config->get('multisite.shared_media', false) && is_multisite() && !is_main_site() ){
+
+			$blog_url = get_home_url(get_main_site_id());
+			$ms_dir = '/sites/' . get_current_blog_id();
+
+			$arr['path'] = str_replace($ms_dir, '', $arr['path']);
+			$arr['basedir'] = str_replace($ms_dir, '', $arr['basedir']);
+
+			$arr['url'] =  str_replace($ms_dir, '', $arr['url']);
+			$arr['url'] =  str_replace($home_url, $blog_url, $arr['url']);
+
+			$arr['baseurl'] =  str_replace($ms_dir, '', $arr['baseurl']);
+			$arr['baseurl'] =  str_replace($home_url, $blog_url, $arr['baseurl']);
+
+			$arr['relative'] = str_replace($ms_dir, '', $arr['relative']);
 		}
 
-		$key = $arr['subdir'];
-
-		if( isset(self::$cache['relative_upload_dir'][$key]) )
-			return self::$cache['relative_upload_dir'][$key];
-
-		$paths = explode('/', $arr['path']);
-		foreach ($paths as $key=>$path){
-			if( $path == '..'){
-				unset($paths[$key-1]);
-				unset($paths[$key]);
-			}
-		}
-		$arr['path'] = implode('/', $paths);
-
-		$paths = explode('/', $arr['basedir']);
-		foreach ($paths as $key=>$path){
-			if( $path == '..'){
-				unset($paths[$key-1]);
-				unset($paths[$key]);
-			}
-		}
-		$arr['basedir'] = implode('/', $paths);
-
-		$arr['url'] = str_replace('edition/../', '', $arr['url']);
-		$arr['baseurl'] = str_replace('edition/../', '', $arr['baseurl']);
-
-		$arr['relative'] = str_replace(get_home_url(null,'','http'), '', $arr['baseurl']);
-		$arr['relative'] = str_replace(get_home_url(null,'','https'), '', $arr['relative']);
-
-		self::$cache['relative_upload_dir'][$key] = $arr;
+		self::$upload_dir = $arr;
 
 		return $arr;
 	}
@@ -853,14 +810,8 @@ class WPS_Media {
 
 		$this->config = $_config;
 
-		add_filter('upload_dir', [$this, 'add_relative_upload_dir_key'], 10, 2);
+		add_filter('upload_dir', [$this, 'uploadDir'], 10, 2);
 		add_filter('wp_calculate_image_srcset_meta', '__return_null');
-
-		if( $this->config->get('multisite.shared_media', false) && is_multisite() ){
-
-			add_filter('upload_dir', [$this, 'uploadDir'], 11 );
-			add_filter('wp_get_attachment_url', [$this, 'attachmentUrl'], 10, 2 );
-		}
 
 		if( is_admin() )
 		{
