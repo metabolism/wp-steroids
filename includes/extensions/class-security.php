@@ -216,6 +216,7 @@ class WPS_Security {
 			add_action( 'admin_init', [$this, 'adminInit'] );
 			add_action( 'wp_handle_upload_prefilter', [$this, 'cleanFilename']);
 			add_filter( 'map_meta_cap', [$this, 'addUnfilteredHtmlCapabilityToEditors'], 1, 3 );
+			add_filter( 'update_right_now_text', '__return_empty_string' );
 			add_action( 'admin_head', [$this, 'hideUpdateNotice'], 1 );
 		}
 		else

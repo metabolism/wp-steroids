@@ -20,7 +20,7 @@ class WPS_Translation {
         if( !is_admin() )
             return;
 
-	    add_action( "wp_ajax_translate", function (){
+	    add_action( 'wp_ajax_translate', function (){
 			$this->translateText($_POST['q']??'', $_POST['wysiwyg']??false);
 	    } );
 

@@ -39,6 +39,9 @@
 
 .headless #post-preview, .headless #wp-admin-bar-view{ display: none }
 #wp-admin-bar-debug{ pointer-events: none }
+.wps-build-badge img{ vertical-align: text-top; margin-left: 5px }
+.post-count.dashicons-before:before{ color: #646970; padding: 0 5px 0 0 }
+.post-count.dashicons-before a:before{ display: none!important }
 
 /* Bugfix */
 .js .tmce-active .wp-editor-area { color: inherit!important }
@@ -56,6 +59,7 @@
 }
 
 /* Quick redesign */
+#footer-thankyou{ display: none }
 h1, h2, h3, h4, h5, h6, #adminmenu .wp-submenu li.current, #adminmenu .wp-submenu li.current a, #adminmenu .wp-submenu li.current a:hover,
 #comment-status-display, #dashboard_right_now .versions .b, #ed_reply_toolbar #ed_reply_strong,
 #pass-strength-result.short, #pass-strength-result.strong, #post-status-display, #post-visibility-display,
@@ -173,7 +177,9 @@ input.large-text, textarea.large-text { width: 35.7rem }
 }
 .acf-postbox{ overflow: visible }
 .acf-menu-settings .acf-field .acf-label label{ font-weight: 400; opacity: 0.8 }
+.acf-fields.acf-menu-item-fields > .acf-field .acf-label label{ margin-bottom: 5px; color: #646970; font-style: normal }
 
+/* Translation */
 .wps-translate{ cursor: pointer; display: none; background: no-repeat center; background-size: contain; position: absolute; right: 5px; top: 50%; transform: translateY(-50%) }
 .wps-translate--google{ background-image: url("google_translate.svg"); width: 26px; height: 26px }
 .wps-translate--deepl{ background-image: url("deepl_translate.svg"); width: 16px; height: 26px }
@@ -201,7 +207,6 @@ textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top
 .handle-order-higher, .handle-order-lower{ display: none }
 .acf-postbox.seamless > .postbox-header{ display: none }
 .postbox-header{ border-bottom: 0 }
-#wpfooter{ display: none }
 .form-table th{ font-weight: normal }
 #side-sortables .acf-gallery-sort{ display: none }
 
@@ -221,7 +226,8 @@ textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top
 .edit-post-layout:not(.is-sidebar-opened) .interface-interface-skeleton__sidebar{display:none;}
 .is-sidebar-opened .interface-interface-skeleton__sidebar{width:350px;}
 
-/*UI Styles*/.ui-dialog .ui-resizable-n{height:2px; top:0}
+/*UI Styles*/
+.ui-dialog .ui-resizable-n{height:2px; top:0}
 .ui-dialog .ui-resizable-e{width:2px; right:0}
 .ui-dialog .ui-resizable-s{height:2px; bottom:0}
 .ui-dialog .ui-resizable-w{width:2px; left:0}

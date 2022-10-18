@@ -110,11 +110,24 @@
 		$('#wp-admin-bar-build a').click(function(e){
 
 			e.preventDefault();
-			$(this).addClass('loading');
+			var $el = $(this);
 
-			$.get( $(this).attr('href') ).then(function (){
+			$el.addClass('loading');
 
-				setTimeout(window.location.reload, 500);
+			$.get( $el.attr('href') ).then(function (){
+
+				var refresh = setInterval(function (){
+
+					$('#wps-build-badge').attr('src', $('#wps-build-badge').data('url')+'&v='+Date.now())
+
+				}, 1000);
+
+				setTimeout(function (){
+
+					clearInterval(refresh);
+					$el.removeClass('loading');
+
+				}, 10000)
 			})
 		})
 

@@ -21,6 +21,25 @@ class WPS_Editor {
 		return $mce_buttons;
 	}
 
+	/**
+	 * @return void
+	 */
+	public function cptAtAGlance() {
+
+		// Custom post types counts
+		$post_types = get_post_types(['_builtin' => false, 'public'=> true], 'objects' );
+
+		foreach ( $post_types as $post_type ) {
+			$num_posts = wp_count_posts( $post_type->name );
+			$num = number_format_i18n( $num_posts->publish );
+			$text = _n( $post_type->labels->singular_name, $post_type->labels->name, $num_posts->publish );
+			if ( current_user_can( 'edit_posts' ) ) {
+				$num = '<li class="post-count dashicons-before '.$post_type->menu_icon.'"><a href="edit.php?post_type=' . $post_type->name . '">' . $num . ' ' . $text . '</a></li>';
+			}
+			echo $num;
+		}
+	}
+
 
 	/**
 	 * Add quick link top bar archive button
@@ -186,7 +205,7 @@ class WPS_Editor {
 			add_action('wp_dashboard_setup', [$this, 'disableDashboardWidgets']);
 			add_action('admin_head', [$this, 'addCustomAdminHeader']);
 			add_action('admin_init', [$this, 'adminInit'] );
-
+			add_action( 'dashboard_glance_items', [$this, 'cptAtAGlance'] );
 
 			add_filter( 'post_row_actions', [$this, 'rowActions'], 10, 2);
 			add_filter( 'page_row_actions', [$this, 'rowActions'], 10, 2);
