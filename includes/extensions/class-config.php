@@ -629,7 +629,7 @@ class WPS_Config {
     {
         $updated = false;
 
-        add_settings_section('page_rewrite', '', null,'permalink');
+        add_settings_section('page_rewrite', '', '__return_empty_string','permalink');
 
 	    if( isset( $_POST['page_rewrite_slug'] ) && !empty($_POST['page_rewrite_slug']) )
 	    {
@@ -644,7 +644,7 @@ class WPS_Config {
 
 	    }, 'permalink', 'page_rewrite' );
 
-        add_settings_section('search_rewrite', '', null,'permalink');
+        add_settings_section('search_rewrite', '', '__return_empty_string','permalink');
 
         if( isset( $_POST['search_rewrite_slug'] ) && !empty($_POST['search_rewrite_slug']) )
         {
@@ -659,11 +659,11 @@ class WPS_Config {
 
         }, 'permalink', 'search_rewrite' );
 
-        add_settings_section('custom_post_type_rewrite', 'Custom post type', null,'permalink');
+        add_settings_section('custom_post_type_rewrite', 'Custom post type', '__return_empty_string','permalink');
 
         foreach ( get_post_types(['public'=> true, '_builtin' => false], 'objects') as $post_type=>$args )
         {
-            if( !$args->publicly_queryable )
+            if( !is_post_type_viewable($post_type) )
                 continue;
 
             foreach( ['slug', 'archive'] as $type)
@@ -696,11 +696,11 @@ class WPS_Config {
             }
         }
 
-        add_settings_section('custom_taxonomy_rewrite', 'Custom taxonomy', null,'permalink');
+        add_settings_section('custom_taxonomy_rewrite', 'Custom taxonomy', '__return_empty_string','permalink');
 
         foreach ( get_taxonomies(['public'=> true, '_builtin' => false], 'objects') as $taxonomy=>$args )
         {
-            if( !$args->publicly_queryable )
+            if( !is_taxonomy_viewable($taxonomy) )
                 continue;
 
             if( isset( $_POST[$taxonomy. '_rewrite_slug'] ) && !empty($_POST[$taxonomy. '_rewrite_slug']) )
@@ -888,16 +888,14 @@ class WPS_Config {
 		}
 	}
 
-	public function filterSitemap(){
+	/**
+	 * @param $is_viewable
+	 * @param $post_type
+	 * @return bool
+	 */
+	public function isPostTypeViewable($is_viewable, $post_type){
 
-		add_filter( 'wp_sitemaps_post_types', function ($post_types){
-
-			foreach ($post_types as $slug=>$post_type){
-
-				if( !$post_type->query_var )
-					unset($post_types[$slug]);
-			}
-		});
+		return $is_viewable && ($post_type->query_var || $post_type->_builtin);
 	}
 
 
@@ -932,7 +930,8 @@ class WPS_Config {
 	        $this->addMenus();
             $this->addSidebars();
             $this->addRoles();
-            //$this->filterSitemap();
+
+            add_filter('is_post_type_viewable', [$this, 'isPostTypeViewable'], 10 ,2);
 
             if( !HEADLESS || URL_MAPPING ){
 
