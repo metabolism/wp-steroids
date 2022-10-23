@@ -2,11 +2,12 @@
 
 use lloc\Msls\MslsOptionsPost;
 use lloc\Msls\MslsPlugin;
+use Metabolism\WordpressBundle\Entity\Block;
 
 /**
  * Class
  *
- * @package 
+ * @package
  */
 class WPS_Multisite_Language_Switcher {
 
@@ -30,6 +31,7 @@ class WPS_Multisite_Language_Switcher {
         if( isset($_GET['blog_id'], $_GET['post_id'], $_GET['clone']))
         {
             $main_site_id = get_main_network_id();
+	        $current_site_id = get_current_blog_id();
 
             // switch to origin blog
             switch_to_blog($_GET['blog_id']);
@@ -49,7 +51,7 @@ class WPS_Multisite_Language_Switcher {
                 $language = get_option('WPLANG');
                 $language = empty($language)?'en':$language;
 
-                // empty id field, to tell wordpress that this will be a new post
+                // empty id field, to tell WordPress that this will be a new post
                 $post['ID'] = '';
 
                 // return to target blog
@@ -57,6 +59,50 @@ class WPS_Multisite_Language_Switcher {
 
                 // insert the post as draft
                 $post['post_status'] = 'draft';
+
+	            // parse block
+	            $blocks = parse_blocks($post['post_content']);
+
+	            foreach ($blocks as $block){
+
+		            if( class_exists('ACF') && !empty($block['attrs']) ){
+
+			            foreach ( $block['attrs']['data']??[] as $key=>$value ){
+
+				            if( substr($key, 0, 1) == '_' && substr($value, 0, 6) == 'field_' ){
+
+					            $field = get_field_object($value);
+
+					            if( isset($field['type']) && in_array($field['type'], ['image', 'file']) )
+					            {
+						            $_key  = substr($key, 1);
+						            $_value = $block['attrs']['data'][$_key]??'';
+
+						            if( !empty($_value)){
+
+							            if( $current_site_id == $main_site_id )
+							            {
+								            switch_to_blog($_GET['blog_id']);
+								            $original_id = get_post_meta($_value, '_wp_original_attachment_id', true);
+								            restore_current_blog();
+
+								            if( $original_id )
+									            $post['post_content'] = str_replace('"'.$_key.'":'.$_value, '"'.$_key.'":'.$original_id, $post['post_content']);
+							            }
+							            else
+							            {
+								            $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
+
+								            if( count($attachments) )
+									            $post['post_content'] = str_replace('"'.$_key.'":'.$_value, '"'.$_key.'":'.$attachments[0], $post['post_content']);
+							            }
+						            }
+					            }
+				            }
+			            }
+		            }
+	            }
+
                 $inserted_post_id = wp_insert_post($post);
 
                 // delete post_name
@@ -64,8 +110,6 @@ class WPS_Multisite_Language_Switcher {
 
                 // register original post
                 add_option('msls_'.$inserted_post_id, [$language => $_GET['post_id']], '', 'no');
-
-                $current_site_id = get_current_blog_id();
 
                 // add and filter meta
                 foreach($meta as $key=>$value){
@@ -110,7 +154,6 @@ class WPS_Multisite_Language_Switcher {
                                     {
                                         switch_to_blog($_GET['blog_id']);
                                         $original_id = get_post_meta($meta_value, '_wp_original_attachment_id', true);
-
                                         restore_current_blog();
 
                                         if( $original_id )
@@ -124,8 +167,9 @@ class WPS_Multisite_Language_Switcher {
                                     else
                                     {
                                         $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$meta_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
-                                        if( count($attachments) )
-                                        {
+
+                                        if( count($attachments) ) {
+
                                             $meta[$meta_key][0] = $attachments[0];
                                             update_post_meta($inserted_post_id, substr($key, 1), $attachments[0]);
 

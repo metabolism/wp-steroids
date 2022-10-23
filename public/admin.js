@@ -66,7 +66,7 @@
 						if( wysiwyg )
 							tinymce.editors[$input.attr('id')].setContent(translations)
 						else
-							$input.val(translations)
+							$input.val(translations).change()
 					}
 				}).fail(function(response) {
 
