@@ -11,6 +11,36 @@ class WPS_Query {
     protected $config;
 
     /**
+     * Filter the terms clauses
+     *
+     * @param $clauses array
+     * @param $taxonomy string
+     * @param $args array
+     * @return array
+     */
+    public function terms_clauses( $clauses, $taxonomy, $args )
+    {
+        global $wpdb;
+
+        if ( isset($args['post_type']) )
+            $args['post_types'] = [$args['post_type']];
+
+        if ( isset($args['post_types']) ) {
+
+            $post_types = implode("','", array_map('esc_sql', (array) $args['post_types']));
+
+            // allow for arrays
+            if ( is_array($args['post_types']) )
+                $post_types = implode( "','", $args['post_types'] );
+
+            $clauses['join'] .= " INNER JOIN $wpdb->term_relationships AS r ON r.term_taxonomy_id = tt.term_taxonomy_id INNER JOIN $wpdb->posts AS p ON p.ID = r.object_id";
+            $clauses['where'] .= " AND p.post_type IN ('". $post_types. "') GROUP BY t.term_id";
+        }
+
+        return $clauses;
+    }
+
+    /**
      * Add custom post type for taxonomy archive page
      * @param \WP_Query $query
      * @return void
@@ -135,6 +165,7 @@ class WPS_Query {
                 add_action( 'init', [$this, 'search_in_meta']);
 
             add_action( 'pre_get_posts', [$this, 'pre_get_posts'] );
+            add_filter('terms_clauses', [$this, 'terms_clauses'], 99999, 3);
         }
     }
 }

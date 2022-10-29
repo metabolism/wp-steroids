@@ -663,12 +663,9 @@ class WPS_Config {
 
         foreach ( get_post_types(['public'=> true, '_builtin' => false], 'objects') as $post_type=>$args )
         {
-            if( !is_post_type_viewable($post_type) )
-                continue;
-
             foreach( ['slug', 'archive'] as $type)
             {
-                if( $type == 'slug' || ($type == 'archive' && $args->has_archive ))
+                if( ($type == 'slug' && is_post_type_viewable($post_type)) || ($type == 'archive' && $args->has_archive ))
                 {
                     if( isset( $_POST[$post_type. '_rewrite_'.$type] ) && !empty($_POST[$post_type. '_rewrite_'.$type]) )
                     {
