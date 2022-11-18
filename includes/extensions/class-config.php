@@ -77,7 +77,7 @@ class WPS_Config {
 					'attributes' => [
 						'mode' => 'preview',
 						'data' => [
-							'_preview_image' => 'uploads/blocks/'.$name.'.png',
+							'_preview_image' => 'uploads/blocks/'.$name.'.jpg',
 						]
 					]
 				];
