@@ -96,6 +96,9 @@ class WPS_Gutenberg
 
 			if ( $_config->get('gutenberg.remove_block_library', true) )
 				add_action( 'wp_enqueue_scripts', [$this, 'removeBlockLibrary'], 100 );
+
+			if ( !$_config->get('gutenberg.load_remote_block_patterns', false) )
+				add_action( 'should_load_remote_block_patterns', '__return_false' );
 		}
     }
 }
