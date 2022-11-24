@@ -292,9 +292,6 @@ class WPS_Config {
                     }
                 }
 
-            }else{
-
-                wp_die($post_type. ' is not allowed, reserved keyword');
             }
         }
 
