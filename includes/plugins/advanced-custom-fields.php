@@ -302,7 +302,7 @@ class WPS_Advanced_Custom_Fields{
 		$this->config = $_config;
 
 		add_filter('acf/pre_load_value', [$this, 'preLoadValue'], 10, 3);
-		add_filter('acf/prepare_field', [$this, 'addTaxonomyTemplates']);
+		add_filter('acf/prepare_field', [$this, 'prepareField']);
 		add_filter('acf/fields/relationship/query/name=items', [$this, 'filterPostsByTermTemplateMeta'], 10, 3);
 		add_filter('acf/get_image_sizes', [$this, 'getImageSizes'] );
 
