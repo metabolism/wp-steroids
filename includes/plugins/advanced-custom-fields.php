@@ -38,7 +38,7 @@ class WPS_Advanced_Custom_Fields{
 
 
 	/**
-	 * Add wordpress configuration 'options_page' fields as ACFHelper Options pages
+	 * Add WordPress configuration 'options_page' fields as ACFHelper Options pages
 	 */
 	public function addOptionPages()
 	{
@@ -84,7 +84,18 @@ class WPS_Advanced_Custom_Fields{
 	 * @param $field
 	 * @return array
      */
-	public function addTaxonomyTemplates($field){
+	public function prepareField($field){
+
+        $lock_max_length = $this->config->get('acf.input.lock_max_length', true);
+
+        if( !$lock_max_length && ($field['type'] == 'text' ||  $field['type'] == 'textarea')){
+
+            if( !empty($field['maxlength']??'') ){
+
+                $field['maxlength_hint'] = $field['maxlength'];
+                $field['maxlength'] = '';
+            }
+        }
 
 		if( $field['type'] == 'select' && $field['_name'] == 'taxonomy'){
 
