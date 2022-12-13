@@ -42,7 +42,8 @@ class WPS_Translation {
             wp_die(basename($resource).' loading error: '.$e->getMessage());
         }
 
-        add_action('shutdown', [$this, 'shutdown']);
+        if( $_GET['debug']??'' == 'translations' )
+            add_action('shutdown', [$this, 'shutdown']);
     }
 
 	/**
@@ -50,7 +51,7 @@ class WPS_Translation {
 	 */
 	public function shutdown(){
 
-        if( !empty(self::$missing_translations) && !wp_doing_ajax() && WP_DEBUG && $_SERVER['REQUEST_METHOD'] === 'GET' )
+        if( !empty(self::$missing_translations) && WP_DEBUG && $_SERVER['REQUEST_METHOD'] === 'GET' )
             echo "<!--\nMissing translations:\n\n".implode("\n", array_unique(self::$missing_translations))."\n-->";
     }
 
