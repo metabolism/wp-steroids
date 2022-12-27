@@ -1,10 +1,6 @@
-.edit-post-visual-editor__post-title-wrapper{
-    padding-bottom: 20px; font-size: 24px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-}
-
+.edit-post-visual-editor__post-title-wrapper{ line-height: 1 }
 .editor-styles-wrapper{ background: #eee; padding: 20px!important; }
-.block-editor-block-list__layout{ background: #fff; padding: 1px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.05) }
+.block-editor-block-list__layout{ background: #fff; padding: 1px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.05); min-height: calc(100vh - 170px) }
 .block-editor-inserter__preview-container .preview_image{ max-width: 368px }
 .block-list-appender{ margin-top: 40px }
 .acf-block-preview > *{ pointer-events: none }
