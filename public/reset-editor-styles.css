@@ -1,4 +1,4 @@
-.edit-post-visual-editor__post-title-wrapper{ line-height: 1 }
+.edit-post-visual-editor__post-title-wrapper h1{ line-height: 1; font-size: revert; margin: revert }
 .editor-styles-wrapper{ background: #eee; padding: 20px!important; }
 .block-editor-block-list__layout{ background: #fff; padding: 1px; box-shadow: 0 0 6px rgba(0, 0, 0, 0.05); min-height: calc(100vh - 170px) }
 .block-editor-inserter__preview-container .preview_image{ max-width: 368px }
