@@ -1,5 +1,7 @@
 ;(function($) {
 
+	var allowInterfaceResizeInterval;
+
 	function disableACFLayoutReorder(){
 		$('.acf-flexible-content > .values').sortable( "disable" );
 		$('.acf-flexible-content .ui-sortable-handle').removeAttr( "title" );
@@ -8,6 +10,8 @@
 	function allowInterfaceResize(){
 
 		if( $('.interface-interface-skeleton__sidebar').length ) {
+
+			clearInterval(allowInterfaceResizeInterval);
 
 			$('.interface-interface-skeleton__sidebar').width(localStorage.getItem('toast_rs_personal_sidebar_width'))
 			$('.interface-interface-skeleton__sidebar').resizable({
@@ -79,7 +83,7 @@
 
 	$(document).ready(function(){
 
-		setInterval(allowInterfaceResize, 500);
+		allowInterfaceResizeInterval = setInterval(allowInterfaceResize, 500);
 
 		if( $('body').hasClass('no-acf_edit_layout') ){
 
