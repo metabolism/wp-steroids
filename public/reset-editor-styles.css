@@ -4,3 +4,7 @@
 .block-editor-inserter__preview-container .preview_image{ max-width: 368px }
 .block-list-appender{ margin-top: 40px }
 .acf-block-preview > *{ pointer-events: none }
+
+/* Force pixel sizing */
+.interface-interface-skeleton__sidebar input[type="radio"]{ width: 16px; height: 16px }
+.interface-interface-skeleton__sidebar input[type="radio"]:before{ width: 8px; height: 8px; margin: 3px }

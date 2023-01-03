@@ -198,7 +198,7 @@ class WPS_Advanced_Custom_Fields{
 
                 $field['label'] = __t($field['label']);
             }
-            elseif( $field['type'] == 'select'){
+            elseif( in_array($field['type'], ['select', 'radio', 'checkbox']) ){
 
                 foreach($field['choices'] as $key=>&$value)
                     $value = __t($value);
