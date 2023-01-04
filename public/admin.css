@@ -85,14 +85,14 @@ ul.category-tabs{ margin-bottom: 4px }
 
 input[type=color], input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month],
 input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url],
-input[type=week], textarea, #titlediv #title {
+input[type=week], textarea, #titlediv #title, .acf-input-inline-editor {
     box-shadow: inset 0 1px 0 0 rgba(63,63,68,0.05); border-color: #c4cdd5; transition-duration: 200ms; border-radius: 3px;
     transition-timing-function: cubic-bezier(0.64, 0, 0.35, 1); transition-property: background, border, box-shadow, -webkit-box-shadow; outline: none
 }
 .wp-core-ui select{ border-color: #c4cdd5;  }
 input[type=color]:focus, input[type=date]:focus, input[type=datetime-local]:focus, input[type=datetime]:focus, input[type=email]:focus, input[type=month]:focus,
 input[type=number]:focus, input[type=password]:focus, input[type=search]:focus, input[type=tel]:focus, input[type=text]:focus, input[type=time]:focus, input[type=url]:focus,
-input[type=week]:focus, select:focus, textarea:focus, #titlediv #title:focus {
+input[type=week]:focus, select:focus, textarea:focus, #titlediv #title:focus, .acf-input-inline-editor:focus {
     outline: none; box-shadow: inset 0 1px 0 0 rgba(63,63,68,0.05);
 }
 
