@@ -280,7 +280,7 @@ class WPS_Config {
 
                             $args = [
                                 'page_title' 	=> ucfirst($name).' archive options',
-                                'menu_title' 	=> __('Archive options', 'wp-steroids'),
+                                'menu_title' 	=> __t('Archive options'),
                                 'autoload'   	=> true
                             ];
                         }
