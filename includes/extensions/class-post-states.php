@@ -14,7 +14,7 @@ class WPS_Post_States {
     /**
      * Save post state
      */
-    public function getPostStates() {
+    public function setPostStates() {
 
         $post_states = $this->config->get('page_states', []);
 
@@ -44,6 +44,25 @@ class WPS_Post_States {
             $post_states[] = $this->post_states[$post->ID];
 
         return $post_states;
+    }
+
+
+    /**
+     * Add post state class
+     * @return array
+     */
+    public function addPostStateClass( $classes ) {
+
+        if( $id = get_the_ID() ){
+
+            global $wpdb;
+            $results = $wpdb->get_col( "SELECT `option_name` FROM {$wpdb->options} WHERE `option_value`={$id} and `option_name` LIKE 'page_on_%'");
+
+            if( count($results) )
+                $classes[] = str_replace('_', '-', str_replace('page_on_', 'page-state-', $results[0]));
+        }
+
+        return $classes;
     }
 
 
@@ -81,13 +100,16 @@ class WPS_Post_States {
      */
     public function __construct() {
 
-        if( !is_admin() )
+        if( !is_admin() ){
+
+            add_filter( 'body_class', [$this, 'addPostStateClass'], 10, 2 );
             return;
+        }
 
         global $_config;
         $this->config = $_config;
 
-        add_action( 'admin_init', [$this, 'getPostStates'] );
+        add_action( 'admin_init', [$this, 'setPostStates'] );
         add_filter( 'display_post_states', [$this, 'addPostState'], 10, 2 );
         add_action( 'admin_init', [$this, 'addReadingOptions'] );
     }
