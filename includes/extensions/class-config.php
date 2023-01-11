@@ -101,7 +101,7 @@ class WPS_Config {
             ],
             'supports' => [],
             'menu_position' => 25,
-            'map_meta_cap' => null,
+            'map_meta_cap' => true,
             'capability_type' => 'post'
         ];
 
@@ -430,7 +430,12 @@ class WPS_Config {
             'public' => true,
             'hierarchical' => true,
             'show_admin_column' => true,
-            'capabilities'=> []
+            'capabilities'=> [
+                'manage_terms' => 'manage_categories',
+                'edit_terms'   => 'edit_category',
+                'delete_terms' => 'delete_category',
+                'assign_terms' => 'assign_category'
+            ]
         ];
 
         foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ) {
@@ -487,6 +492,31 @@ class WPS_Config {
             } else{
 
                 wp_die($taxonomy. ' is not allowed, reserved keyword');
+            }
+        }
+
+        $roles = array('editor','administrator');
+
+        // Loop through each role and assign capabilities
+        foreach($roles as $the_role) {
+
+            if( !$role = get_role($the_role) )
+                continue;
+
+            $role->add_cap( 'edit_category');
+            $role->add_cap( 'delete_category' );
+            $role->add_cap( 'assign_category' );
+
+            foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ) {
+
+                if( !empty($args['capabilities']) ){
+
+                    foreach ($args['capabilities'] as $capability=>$map){
+
+                        if( $map != 'do_not_allow')
+                            $role->add_cap( $map);
+                    }
+                }
             }
         }
     }

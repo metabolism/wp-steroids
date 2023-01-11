@@ -8,4 +8,4 @@
 /* Force pixel sizing */
 .interface-interface-skeleton__sidebar input[type="radio"], .interface-interface-skeleton__sidebar input[type="checkbox"]{ width: 16px; height: 16px }
 .interface-interface-skeleton__sidebar input[type="radio"]:before{ width: 8px; height: 8px; margin: 3px }
-.interface-interface-skeleton__sidebar input[type="checkbox"]:before{ width: 16px; height: 16px; margin: -1px }
+.interface-interface-skeleton__sidebar input[type="checkbox"]:before{ width: 16px; height: 16px; margin: -1px!important }

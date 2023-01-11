@@ -17,7 +17,7 @@ class WPS_Translation {
      */
     public function __construct()
     {
-        if( !is_admin() )
+        if( !is_admin() && !wp_is_json_request() )
             return;
 
 	    add_action( 'wp_ajax_translate', function (){
@@ -42,7 +42,7 @@ class WPS_Translation {
             wp_die(basename($resource).' loading error: '.$e->getMessage());
         }
 
-        if( $_GET['debug']??'' == 'translations' )
+        if( is_admin() && ($_GET['debug']??'') == 'translations' )
             add_action('shutdown', [$this, 'shutdown']);
     }
 

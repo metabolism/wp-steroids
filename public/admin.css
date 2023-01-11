@@ -11,19 +11,31 @@
 .no-acf_edit_layout [data-name="remove-layout"]
 { display: none!important }
 
+.no-edit_blocks .edit-post-header-toolbar__inserter-toggle,
+.no-edit_blocks .block-list-appender, .no-edit_blocks .block-editor-block-popover,
+.no-edit_blocks .block-editor-list-view-block__menu-cell
+{ display: none!important }
+
 .no-acf_edit_image .acf-field-image .acf-actions.-hover,
 .no-acf_edit_file .acf-field-file .acf-actions.-hover{ display: none!important }
 
-.no-acf_edit_layout .acf-repeater .acf-actions,
-.no-acf_edit_layout [data-event="add-row"],
-.no-acf_edit_layout [data-event="remove-row"]
+.no-acf_edit_repeater .acf-repeater .acf-actions,
+.no-acf_edit_repeater [data-event="add-row"],
+.no-acf_edit_repeater [data-event="remove-row"]
 { display: none!important }
+
+.no-acf_edit_repeater .acf-row-handle{ pointer-events: none }
 
 .no-acf_edit_layout .acf-flexible-content .layout .acf-fc-layout-handle{ cursor: pointer!important }
 
+.no-acf_edit_relationship .acf-field-relationship .acf-relationship,
+.no-acf_edit_image .acf-field-image .acf-basic-uploader,
 .no-acf_edit_true-false .acf-field-true-false .acf-input label,
-.no-acf_edit_radio .acf-field-radio .acf-input label,
-.no-acf_edit_post-object .acf-field-post-object .select2
+.no-acf_edit_link .acf-field-link .acf-input .button, .no-acf_edit_link .acf-field-link .acf-input .-cancel,
+.no-acf_edit_link #wp-link #link-options > div:not(.wp-link-text-field), .no-acf_edit_link #wp-link #search-panel,
+.no-acf_edit_radio .acf-field-radio .acf-input label, .no-acf_edit_select .acf-field-select .acf-input select,
+.no-acf_edit_post-object .acf-field-post-object .select2,
+.no-acf_edit_taxonomy .acf-field-taxonomy .acf-taxonomy-field
 { pointer-events: none!important; opacity: 0.5; }
 
 /* Bundle specific */
@@ -145,7 +157,7 @@ input.large-text, textarea.large-text { width: 35.7rem }
 }
 
 /* ACF */
-.acf-field input[type="text"], .acf-field input[type="password"], .acf-field input[type="date"], .acf-field input[type="datetime"],
+.acf-field input, .acf-field input[type="text"], .acf-field input[type="password"], .acf-field input[type="date"], .acf-field input[type="datetime"],
 .acf-field input[type="datetime-local"], .acf-field input[type="email"], .acf-field input[type="month"], .acf-field input[type="number"],
 .acf-field input[type="search"], .acf-field input[type="tel"], .acf-field input[type="time"], .acf-field input[type="url"],
 .acf-field input[type="week"], .acf-field textarea, .acf-field select{ font-size: 13px; }
