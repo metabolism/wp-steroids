@@ -2,7 +2,7 @@
 
 Supercharge WordPress with :
 
-* WordPress configuration using yml
+* WordPress' configuration using yml
 * Permalink configuration for custom post type and taxonomy
 * Maintenance mode
 * Backup download in dev mode
@@ -15,9 +15,10 @@ Supercharge WordPress with :
 * Better Performance
 * WordPress Bugfix
 * CSS Fix
-* Relative urls
 * Multisite post deep copy ( with multisite-language-switcher plugin )
 * Custom datatable support with view and delete actions in admin
+* Google translate or Deepl integration
+* Optimisations
 
 YML file allows to configure : 
 * Image options
@@ -31,15 +32,467 @@ YML file allows to configure :
 * Custom Post type
 * Custom Taxonomy
 * Block
-* Page, post, taxonomy templates
-* Page states
+* Page, post, taxonomy template
+* Page state
 * Post format
 * External table viewer
-* Roles
-* Optimisations
-
+* Advanced roles
+* 
 ## Documentation
 
 Full documentation is available on [Gitbook](https://metabolism.gitbook.io/symfony-wordpress-bundle/guides/wp-steroids-plugin)
 
 [![Doc - Gitbook](https://img.shields.io/badge/Doc-Gitbook-346ddb?style=for-the-badge&logo=gitbook&logoColor=fff)](https://metabolism.gitbook.io/symfony-wordpress-bundle/guides/wp-steroids-plugin)
+
+## YML Sample
+
+```yaml
+##########################################################################
+##                                                                      ##
+##                    WordPress configuration file                      ##
+##                                                                      ##
+##########################################################################
+
+wordpress:
+
+  #####################
+  ##    Gutenberg    ##
+  #####################
+
+  gutenberg:
+    replace_reset_styles: true
+    remove_core_block: true
+    remove_block_library: true
+    load_remote_block_patterns: false
+    block_editor_style: '/build/bundle.css'
+    block_editor_script: '/blocks.js'
+    render_template: 'blocks/{name}.html.twig'
+    preview_image: true
+
+
+  #########################
+  ##    Image options    ##
+  #########################
+
+  image:
+    compression: 90 #on the fly compression ratio
+    resize: #resize image on upload to save server space
+      max_width: 1920
+      max_height: 2160
+
+  ###########################
+  ##    Admin interface    ##
+  ###########################
+
+  ## Enable maintenance mode support
+  maintenance: true
+
+  ## Hide pages from menu
+  remove_menu_page:
+    - edit-comments.php #Comments
+  #  - index.php #Dashboard
+  #  - jetpack #Jetpack
+  #  - upload.php #Media
+  #  - themes.php #Appearance
+  #  - plugins.php #Plugins
+  #  - users.php #Users
+  #  - tools.php #Tools
+  #  - options-general.php #Settings
+
+  ## Hide page from submenu
+  remove_submenu_page:
+    #themes.php: nav-menus.php
+
+  ## Customize WYSIWYG Editor TinyMCE Buttons
+  ##https://www.tiny.cloud/docs/advanced/editor-control-identifiers/
+  mce_buttons:
+    - formatselect
+    - bold
+    - italic
+    - underline
+    - sup
+    - strikethrough
+    - superscript
+    - subscript
+    - bullist
+    - numlist
+    - blockquote
+    - hr
+    - table
+    - alignleft
+    - aligncenter
+    - alignright
+    - alignjustify
+    - link
+    - unlink
+    - wp_more
+    - spellchecker
+    - wp_adv
+    - dfw
+
+  #editor_style: backoffice.css
+
+  ##################
+  ##    System    ##
+  ##################
+
+  ## Add blog support
+  support:
+    - page #enable page
+    - post #enable post
+    - tag #enable tag taxonomy for post
+    - category #enable category taxonomy for post
+
+  ## Add post type support
+  ## https://developer.wordpress.org/reference/functions/post_type_supports/
+  post_type_support:
+    page: excerpt #add excerpt to page
+
+  ## Add theme support
+  ## https://developer.wordpress.org/reference/functions/add_theme_support/
+  theme_support:
+    - thumbnail #add thumbnails to post
+    #- post-formats:
+    #  - video
+    #  - gallery
+
+  ## Use Wordpress as a headless cms
+  #headless:
+  #  mapping: true
+
+  ## Multisite configuration
+  # multisite:
+  #  shared_media: true
+  #  clone_post: true
+
+  ## Declare constant
+  #define:
+  #  disallow_file_edit: false
+
+  ###############
+  ##    ACF    ##
+  ###############
+
+  acf:
+    settings:
+      use_entity: true #add new optimised return format
+      autoload: true #autoload options
+    user_settings:
+      gallery_height: 210
+    options_page: #add option pages https://www.advancedcustomfields.com/resources/options-page/
+      - 'Global'
+      - 'Translations'
+    input:
+      lock_max_length: false
+    toolbars: #customize wysiwyg toolbar
+      Full:
+        1:
+          - formatselect
+          - bold
+          - italic
+          - blockquote
+          - superscript
+          - subscript
+          - bullist
+          - numlist
+          - table
+          - alignjustify
+          - pastetext
+          - removeformat
+          - link
+          - wp_adv
+          - fullscreen
+        2:
+          - undo
+          - redo
+          - hr
+          - underline
+          - strikethrough
+          - forecolor
+          - removeformat
+          - charmap
+          - outdent
+          - indent
+      Basic:
+        1:
+          - bold
+          - italic
+          - blockquote
+          - superscript
+          - subscript
+          - bullist
+          - numlist
+          - link
+          - alignjustify
+          - pastetext
+          - removeformat
+          - fullscreen
+
+
+  ################
+  ##    Menu    ##
+  ################
+
+  menu:
+    depth: 1
+    register:
+      footer: Footer
+      header: Header
+
+
+  ###################
+  ##    Sidebar    ##
+  ###################
+
+  sidebar: # https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
+    footer:
+      name : Footer
+      description : 'Add widgets here to appear in your footer.'
+      before_widget : '<section id="%1$s" class="widget %2$s">'
+      after_widget : '</section>'
+      before_title : '<h2 class="widget-title">'
+      after_title : '</h2>'
+
+
+  ##########################
+  ##       New block      ##
+  ##########################
+
+  block:
+    title-text:
+      title: Title with text
+      description: Title with text
+      supports:
+        align_text: 'left'
+        #multiple: false
+      icon: 'editor-alignleft'
+      post_types:
+        - page
+        - guide
+
+
+  ##########################
+  ##    New post types    ##
+  ##########################
+
+  post_type: # https://developer.wordpress.org/reference/functions/register_post_type/
+    guide:
+      menu_icon: book #https://developer.wordpress.org/resource/dashicons/
+      has_archive: true
+      #enable_for_blogs:
+      #  - 1
+      #disable_for_blogs:
+      #  - 2#
+      #has_options: true #add acf page option to post type menu
+      capability_type: post
+      #publicly_queryable: false
+      ## options for archive page
+      #posts_per_page: 11
+      #orderby: name #https://developer.wordpress.org/reference/classes/wp_query/#order-orderby-parameters
+      #order: ASC
+      show_in_rest: true
+      #template:
+      #  - - acf/title-text
+      #    - lock:
+      #        move: true
+      #        remove: true
+      supports:
+        - title
+        - excerpt
+        - thumbnail
+        - editor
+        #- author
+        #- excerpt
+        #- trackbacks
+        #- custom-fields
+        #- comments
+        #- revisions
+        #- page-attributes
+        #- post-formats
+      #columns: #add new column to post listing, thumbnail|meta
+       # - thumbnail
+      #taxonomies:
+       # - category
+      #labels:
+      #  name:           'Guides'
+      #  singular_name:  'Guide'
+      #  all_items:      'Tous les guides'
+      #  edit_item:      'Editer le guide'
+      #  view_item:      'Voir le guide'
+      #  update_item:    'Mettre à jour le guide'
+      #  add_new_item:   'Ajouter un guide'
+      #  new_item_name:  'Nouveau guide'
+      #  search_items:   'Rechercher un guide'
+      #  popular_items:  'Guides populaires'
+      #  not_found:      'Aucun guide trouvé'
+
+
+  ##########################
+  ##    New taxonomies    ##
+  ##########################
+
+  taxonomy: # https://developer.wordpress.org/reference/functions/register_taxonomy/
+    item:
+      ## options for archive page
+      #posts_per_page: 11
+      #orderby: name #https://developer.wordpress.org/reference/classes/wp_term_query/__construct/
+      #order: ASC
+      #radio: true #display terms selection as radio instead of checkbox
+      #publicly_queryable: false
+      object_type:
+        - guide
+      #capabilities:
+      #  manage_terms: 'do_not_allow'
+      #  edit_terms: 'do_not_allow'
+      #  delete_terms: 'do_not_allow'
+      #  assign_terms: 'edit_posts'
+      #labels:
+      #  name:           'Catégories'
+      #  singular_name:  'Catégorie'
+      #  all_items:      'Toutes les catégories'
+      #  edit_item:      'Editer la catégorie'
+      #  view_item:      'Voir la catégorie'
+      #  update_item:    'Mettre à jour la catégorie'
+      #  add_new_item:   'Ajouter une catégorie'
+      #  new_item_name:  'Nouvelle catégorie'
+      #  search_items:   'Rechercher une catégorie'
+      #  popular_items:  'Catégories populaires'
+      #  not_found:      'Aucune catégorie trouvée'
+
+
+  ####################################
+  ##    Templates/States/Formats    ##
+  ####################################
+
+  ## Add post and taxonomy templates
+  #template:
+  #  page:
+  #    coming_soon: 'Coming Soon'
+  #    not_found: '404'
+  #  post:
+  #    video: 'Video'
+  #  taxonomy:
+  #    item:
+  #      edito: 'Edito'
+  #      podcast: 'Podcast'
+  #      reportage: 'Reportage'
+  #      video: 'Video'
+
+  ## Add page states like "homepage"
+  #page_states:
+    #archive_guide: 'Guide archive'
+
+  #################################
+  ##    Database table viewer    ##
+  #################################
+
+  #table:
+  #  newsletter:
+  #    page_title: Newsletter
+  #    menu_title: Newsletter
+  #    column_title: id
+  #    export: false
+  #    columns:
+  #      name: Name
+  #      email: Email
+  #      company: Company
+  #      type: Type
+  #  contact:
+  #    page_title: Contact
+  #    menu_title: Contact
+  #    column_title: id
+  #    columns:
+  #      name: Name
+  #      email: Email
+  #      company: Company
+  #      request: Request
+
+  #############################################
+  ##               Add Roles                 ##
+  ##                                         ##
+  ##    To reload role please go to          ##
+  ##    /wp-admin/index.php?reload_role=1    ##
+  ##                                         ##
+  #############################################
+  #role:
+  #  translator:
+  #    display_name: Translator
+  #    redirect_to: edit.php?post_type=guide
+  #    #inherit: editor
+  #    capabilities:
+  #      read: true
+  #      publish: false
+  #      manage_items: true
+  #      edit_items: true
+  #
+  #      edit_blocks: false
+  #
+  #      manage_categories: true
+  #      edit_category: true
+  #      delete_category: false
+  #      assign_category: false
+  #
+  #      edit_others_pages: true
+  #      read_page: true
+  #      edit_pages: true
+  #      publish_pages: false
+  #      edit_published_pages: true
+  #
+  #      edit_others_posts: true
+  #      read_post: true
+  #      edit_posts: true
+  #      publish_posts: false
+  #      edit_published_posts: true
+  #
+  #      acf_edit_taxonomy: false
+  #      acf_edit_layout: false
+  #      acf_edit_relationship: false
+  #      acf_edit_repeater: false
+  #      acf_edit_true-false: false
+  #      acf_edit_radio: false
+  #      acf_edit_select: false
+  #      acf_edit_image: false
+  #      acf_edit_file: false
+  #      acf_edit_link: false
+  #      acf_edit_post-object: false
+
+
+  ############################
+  ##    Plugins specific    ##
+  ############################
+
+  #plugins:
+  #  redirection:
+  #    redirection_role: edit_others_posts
+
+  #########################
+  ##    Optimisations    ##
+  #########################
+
+  rewrite_rules:
+    remove:
+      - author
+      - attachment
+      - embed
+      - trackback
+      - comment
+  #    - feed
+
+  ####################
+  ##    Security    ##
+  ####################
+
+  security:
+    rest_api: false
+    xmlrpc: false
+    pings: false
+    disable_update: true
+
+  ##################
+  ##    Search    ##
+  ##################
+
+  #search: # change search settings
+  # use_metafields: false
+  # posts_per_page: 12
+```
