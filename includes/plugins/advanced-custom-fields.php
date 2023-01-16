@@ -237,32 +237,29 @@ class WPS_Advanced_Custom_Fields{
      */
     public function allowedBlockTypes($block_editor_context, $editor_context) {
 
-        if ( ! empty( $editor_context->post ) ) {
+        if ( empty( $editor_context->post ) || !$block_types = acf_get_store( 'block-types' ) )
+            return $block_editor_context;
 
-            $blocks = acf_get_store( 'block-types' )->get();
-            $field_groups = acf_get_field_groups();
+        $blocks = $block_types->get();
+        $field_groups = acf_get_field_groups();
 
-            $block_editor_context = [];
+        $block_editor_context = [];
 
-            foreach ($blocks as $name=>$block){
+        foreach ($blocks as $name=>$block){
 
-                foreach ($field_groups as $index=>$field_group){
+            foreach ($field_groups as $index=>$field_group){
 
-                    if(($field_group['location'][0][0]['value']??'') == $name){
+                if(($field_group['location'][0][0]['value']??'') == $name){
 
-                        unset($blocks[$name]);
+                    unset($blocks[$name]);
 
-                        if( acf_get_field_group_visibility($field_group, ['block'=>$name, 'post_id'=>get_the_ID()]) )
-                            $block_editor_context[] = $name;
-                    }
+                    if( acf_get_field_group_visibility($field_group, ['block'=>$name, 'post_id'=>get_the_ID()]) )
+                        $block_editor_context[] = $name;
                 }
             }
-
-		    $block_editor_context = array_merge(array_unique($block_editor_context), array_keys($blocks));
         }
 
-
-        return $block_editor_context;
+        return array_merge(array_unique($block_editor_context), array_keys($blocks));
     }
 
     /**

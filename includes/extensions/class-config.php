@@ -41,7 +41,7 @@ class WPS_Config {
      */
     public function addBlocks()
     {
-		if( !class_exists('ACF') )
+		if( !class_exists('ACF') || !function_exists('acf_register_block_type') )
 			return;
 
 		$render_template = $this->config->get('gutenberg.render_template', '');
