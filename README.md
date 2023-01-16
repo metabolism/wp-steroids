@@ -1,5 +1,10 @@
 # WP Steroids
 
+[![Latest Stable Version](http://poser.pugx.org/metabolism/wp-steroids/v)](https://packagist.org/packages/metabolism/wp-steroids)
+[![Latest Unstable Version](http://poser.pugx.org/metabolism/wp-steroids/v/unstable)](https://packagist.org/packages/metabolism/wp-steroids)
+[![License](http://poser.pugx.org/metabolism/wp-steroids/license)](https://packagist.org/packages/metabolism/wp-steroids)
+[![Doc - Gitbook](https://img.shields.io/badge/Doc-Gitbook-346ddb?logo=gitbook&logoColor=fff)](https://metabolism.gitbook.io/symfony-wordpress-bundle/guides/wp-steroids-plugin)
+
 Supercharge WordPress with :
 
 * WordPress' configuration using yml
@@ -37,12 +42,10 @@ YML file allows to configure :
 * Post format
 * External table viewer
 * Advanced roles
-* 
+
 ## Documentation
 
-Full documentation is available on [Gitbook](https://metabolism.gitbook.io/symfony-wordpress-bundle/guides/wp-steroids-plugin)
-
-[![Doc - Gitbook](https://img.shields.io/badge/Doc-Gitbook-346ddb?style=for-the-badge&logo=gitbook&logoColor=fff)](https://metabolism.gitbook.io/symfony-wordpress-bundle/guides/wp-steroids-plugin)
+Documentation is available on [Gitbook](https://metabolism.gitbook.io/symfony-wordpress-bundle/guides/wp-steroids-plugin)
 
 ## YML Sample
 
