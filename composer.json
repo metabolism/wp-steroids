@@ -1,10 +1,10 @@
 {
   "name": "metabolism/wp-steroids",
   "type": "wordpress-plugin",
-  "version": "1.0.1",
-  "homepage": "http://www.akhela.fr",
+  "version": "1.1.0",
+  "homepage": "https://www.akhela.fr",
   "license": "GPL-3.0-or-later",
-  "description": "Supercharge Wordpress with YML configuration and more",
+  "description": "Supercharge Wordpress with YML configuration, increase performance and security",
   "keywords": ["plugin","wordpress"],
   "extra": {
     "branch-alias": {

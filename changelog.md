@@ -1,3 +1,13 @@
+### 1.1.0
+- Deepl integration
+- Build hook management
+- Better taxonomy capabilities
+- Plugins loading optimisation
+- Add post state to body class
+- Transients cleaner in options
+- Better role management
+- Bugfix
+
 ### 1.0.2
 - Gutenberg block configuration
 
