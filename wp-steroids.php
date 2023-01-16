@@ -2,9 +2,9 @@
 /**
  * Plugin Name: WordPress on Steroids
  * Description: Configure WordPress using yml and add amazing features
- * Version: 1.1.1
- * Author: Akhela
- * Author URI: https://www.akhela.fr
+ * Version: 1.1.2
+ * Author: Metabolism
+ * Author URI: https://github.com/wearemetabolism
  */
 
 use Dallgoot\Yaml;

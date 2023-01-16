@@ -308,6 +308,12 @@ class WPS_Advanced_Custom_Fields{
         add_filter('acf/get_field_label', [WPS_Translation::class, 'translate'], 9);
         add_filter('acf/load_fields', [$this, 'load_fields'], 9);
 
+        if( $path = $this->config->get('acf.json_path', '/config/packages/acf') ){
+
+            add_filter('acf/settings/save_json', function() use($path){ return ABSPATH.'../..'.$path; });
+            add_filter('acf/settings/load_json', function() use($path){ return [ABSPATH.'../..'.$path]; });
+        }
+
         // When viewing admin
         if( is_admin() )
         {

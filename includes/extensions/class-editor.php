@@ -79,8 +79,6 @@ class WPS_Editor {
 			remove_menu_page($menu);
 		}
 
-		remove_submenu_page('themes.php', 'themes.php' );
-
 		foreach ( $this->config->get('remove_submenu_page', []) as $menu=>$submenu )
 		{
 			remove_submenu_page($menu, $submenu);
