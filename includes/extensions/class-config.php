@@ -27,12 +27,12 @@ class WPS_Config {
      */
     public function configureContentType()
     {
-	    $this->addPostTypes();
-	    $this->addTaxonomies();
-	    $this->addRewriteRules();
+        $this->addPostTypes();
+        $this->addTaxonomies();
+        $this->addRewriteRules();
 
-	    $this->updateSearchStructure();
-	    $this->updatePageStructure();
+        $this->updateSearchStructure();
+        $this->updatePageStructure();
     }
 
     /**
@@ -41,50 +41,50 @@ class WPS_Config {
      */
     public function addBlocks()
     {
-		if( !class_exists('ACF') || !function_exists('acf_register_block_type') )
-			return;
+        if( !class_exists('ACF') || !function_exists('acf_register_block_type') )
+            return;
 
-		$render_template = $this->config->get('gutenberg.render_template', '');
-		$preview_image = $this->config->get('gutenberg.preview_image', false);
+        $render_template = $this->config->get('gutenberg.render_template', '');
+        $preview_image = $this->config->get('gutenberg.preview_image', false);
 
-	    foreach ( $this->config->get('block', []) as $name => $args )
-	    {
-		    $block = [
-			    'name'              => $name,
-			    'title'             => __t($args['title']??$name),
-			    'description'       => __t($args['description']??''),
-			    'render_template'   => $args['render_template']??str_replace('{name}', $name, $render_template),
-			    'category'          => $args['category']??'layout',
-			    'icon'              => $args['icon']??'admin-comments',
-			    'mode'              => $args['mode']??'preview',
-			    'keywords'          => $args['keywords']??[],
-			    'post_types'        => $args['post_types']??[],
-			    'supports'        => $args['supports']??[]
-		    ];
+        foreach ( $this->config->get('block', []) as $name => $args )
+        {
+            $block = [
+                'name'              => $name,
+                'title'             => __t($args['title']??$name),
+                'description'       => __t($args['description']??''),
+                'render_template'   => $args['render_template']??str_replace('{name}', $name, $render_template),
+                'category'          => $args['category']??'layout',
+                'icon'              => $args['icon']??'admin-comments',
+                'mode'              => $args['mode']??'preview',
+                'keywords'          => $args['keywords']??[],
+                'post_types'        => $args['post_types']??[],
+                'supports'        => $args['supports']??[]
+            ];
 
-		    $block['render_callback'] = apply_filters('block_render_callback', false);
+            $block['render_callback'] = apply_filters('block_render_callback', false);
 
-		    $block['supports']['align'] = boolval($args['supports']['align']??false);
-		    $block['supports']['align_text'] = boolval($args['supports']['align_text']??false);
-		    $block['supports']['align_content'] = boolval($args['supports']['align_content']??false);
+            $block['supports']['align'] = boolval($args['supports']['align']??false);
+            $block['supports']['align_text'] = boolval($args['supports']['align_text']??false);
+            $block['supports']['align_content'] = boolval($args['supports']['align_content']??false);
 
-			if( substr($args['icon']??'', -4) == '.svg' )
-				$block['icon'] = file_get_contents(ABSPATH.'/'.$args['icon']);
+            if( substr($args['icon']??'', -4) == '.svg' )
+                $block['icon'] = file_get_contents(ABSPATH.'/'.$args['icon']);
 
-			if( $args['preview_image']??$preview_image ){
+            if( $args['preview_image']??$preview_image ){
 
-				$block['example'] = [
-					'attributes' => [
-						'mode' => 'preview',
-						'data' => [
-							'_preview_image' => 'uploads/blocks/'.$name.'.jpg',
-						]
-					]
-				];
-			}
+                $block['example'] = [
+                    'attributes' => [
+                        'mode' => 'preview',
+                        'data' => [
+                            '_preview_image' => 'uploads/blocks/'.$name.'.jpg',
+                        ]
+                    ]
+                ];
+            }
 
-		    acf_register_block_type($block);
-	    }
+            acf_register_block_type($block);
+        }
     }
 
     /**
@@ -97,7 +97,7 @@ class WPS_Config {
             'public' => true,
             'has_archive' => true,
             'rewrite' => [
-				'pages'=>true
+                'pages'=>true
             ],
             'supports' => [],
             'menu_position' => 25,
@@ -150,8 +150,13 @@ class WPS_Config {
 
                 $slug = $this->getSlug( $post_type );
 
-                if(!empty($slug))
-                    $args['rewrite']['slug'] = $slug;
+                if(!empty($slug)){
+
+                    if( !is_array($args['rewrite']) )
+                        $args['rewrite'] = ['slug'=> $slug];
+                    else
+                        $args['rewrite']['slug'] = $slug;
+                }
 
                 if( $args['has_archive'] ){
 
@@ -161,13 +166,13 @@ class WPS_Config {
 
                         $args['has_archive'] = $archive;
 
-						if( !isset($args['rewrite']['pages']) )
-							$args['rewrite']['pages'] = true;
-					}
+                        if( !isset($args['rewrite']['pages']) )
+                            $args['rewrite']['pages'] = true;
+                    }
                 }
 
-				if( !($args['query_var']??true) && !isset($args['show_in_nav_menus']) )
-					$args['show_in_nav_menus'] = false;
+                if( !($args['query_var']??true) && !isset($args['show_in_nav_menus']) )
+                    $args['show_in_nav_menus'] = false;
 
                 if( HEADLESS && !URL_MAPPING ){
 
@@ -378,7 +383,7 @@ class WPS_Config {
     public function addMenus()
     {
         $register = $this->config->get('menu.register');
-	    $register = $register ? 'menu.register' : 'menu';
+        $register = $register ? 'menu.register' : 'menu';
 
         foreach ($this->config->get($register, []) as $location => $description)
         {
@@ -658,18 +663,18 @@ class WPS_Config {
 
         add_settings_section('page_rewrite', '', '__return_empty_string','permalink');
 
-	    if( isset( $_POST['page_rewrite_slug'] ) && !empty($_POST['page_rewrite_slug']) )
-	    {
-		    update_option( 'page_rewrite_slug', sanitize_title_with_dashes( $_POST['page_rewrite_slug'] ), true );
-		    $updated = true;
-	    }
+        if( isset( $_POST['page_rewrite_slug'] ) && !empty($_POST['page_rewrite_slug']) )
+        {
+            update_option( 'page_rewrite_slug', sanitize_title_with_dashes( $_POST['page_rewrite_slug'] ), true );
+            $updated = true;
+        }
 
-	    add_settings_field( 'page_rewrite_slug', 'Page base',function ()
-	    {
-		    $value = get_option( 'page_rewrite_slug' );
-		    echo '<input type="text" value="' . esc_attr( $value ) . '" name="page_rewrite_slug" placeholder="page" id="page_rewrite_slug" class="regular-text" />';
+        add_settings_field( 'page_rewrite_slug', 'Page base',function ()
+        {
+            $value = get_option( 'page_rewrite_slug' );
+            echo '<input type="text" value="' . esc_attr( $value ) . '" name="page_rewrite_slug" placeholder="page" id="page_rewrite_slug" class="regular-text" />';
 
-	    }, 'permalink', 'page_rewrite' );
+        }, 'permalink', 'page_rewrite' );
 
         add_settings_section('search_rewrite', '', '__return_empty_string','permalink');
 
@@ -871,56 +876,56 @@ class WPS_Config {
         return $term_link;
     }
 
-	public function updatePageStructure(){
+    public function updatePageStructure(){
 
-		$value = get_option( 'page_rewrite_slug' );
+        $value = get_option( 'page_rewrite_slug' );
 
-		if( !empty($value) ){
+        if( !empty($value) ){
 
-			global $wp_rewrite;
+            global $wp_rewrite;
 
-			$page_structure = $wp_rewrite->get_page_permastruct();
-			$wp_rewrite->page_structure = $value.'/'.$page_structure;
+            $page_structure = $wp_rewrite->get_page_permastruct();
+            $wp_rewrite->page_structure = $value.'/'.$page_structure;
 
-			if( $value == 'page' && $wp_rewrite->pagination_base == 'page' ){
+            if( $value == 'page' && $wp_rewrite->pagination_base == 'page' ){
 
-				$wp_rewrite->pagination_base = 'paged';
-				$wp_rewrite->comments_pagination_base = 'comment-paged';
-			}
-		}
-	}
+                $wp_rewrite->pagination_base = 'paged';
+                $wp_rewrite->comments_pagination_base = 'comment-paged';
+            }
+        }
+    }
 
-	public function updateSearchStructure(){
+    public function updateSearchStructure(){
 
-		global $wp_rewrite, $wp_search_base;
+        global $wp_rewrite, $wp_search_base;
 
-		$search_slug = get_option( 'search_rewrite_slug' );
+        $search_slug = get_option( 'search_rewrite_slug' );
 
-		if( empty($wp_search_base) )
-			$wp_search_base = $wp_rewrite->search_base;
+        if( empty($wp_search_base) )
+            $wp_search_base = $wp_rewrite->search_base;
 
-		if( isset($wp_rewrite->search_structure) )
-			unset($wp_rewrite->search_structure);
+        if( isset($wp_rewrite->search_structure) )
+            unset($wp_rewrite->search_structure);
 
-		if( !empty($search_slug) ){
+        if( !empty($search_slug) ){
 
-			$wp_rewrite->search_base = $search_slug;
-		}
-		else{
+            $wp_rewrite->search_base = $search_slug;
+        }
+        else{
 
-			$wp_rewrite->search_base = $wp_search_base;
-		}
-	}
+            $wp_rewrite->search_base = $wp_search_base;
+        }
+    }
 
-	/**
-	 * @param $is_viewable
-	 * @param $post_type
-	 * @return bool
-	 */
-	public function isPostTypeViewable($is_viewable, $post_type){
+    /**
+     * @param $is_viewable
+     * @param $post_type
+     * @return bool
+     */
+    public function isPostTypeViewable($is_viewable, $post_type){
 
-		return $is_viewable && ($post_type->query_var || $post_type->_builtin);
-	}
+        return $is_viewable && ($post_type->query_var || $post_type->_builtin);
+    }
 
 
     /**
@@ -939,19 +944,19 @@ class WPS_Config {
         // Global init action
         add_action( 'init', function()
         {
-	        global $wp_rewrite;
+            global $wp_rewrite;
 
-	        $this->disableFeatures();
+            $this->disableFeatures();
 
             $this->addBlocks();
             $this->defineThemeSupport();
             $this->addPostTypeSupport();
 
-	        $this->configureContentType();
+            $this->configureContentType();
 
-	        $wp_rewrite->flush_rules(false);
+            $wp_rewrite->flush_rules(false);
 
-	        $this->addMenus();
+            $this->addMenus();
             $this->addSidebars();
             $this->addRoles();
 
@@ -974,7 +979,7 @@ class WPS_Config {
 
         add_action('switch_blog', function($new_blog_id, $prev_blog_id){
 
-			global $wp_rewrite;
+            global $wp_rewrite;
 
             if( $new_blog_id != $prev_blog_id && $wp_rewrite )
                 $this->configureContentType();

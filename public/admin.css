@@ -150,7 +150,8 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .term-php .form-table>tbody>.acf-tab-wrap{ display: block }
 .term-php .form-table>tbody>.acf-tab-wrap td{ display: block; padding: 10px 10px 0 0 }
 
-.edit-tags-php #acf-term-fields{ display: none }
+.edit-tags-php #acf-term-fields, .editor-post-excerpt .components-base-control__label,
+.editor-post-excerpt .components-external-link{ display: none }
 
 .form-table, .form-table td, .form-table td p, .form-table th {
     font-size: 13px;
