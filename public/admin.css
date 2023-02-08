@@ -119,8 +119,7 @@ p.help, span.description, .post-attributes-help-text { font-size: 11px }
 .form-table p.description{ font-size: 80% }
 input.large-text, textarea.large-text { width: 35.7rem }
 .form-table td fieldset label { margin: .35em 0 1em!important }
-.wrap{ max-width: 1350px; margin-left: auto; margin-right: auto; padding-right: 20px }
-.index-php .wrap{ max-width: none }
+
 @keyframes rotating {
     from { transform: rotate(0deg) }
     to { transform: rotate(360deg) }

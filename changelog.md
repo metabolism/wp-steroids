@@ -1,3 +1,6 @@
+### 1.1.4
+- Bugfix using config getter
+
 ### 1.1.0
 - Deepl integration
 - Build hook management

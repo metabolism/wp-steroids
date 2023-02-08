@@ -60,7 +60,7 @@ class WPS_Editor {
 
             $wp_admin_bar->add_node( $args );
 
-            if( $this->config->get('post_type.'.$object->name.'.has_options') ){
+            if( $this->config->get('post_type.'.$object->name.'.has_options', false) ){
 
                 $args = [
                     'id'    => 'archive_options',
