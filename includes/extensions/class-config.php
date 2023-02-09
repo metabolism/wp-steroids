@@ -148,17 +148,15 @@ class WPS_Config {
                 if( !isset($args['capability_type']) && $args['map_meta_cap'] )
                     $args['capability_type'] = [$post_type, $this->plural($post_type)];
 
-                $slug = $this->getSlug( $post_type );
-
-                if(!empty($slug)){
-
-                    if( !is_array($args['rewrite']) )
-                        $args['rewrite'] = ['slug'=> $slug];
-                    else
-                        $args['rewrite']['slug'] = $slug;
-                }
+                if( is_string($args['rewrite']) )
+                    $args['rewrite'] = ['slug'=> $args['rewrite']];
 
                 $args['rewrite']['paged'] = false;
+
+                $slug = $this->getSlug( $post_type );
+
+                if(!empty($slug))
+                    $args['rewrite']['slug'] = $slug;
 
                 if( $args['has_archive'] ){
 
@@ -170,6 +168,9 @@ class WPS_Config {
 
                         if( !isset($args['rewrite']['pages']) )
                             $args['rewrite']['pages'] = true;
+
+                        if( !isset($args['rewrite']['feed']) )
+                            $args['rewrite']['feed'] = false;
                     }
                 }
 
