@@ -158,6 +158,8 @@ class WPS_Config {
                         $args['rewrite']['slug'] = $slug;
                 }
 
+                $args['rewrite']['paged'] = false;
+
                 if( $args['has_archive'] ){
 
                     $archive = get_option( $post_type. '_rewrite_archive' );
