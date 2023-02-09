@@ -97,7 +97,9 @@ class WPS_Config {
             'public' => true,
             'has_archive' => true,
             'rewrite' => [
-                'pages'=>true
+                'pages'=>true,
+                'paged'=>false,
+                'feeds'=>false
             ],
             'supports' => [],
             'menu_position' => 25,
@@ -162,16 +164,14 @@ class WPS_Config {
 
                     $archive = get_option( $post_type. '_rewrite_archive' );
 
-                    if( !empty($archive) ){
-
+                    if( !empty($archive) )
                         $args['has_archive'] = $archive;
 
-                        if( !isset($args['rewrite']['pages']) )
-                            $args['rewrite']['pages'] = true;
+                    if( !isset($args['rewrite']['pages']) )
+                        $args['rewrite']['pages'] = true;
 
-                        if( !isset($args['rewrite']['feed']) )
-                            $args['rewrite']['feed'] = false;
-                    }
+                    if( !isset($args['rewrite']['feeds']) )
+                        $args['rewrite']['feeds'] = false;
                 }
 
                 if( !($args['query_var']??true) && !isset($args['show_in_nav_menus']) )
@@ -437,6 +437,7 @@ class WPS_Config {
         $default_args = [
             'public' => true,
             'hierarchical' => true,
+            'rewrite' => [],
             'show_admin_column' => true,
             'capabilities'=> [
                 'manage_terms' => 'manage_categories',
@@ -448,7 +449,7 @@ class WPS_Config {
 
         foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ) {
 
-            if( !in_array($taxonomy, ['category', 'tag', 'edition', 'theme']) ) {
+            if( !in_array($taxonomy, ['category', 'tag', 'edition', 'theme', 'type']) ) {
 
                 $args = array_merge($default_args, $args);
                 $name = str_replace('_', ' ', $args['name'] ?? $taxonomy);
@@ -463,10 +464,16 @@ class WPS_Config {
                     'search_items' => 'Search in ' . $this->plural($name)
                 ];
 
+                if( is_string($args['rewrite']) )
+                    $args['rewrite'] = ['slug'=> $args['rewrite']];
+
+                if( !isset($args['rewrite']['feed']) )
+                    $args['rewrite']['feed'] = false;
+
                 $slug = $this->getSlug( $taxonomy );
 
                 if(!empty($slug))
-                    $args['rewrite'] = ['slug'=>$slug];
+                    $args['rewrite']['slug'] = $slug;
 
                 if (isset($args['labels']))
                     $args['labels'] = array_merge($labels, $args['labels']);
@@ -797,17 +804,29 @@ class WPS_Config {
      */
     public function disableFeatures()
     {
-        if( !in_array('post', $this->support) )
+        if( !in_array('post', $this->support) ){
+
             register_post_type('post', []);
+            remove_permastruct('post');
+        }
 
-        if( !in_array('page', $this->support) )
+        if( !in_array('page', $this->support) ){
+
             register_post_type('page', []);
+            remove_permastruct('page');
+        }
 
-        if( !in_array('category', $this->support) )
-            register_taxonomy( 'category', array() );
+        if( !in_array('category', $this->support) ){
 
-        if( !in_array('tag', $this->support) )
+            register_taxonomy( 'category', []);
+            remove_permastruct('category');
+        }
+
+        if( !in_array('tag', $this->support) ){
+
             register_taxonomy( 'post_tag', array() );
+            remove_permastruct('post_tag');
+        }
     }
 
 
