@@ -59,7 +59,8 @@ class WPS_Config {
                 'mode'              => $args['mode']??'preview',
                 'keywords'          => $args['keywords']??[],
                 'post_types'        => $args['post_types']??[],
-                'supports'        => $args['supports']??[]
+                'supports'          => $args['supports']??[],
+                'front'             => $args['front']??true
             ];
 
             $block['render_callback'] = apply_filters('block_render_callback', false);
