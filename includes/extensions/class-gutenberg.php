@@ -10,6 +10,7 @@ class WPS_Gutenberg
 	 */
 	public function removeBlockLibrary(){
 
+        wp_dequeue_style('core-block-supports');
 	    wp_dequeue_style( 'wp-block-library' );
 	    wp_dequeue_style( 'wp-block-library-theme' );
 	    wp_dequeue_style( 'wc-block-style' ); // REMOVE WOOCOMMERCE BLOCK CSS
@@ -80,6 +81,9 @@ class WPS_Gutenberg
     {
 	    global $_config;
 
+        if ( $_config->get('gutenberg.disable_classic_theme_styles', true) )
+            remove_action( 'wp_enqueue_scripts', 'wp_enqueue_classic_theme_styles' );
+
 		if( is_admin() ){
 
 			if( $_config->get('gutenberg.replace_reset_styles', true) )
@@ -94,8 +98,12 @@ class WPS_Gutenberg
         }
 		else{
 
-			if ( $_config->get('gutenberg.remove_block_library', true) )
+
+			if ( $_config->get('gutenberg.remove_block_library', true) ){
+
 				add_action( 'wp_enqueue_scripts', [$this, 'removeBlockLibrary'], 100 );
+                add_action( 'wp_footer', [$this, 'removeBlockLibrary']);
+            }
 
 			if ( !$_config->get('gutenberg.load_remote_block_patterns', false) )
 				add_action( 'should_load_remote_block_patterns', '__return_false' );
