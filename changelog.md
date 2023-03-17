@@ -1,3 +1,11 @@
+### 1.1.6
+- Remove unnecessary Css added by Wordpress 6.1
+- Allow non-breakable space in editor
+- WordPress link selector now display term and post archive on search
+
+### 1.1.5
+- Better post type and taxonomy registration/de-registration
+
 ### 1.1.4
 - Bugfix using config getter
 

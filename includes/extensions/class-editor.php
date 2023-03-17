@@ -9,11 +9,24 @@ class WPS_Editor {
 
 
     /**
+     * Allow non-breakable space
+     * @param $init
+     * @return array
+     */
+    public function tinyMceInit( $init )
+    {
+        $init['entities'] = '160,nbsp,38,amp,60,lt,62,gt';
+        $init['entity_encoding'] = 'named';
+
+        return $init;
+    }
+
+    /**
      * Configure Tiny MCE first line buttons
      * @param $mce_buttons
      * @return array
      */
-    public function TinyMceButtons( $mce_buttons )
+    public function tinyMceButtons( $mce_buttons )
     {
         $mce_buttons = $this->config->get('mce_buttons', ['formatselect','bold','italic','underline','sup','strikethrough','bullist','numlist','blockquote','hr','alignleft',
             'aligncenter','alignright','alignjustify','link','unlink','wp_more','spellchecker','wp_adv','dfw']);
@@ -209,6 +222,60 @@ class WPS_Editor {
         return $actions;
     }
 
+    /**
+     * @param $results
+     * @param $query
+     * @return mixed
+     */
+    function linkQueryTermLinking($results, $query ) {
+
+        if( !($query['s']??false) || ($query['offset']??0) )
+            return $results;
+
+        $taxonomies = get_taxonomies(['publicly_queryable' => true]);
+
+        $terms = get_terms( $taxonomies, [
+            'name__like' => $query['s'],
+            'number'     => 20,
+            'hide_empty' => true,
+        ]);
+
+        $charset = get_bloginfo('charset');
+
+        //* Terms
+        if ( ! empty( $terms ) && ! is_wp_error( $terms ) ):
+            foreach( $terms as $term ):
+                $results[] = [
+                    'ID'        => 'term-' . $term->term_id,
+                    'title'     => html_entity_decode($term->name, ENT_QUOTES, $charset) ,
+                    'permalink' => get_term_link($term->term_id , $term->taxonomy) ,
+                    'info'      => get_taxonomy($term->taxonomy)->labels->singular_name,
+                ];
+            endforeach;
+        endif;
+
+        $match = '/' . remove_accents( $query['s'] ) . '/i';
+
+        foreach( $query['post_type'] as $post_type ) :
+
+            $pt_archive_link = get_post_type_archive_link($post_type);
+            $pt_obj = get_post_type_object($post_type);
+
+            if ( $pt_archive_link !== false && $pt_obj->has_archive !== false ) : // Add only post type with 'has_archive'
+                if ( preg_match( $match, remove_accents( $pt_obj->labels->name ) ) > 0 ) :
+                    $results[] = [
+                        'ID' => $pt_obj->has_archive,
+                        'title' => trim( esc_html( strip_tags($pt_obj->labels->name) ) ) ,
+                        'permalink' => $pt_archive_link,
+                        'info' => 'Archive'
+                    ];
+                endif;
+            endif; //end post type archive links in link_query
+        endforeach;
+
+        return $results;
+    }
+
 
     /**
      * Editor constructor.
@@ -226,17 +293,19 @@ class WPS_Editor {
 
         if( is_admin() )
         {
-            add_filter('mce_buttons', [$this, 'TinyMceButtons']);
-            add_action('admin_menu', [$this, 'adminMenu']);
-            add_action('wp_dashboard_setup', [$this, 'disableDashboardWidgets']);
-            add_action('admin_head', [$this, 'addCustomAdminHeader']);
-            add_action('admin_init', [$this, 'adminInit'] );
+            add_filter( 'wp_link_query', [$this, 'linkQueryTermLinking'], 99, 2 );
+            add_filter( 'mce_buttons', [$this, 'tinyMceButtons']);
+            add_filter( 'tiny_mce_before_init', [$this,'tinyMceInit']);
+            add_action( 'admin_menu', [$this, 'adminMenu']);
+            add_action( 'wp_dashboard_setup', [$this, 'disableDashboardWidgets']);
+            add_action( 'admin_head', [$this, 'addCustomAdminHeader']);
+            add_action( 'admin_init', [$this, 'adminInit'] );
             add_action( 'dashboard_glance_items', [$this, 'cptAtAGlance'] );
 
             add_filter( 'post_row_actions', [$this, 'rowActions'], 10, 2);
             add_filter( 'page_row_actions', [$this, 'rowActions'], 10, 2);
 
-            add_filter('admin_body_class', function ( $classes ) {
+            add_filter( 'admin_body_class', function ( $classes ) {
 
                 $data = get_userdata( get_current_user_id() );
                 $caps = [];
