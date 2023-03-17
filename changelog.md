@@ -1,3 +1,6 @@
+### 1.1.7
+- Fix broken clone when using blocks and Multisite language switcher plugin
+
 ### 1.1.6
 - Remove unnecessary Css added by Wordpress 6.1
 - Allow non-breakable space in editor

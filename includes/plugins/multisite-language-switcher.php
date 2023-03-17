@@ -41,8 +41,8 @@ class WPS_Multisite_Language_Switcher {
 
             if( !is_wp_error($post) )
             {
-                //remove tags
-                unset($post['tags_input']);
+                //remove tags and parent
+                unset($post['tags_input'], $post['post_parent']);
 
                 // get the original meta
                 $meta = get_post_meta($_GET['post_id']);
@@ -105,8 +105,8 @@ class WPS_Multisite_Language_Switcher {
 
                 $inserted_post_id = wp_insert_post($post);
 
-                // delete post_name
-                $wpdb->query("UPDATE $wpdb->posts SET `post_name`='' WHERE `ID`=".$inserted_post_id);
+                // update raw content
+                $wpdb->update($wpdb->posts, ['post_name'=>'', 'post_content'=>$post['post_content']], ['ID'=>$inserted_post_id]);
 
                 // register original post
                 add_option('msls_'.$inserted_post_id, [$language => $_GET['post_id']], '', 'no');
