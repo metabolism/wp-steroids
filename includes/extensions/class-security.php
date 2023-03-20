@@ -23,10 +23,22 @@ class WPS_Security {
 	 * @param $user_id
 	 * @return array
 	 */
-	public function addUnfilteredHtmlCapabilityToEditors( $caps, $cap, $user_id )
+	public function mapMetaCap( $caps, $cap, $user_id )
 	{
-		if ( 'unfiltered_html' === $cap && user_can( $user_id, 'editor' ) )
-			$caps = array( 'unfiltered_html' );
+        $user_meta = get_userdata($user_id);
+
+        if( array_intersect(['editor', 'administrator'], $user_meta->roles) ){
+
+            if ( 'unfiltered_html' === $cap ){
+
+                $caps = ['unfiltered_html'];
+            }
+            elseif ('manage_privacy_options' === $cap) {
+
+                $manage_name = is_multisite() ? 'manage_network' : 'manage_options';
+                $caps = array_diff($caps, [ $manage_name ]);
+            }
+        }
 
 		return $caps;
 	}
@@ -215,7 +227,7 @@ class WPS_Security {
 		{
 			add_action( 'admin_init', [$this, 'adminInit'] );
 			add_action( 'wp_handle_upload_prefilter', [$this, 'cleanFilename']);
-			add_filter( 'map_meta_cap', [$this, 'addUnfilteredHtmlCapabilityToEditors'], 1, 3 );
+			add_filter( 'map_meta_cap', [$this, 'mapMetaCap'], 1, 3 );
 			add_filter( 'update_right_now_text', '__return_empty_string' );
 			add_action( 'admin_head', [$this, 'hideUpdateNotice'], 1 );
 		}
