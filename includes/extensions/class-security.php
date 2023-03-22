@@ -27,7 +27,7 @@ class WPS_Security {
 	{
         $user_meta = get_userdata($user_id);
 
-        if( array_intersect(['editor', 'administrator'], $user_meta->roles) ){
+        if( array_intersect(['editor', 'administrator'], $user_meta->roles??[]) ){
 
             if ( 'unfiltered_html' === $cap ){
 
