@@ -25,6 +25,8 @@ class WPS_Security {
 	 */
 	public function mapMetaCap( $caps, $cap, $user_id )
 	{
+        if ( !is_user_logged_in() ) return $caps;
+
         $user_meta = get_userdata($user_id);
 
         if( array_intersect(['editor', 'administrator'], $user_meta->roles??[]) ){
@@ -223,11 +225,12 @@ class WPS_Security {
 		if( $_config->get('security.disable_update', true) )
 			$this->disableUpdate();
 
+        add_filter( 'map_meta_cap', [$this, 'mapMetaCap'], 1, 3 );
+
 		if( is_admin() )
 		{
 			add_action( 'admin_init', [$this, 'adminInit'] );
 			add_action( 'wp_handle_upload_prefilter', [$this, 'cleanFilename']);
-			add_filter( 'map_meta_cap', [$this, 'mapMetaCap'], 1, 3 );
 			add_filter( 'update_right_now_text', '__return_empty_string' );
 			add_action( 'admin_head', [$this, 'hideUpdateNotice'], 1 );
 		}
