@@ -219,7 +219,7 @@ class WPS_Advanced_Custom_Fields{
      */
     public function render_field($field) {
 
-        if( in_array($field['type'], ['text','textarea','wysiwyg']) ){
+        if( in_array($field['type'], ['text','textarea','wysiwyg','inline_editor']) ){
 
             if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY )
                 echo '<a class="wps-translate wps-translate--google" title="'.__('Translate with Google', 'wp-steroids').'"></a>';

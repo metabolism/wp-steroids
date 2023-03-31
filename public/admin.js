@@ -49,6 +49,7 @@
 			}
 
 			var $input = $inputs.first()
+			var $editable = $input.prev('[contenteditable]');
 			var wysiwyg = $input.hasClass('wp-editor-area');
 			var value = wysiwyg ? tinymce.editors[$input.attr('id')].getContent() : $input.val();
 
@@ -67,10 +68,17 @@
 
 						var translations = response.text;
 
-						if( wysiwyg )
+						if( wysiwyg ){
+
 							tinymce.editors[$input.attr('id')].setContent(translations)
-						else
+						}
+						else{
+
+							if( $editable.length )
+								$editable.html(translations)
+
 							$input.val(translations).change()
+						}
 					}
 				}).fail(function(response) {
 

@@ -206,6 +206,7 @@ input.large-text, textarea.large-text { width: 35.7rem }
 #tag-post-content .acf-field-text .wps-translate{ margin-top: 4px }
 .acf-field-wysiwyg .wps-translate, #wp-advanced_description-wrap .wps-translate{ transform: none; top: auto; bottom: 22px }
 #wp-content-wrap .wps-translate{ transform: none; top: auto; bottom: 0 }
+.acf-field-inline-editor .wps-translate{ transform: none; top: auto; bottom: 2px }
 .acf-field-textarea .wps-translate, .input-wrapper--textarea .wps-translate{ bottom: 5px; transform: none; top: auto }
 textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top: auto }
 #postexcerpt .wps-translate{ bottom: 12px; transform: none; top: auto; right: 14px }
