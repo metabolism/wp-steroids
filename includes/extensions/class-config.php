@@ -151,14 +151,18 @@ class WPS_Config {
                 if( !isset($args['capability_type']) && $args['map_meta_cap'] )
                     $args['capability_type'] = [$post_type, $this->plural($post_type)];
 
+                if( is_bool($args['rewrite']) && $args['rewrite'] )
+                    $args['rewrite'] = ['slug'=>$post_type];
+
                 if( is_string($args['rewrite']) )
                     $args['rewrite'] = ['slug'=> $args['rewrite']];
 
-                $args['rewrite']['paged'] = false;
+                if( is_array($args['rewrite']) )
+                    $args['rewrite']['paged'] = false;
 
                 $slug = $this->getSlug( $post_type );
 
-                if(!empty($slug))
+                if( !empty($slug) && is_array($args['rewrite']) )
                     $args['rewrite']['slug'] = $slug;
 
                 if( $args['has_archive'] ){
@@ -168,10 +172,10 @@ class WPS_Config {
                     if( !empty($archive) )
                         $args['has_archive'] = $archive;
 
-                    if( !isset($args['rewrite']['pages']) )
+                    if( !isset($args['rewrite']['pages']) && is_array($args['rewrite']) )
                         $args['rewrite']['pages'] = true;
 
-                    if( !isset($args['rewrite']['feeds']) )
+                    if( !isset($args['rewrite']['feeds']) && is_array($args['rewrite']) )
                         $args['rewrite']['feeds'] = false;
                 }
 
@@ -465,6 +469,9 @@ class WPS_Config {
                     'search_items' => 'Search in ' . $this->plural($name)
                 ];
 
+                if( is_bool($args['rewrite']) && $args['rewrite'] )
+                    $args['rewrite'] = ['slug'=>$taxonomy];
+
                 if( is_string($args['rewrite']) )
                     $args['rewrite'] = ['slug'=> $args['rewrite']];
 
@@ -473,7 +480,7 @@ class WPS_Config {
 
                 $slug = $this->getSlug( $taxonomy );
 
-                if(!empty($slug))
+                if( !empty($slug) && is_array($args['rewrite']) )
                     $args['rewrite']['slug'] = $slug;
 
                 if (isset($args['labels']))
