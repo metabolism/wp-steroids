@@ -73,6 +73,8 @@ body.mce-fullscreen .interface-complementary-area .components-panel__header{ dis
     #addtag{ padding-right: 0 }
 }
 
+.wp-list-table.table-view-list{ table-layout: auto }
+
 /* Quick redesign */
 #footer-thankyou{ display: none }
 h1, h2, h3, h4, h5, h6, #adminmenu .wp-submenu li.current, #adminmenu .wp-submenu li.current a, #adminmenu .wp-submenu li.current a:hover,
@@ -273,3 +275,7 @@ textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top
 .wpseo-meta-section, .wpseo-meta-section-react, .wpseo-metabox-content{ max-width: none }
 .wpseo-metabox-menu ul{ padding-left: 1px }
 .wpseo-metabox-menu ul li{ box-shadow: none }
+
+/* Multisite language switcher */
+th#mslscol .flag-icon{ width: 20px }
+th#mslscol, td.mslscol.column-mslscol{ width: 1%; white-space: nowrap }
