@@ -22,6 +22,137 @@ class WPS_Multisite_Language_Switcher {
         return $WPLANG;
     }
 
+    public function load_edit_tags(){
+
+        if( isset($_GET['blog_id'], $_GET['tag_ID'], $_GET['clone']))
+        {
+            $main_site_id = get_main_network_id();
+            $current_site_id = get_current_blog_id();
+
+            // switch to origin blog
+            switch_to_blog($_GET['blog_id']);
+
+            // get the original $term
+            $term = get_term($_GET['tag_ID']);
+
+            if( !is_wp_error($term) )
+            {
+                //get original translations
+                $translations = get_option('msls_term_'.$_GET['tag_ID'],[]);
+
+                // get the original meta
+                $meta = get_term_meta($_GET['tag_ID']);
+
+                // get the original language, fallback to en
+                $language = get_option('WPLANG');
+                $language = empty($language)?'en_US':$language;
+
+                $translations[$language] = $_GET['tag_ID'];
+
+                // return to target blog
+                restore_current_blog();
+
+                $inserted_tag_id = wp_insert_term($term->name, $term->taxonomy, ['description'=>$term->description]);
+
+                if( is_wp_error($inserted_tag_id) )
+                    wp_die($inserted_tag_id->get_error_message());
+
+                $inserted_tag_id = $inserted_tag_id['term_id'];
+
+                // register original term
+                add_option('msls_term_'.$inserted_tag_id, $translations, '', 'no');
+
+                // add and filter meta
+                foreach($meta as $key=>$value){
+
+                    $value = maybe_unserialize($value[0]);
+
+                    if(empty($value))
+                        continue;
+
+                    if( function_exists('get_field_object') && is_string($value) )
+                    {
+                        $field = get_field_object($value);
+
+                        if( isset($field['type']) && in_array($field['type'], ['image', 'file']) )
+                        {
+                            $meta_key = substr($key, 1);
+                            $meta_value = $meta[$meta_key][0]??'';
+
+                            if( !empty($meta_value)){
+
+                                if( $current_site_id == $main_site_id )
+                                {
+                                    switch_to_blog($_GET['blog_id']);
+                                    $original_id = get_post_meta($meta_value, '_wp_original_attachment_id', true);
+                                    restore_current_blog();
+
+                                    if( $original_id )
+                                    {
+                                        $meta[$meta_key][0] = $original_id;
+                                        update_post_meta($inserted_tag_id, substr($key, 1), $original_id);
+
+                                        continue;
+                                    }
+                                }
+                                else
+                                {
+                                    $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$meta_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
+
+                                    if( count($attachments) ) {
+
+                                        $meta[$meta_key][0] = $attachments[0];
+                                        update_post_meta($inserted_tag_id, substr($key, 1), $attachments[0]);
+
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    update_term_meta($inserted_tag_id, $key, $value);
+                }
+
+                // get the target language, fallback to us
+                $language = get_option('WPLANG');
+                $language = empty($language)?'en_US':$language;
+
+                $translations[$language] = $inserted_tag_id;
+
+                //update other terms
+                foreach ( get_sites() as $site ) {
+
+                    if ( (int) $site->blog_id !== $current_site_id ) {
+
+                        switch_to_blog( $site->blog_id );
+
+                        $blog_language = get_option('WPLANG');
+                        $blog_language = empty($blog_language)?'en_US':$blog_language;
+
+                        foreach ($translations as $_language=>$tag_id){
+
+                            if( $_language == $blog_language ){
+
+                                $_translations = $translations;
+
+                                unset($_translations[$blog_language]);
+                                update_option('msls_term_'.$tag_id, $_translations);
+                            }
+                        }
+
+                        // return to original blog
+                        restore_current_blog();
+                    }
+                }
+
+                // return to edit term
+                wp_redirect( get_admin_url($current_site_id, 'term.php?taxonomy=thematic&tag_ID='.$inserted_tag_id));
+                exit;
+            }
+        }
+    }
+
     public function load_post_new(){
 
         global $wpdb;
@@ -107,6 +238,9 @@ class WPS_Multisite_Language_Switcher {
                 }
 
                 $inserted_post_id = wp_insert_post($post);
+
+                if( is_wp_error($inserted_post_id) )
+                    wp_die($inserted_post_id->get_error_message());
 
                 // update raw content
                 $wpdb->update($wpdb->posts, ['post_name'=>'', 'post_content'=>$post['post_content']], ['ID'=>$inserted_post_id]);
@@ -229,14 +363,27 @@ class WPS_Multisite_Language_Switcher {
     function get_edit_new($path){
 
         global $current_blog;
-        $current_id = $_GET['post'] ?? get_the_ID();
 
-        if( $current_id ) {
+        $args = parse_url($path);
+        parse_str($args['query']??'', $args);
+
+        if( !isset($args['msls_id']) )
+            return $path;
+
+        if( isset($args['taxonomy']) ) {
 
             $path = add_query_arg([
                 'clone' => 'true',
                 'blog_id' => $current_blog->blog_id,
-                'post_id' => $current_id
+                'tag_ID' => $args['msls_id']
+            ], $path);
+        }
+        elseif( isset($args['post_type']) ) {
+
+            $path = add_query_arg([
+                'clone' => 'true',
+                'blog_id' => $current_blog->blog_id,
+                'post_id' => $args['msls_id']
             ], $path);
         }
 
@@ -372,6 +519,7 @@ class WPS_Multisite_Language_Switcher {
 
                     add_filter( 'msls_admin_icon_get_edit_new', [$this, 'get_edit_new']);
                     add_action( 'load-post-new.php', [$this, 'load_post_new']);
+                    add_action( 'load-edit-tags.php', [$this, 'load_edit_tags']);
                 }
 
                 add_filter('admin_body_class', function ( $classes ) {
