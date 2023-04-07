@@ -198,6 +198,7 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .acf-menu-settings .acf-field .acf-label label{ font-weight: 400; opacity: 0.8 }
 .acf-fields.acf-menu-item-fields > .acf-field .acf-label label{ margin-bottom: 5px; color: #646970; font-style: normal }
 .acf-block-panel .acf-block-fields:last-of-type{ border-bottom: 0 }
+.meta-box-sortables *+.acf-postbox{ border-top: 1px solid #e0e0e0!important }
 
 /* Translation */
 .wps-translate{ cursor: pointer; display: none; background: no-repeat center; background-size: contain; position: absolute; right: 5px; top: 50%; transform: translateY(-50%) }
