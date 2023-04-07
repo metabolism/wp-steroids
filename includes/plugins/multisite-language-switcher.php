@@ -1,8 +1,6 @@
 <?php
 
-use lloc\Msls\MslsOptionsPost;
 use lloc\Msls\MslsPlugin;
-use Metabolism\WordpressBundle\Entity\Block;
 
 /**
  * Class
@@ -31,7 +29,7 @@ class WPS_Multisite_Language_Switcher {
         if( isset($_GET['blog_id'], $_GET['post_id'], $_GET['clone']))
         {
             $main_site_id = get_main_network_id();
-	        $current_site_id = get_current_blog_id();
+            $current_site_id = get_current_blog_id();
 
             // switch to origin blog
             switch_to_blog($_GET['blog_id']);
@@ -44,12 +42,17 @@ class WPS_Multisite_Language_Switcher {
                 //remove tags and parent
                 unset($post['tags_input'], $post['post_parent']);
 
+                //get original translations
+                $translations = get_option('msls_'.$_GET['post_id'],[]);
+
                 // get the original meta
                 $meta = get_post_meta($_GET['post_id']);
 
                 // get the original language, fallback to en
                 $language = get_option('WPLANG');
-                $language = empty($language)?'en':$language;
+                $language = empty($language)?'en_US':$language;
+
+                $translations[$language] = $_GET['post_id'];
 
                 // empty id field, to tell WordPress that this will be a new post
                 $post['ID'] = '';
@@ -60,48 +63,48 @@ class WPS_Multisite_Language_Switcher {
                 // insert the post as draft
                 $post['post_status'] = 'draft';
 
-	            // parse block
-	            $blocks = parse_blocks($post['post_content']);
+                // parse block
+                $blocks = parse_blocks($post['post_content']);
 
-	            foreach ($blocks as $block){
+                foreach ($blocks as $block){
 
-		            if( class_exists('ACF') && !empty($block['attrs']) ){
+                    if( class_exists('ACF') && !empty($block['attrs']) ){
 
-			            foreach ( $block['attrs']['data']??[] as $key=>$value ){
+                        foreach ( $block['attrs']['data']??[] as $key=>$value ){
 
-				            if( substr($key, 0, 1) == '_' && substr($value, 0, 6) == 'field_' ){
+                            if( substr($key, 0, 1) == '_' && substr($value, 0, 6) == 'field_' ){
 
-					            $field = get_field_object($value);
+                                $field = get_field_object($value);
 
-					            if( isset($field['type']) && in_array($field['type'], ['image', 'file']) )
-					            {
-						            $_key  = substr($key, 1);
-						            $_value = $block['attrs']['data'][$_key]??'';
+                                if( isset($field['type']) && in_array($field['type'], ['image', 'file']) )
+                                {
+                                    $_key  = substr($key, 1);
+                                    $_value = $block['attrs']['data'][$_key]??'';
 
-						            if( !empty($_value)){
+                                    if( !empty($_value)){
 
-							            if( $current_site_id == $main_site_id )
-							            {
-								            switch_to_blog($_GET['blog_id']);
-								            $original_id = get_post_meta($_value, '_wp_original_attachment_id', true);
-								            restore_current_blog();
+                                        if( $current_site_id == $main_site_id )
+                                        {
+                                            switch_to_blog($_GET['blog_id']);
+                                            $original_id = get_post_meta($_value, '_wp_original_attachment_id', true);
+                                            restore_current_blog();
 
-								            if( $original_id )
-									            $post['post_content'] = str_replace('"'.$_key.'":'.$_value, '"'.$_key.'":'.$original_id, $post['post_content']);
-							            }
-							            else
-							            {
-								            $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
+                                            if( $original_id )
+                                                $post['post_content'] = str_replace('"'.$_key.'":'.$_value, '"'.$_key.'":'.$original_id, $post['post_content']);
+                                        }
+                                        else
+                                        {
+                                            $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
 
-								            if( count($attachments) )
-									            $post['post_content'] = str_replace('"'.$_key.'":'.$_value, '"'.$_key.'":'.$attachments[0], $post['post_content']);
-							            }
-						            }
-					            }
-				            }
-			            }
-		            }
-	            }
+                                            if( count($attachments) )
+                                                $post['post_content'] = str_replace('"'.$_key.'":'.$_value, '"'.$_key.'":'.$attachments[0], $post['post_content']);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
                 $inserted_post_id = wp_insert_post($post);
 
@@ -109,7 +112,7 @@ class WPS_Multisite_Language_Switcher {
                 $wpdb->update($wpdb->posts, ['post_name'=>'', 'post_content'=>$post['post_content']], ['ID'=>$inserted_post_id]);
 
                 // register original post
-                add_option('msls_'.$inserted_post_id, [$language => $_GET['post_id']], '', 'no');
+                add_option('msls_'.$inserted_post_id, $translations, '', 'no');
 
                 // add and filter meta
                 foreach($meta as $key=>$value){
@@ -146,7 +149,7 @@ class WPS_Multisite_Language_Switcher {
                             if( isset($field['type']) && in_array($field['type'], ['image', 'file']) )
                             {
                                 $meta_key = substr($key, 1);
-                                $meta_value = $meta[$meta_key][0];
+                                $meta_value = $meta[$meta_key][0]??'';
 
                                 if( !empty($meta_value)){
 
@@ -186,19 +189,38 @@ class WPS_Multisite_Language_Switcher {
 
                 // get the target language, fallback to us
                 $language = get_option('WPLANG');
-                $language = empty($language)?'us':$language;
+                $language = empty($language)?'en_US':$language;
 
-                // switch to origin blog
-                switch_to_blog($_GET['blog_id']);
+                $translations[$language] = $inserted_post_id;
 
-                // register new post
-                add_option('msls_'.$_GET['post_id'], [$language => $inserted_post_id], '', 'no');
+                //update other posts
+                foreach ( get_sites() as $site ) {
 
-                // return to original blog
-                restore_current_blog();
+                    if ( (int) $site->blog_id !== $current_site_id ) {
+
+                        switch_to_blog( $site->blog_id );
+
+                        $blog_language = get_option('WPLANG');
+                        $blog_language = empty($blog_language)?'en_US':$blog_language;
+
+                        foreach ($translations as $_language=>$post_id){
+
+                            if( $_language == $blog_language ){
+
+                                $_translations = $translations;
+
+                                unset($_translations[$blog_language]);
+                                update_option('msls_'.$post_id, $_translations);
+                            }
+                        }
+
+                        // return to original blog
+                        restore_current_blog();
+                    }
+                }
 
                 // return to edit page
-                wp_redirect( get_admin_url(get_current_blog_id(), 'post.php?post='.$inserted_post_id.'&action=edit'));
+                wp_redirect( get_admin_url($current_site_id, 'post.php?post='.$inserted_post_id.'&action=edit'));
                 exit;
             }
         }
@@ -324,14 +346,14 @@ class WPS_Multisite_Language_Switcher {
     }
 
 
-	/**
-	 * MSLSProvider constructor.
-	 */
-	public function __construct(){
+    /**
+     * MSLSProvider constructor.
+     */
+    public function __construct(){
 
-		if( is_multisite() && defined('MSLS_PLUGIN_VERSION') ){
+        if( is_multisite() && defined('MSLS_PLUGIN_VERSION') ){
 
-			if( is_admin() ) {
+            if( is_admin() ) {
 
                 global $_config;
 
@@ -340,7 +362,13 @@ class WPS_Multisite_Language_Switcher {
                     add_filter('msls_metabox_post_select_title', function (){ return __( 'Language Switcher', 'wp-steroids' ); });
                 });
 
-				if( $_config->get('multisite.clone_post', false) ){
+                add_filter( 'msls_meta_box_render_select_hierarchical', function ($args){
+
+                    $args['post_status'] = 'publish,draft';
+                    return $args;
+                });
+
+                if( $_config->get('multisite.clone_post', false) ){
 
                     add_filter( 'msls_admin_icon_get_edit_new', [$this, 'get_edit_new']);
                     add_action( 'load-post-new.php', [$this, 'load_post_new']);
@@ -378,13 +406,13 @@ class WPS_Multisite_Language_Switcher {
             add_action( 'admin_bar_menu', [$this, 'wp_admin_bar_my_sites_menu'], 10 );
 
             //todo: find why $url is buggy
-           add_filter( 'mlsl_output_get_alternate_links', function ($url, $blog){
+            add_filter( 'mlsl_output_get_alternate_links', function ($url, $blog){
 
-               if( strpos($url, 'http') === false )
-                   return null;
+                if( strpos($url, 'http') === false )
+                    return null;
 
-               return $url;
+                return $url;
             }, 10, 2);
         }
-	}
+    }
 }
