@@ -147,7 +147,7 @@ class WPS_Multisite_Language_Switcher {
                 }
 
                 // return to edit term
-                wp_redirect( get_admin_url($current_site_id, 'term.php?taxonomy=thematic&tag_ID='.$inserted_tag_id));
+                wp_redirect( get_admin_url($current_site_id, 'term.php?taxonomy='.$term->taxonomy.'&tag_ID='.$inserted_tag_id));
                 exit;
             }
         }
