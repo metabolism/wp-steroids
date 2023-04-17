@@ -276,6 +276,17 @@ class WPS_Editor {
         return $results;
     }
 
+    /**
+     * @param $mimes
+     * @return mixed
+     */
+    public function uploadMimes($mimes )
+    {
+        $mimes['json'] = 'text/plain';
+
+        return $mimes;
+    }
+
 
     /**
      * Editor constructor.
@@ -293,6 +304,7 @@ class WPS_Editor {
 
         if( is_admin() )
         {
+            add_filter( 'upload_mimes', [$this, 'uploadMimes']);
             add_filter( 'wp_link_query', [$this, 'linkQueryTermLinking'], 99, 2 );
             add_filter( 'mce_buttons', [$this, 'tinyMceButtons']);
             add_filter( 'tiny_mce_before_init', [$this,'tinyMceInit']);
