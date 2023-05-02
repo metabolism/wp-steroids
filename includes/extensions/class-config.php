@@ -10,6 +10,7 @@ class WPS_Config {
     /** @var Data $config */
     protected $config;
     protected $support;
+    protected $loaded=false;
 
     /**
      * Get plural from name
@@ -33,6 +34,8 @@ class WPS_Config {
 
         $this->updateSearchStructure();
         $this->updatePageStructure();
+
+        $this->loaded = true;
     }
 
     /**
@@ -114,6 +117,7 @@ class WPS_Config {
 
         foreach ( $this->config->get('post_type', []) as $post_type => $args )
         {
+
             if( !in_array($post_type, ['post', 'page', 'edition']) )
             {
                 if( (isset($args['enable_for_blogs']) && !in_array($current_blog_id, (array)$args['enable_for_blogs'])) || (isset($args['disable_for_blogs']) && in_array($current_blog_id, (array)$args['disable_for_blogs'])))
@@ -210,7 +214,7 @@ class WPS_Config {
 
                 register_post_type($post_type, $args);
 
-                if( $is_admin )
+                if( $is_admin && !$this->loaded )
                 {
                     if( isset($args['columns']) )
                     {
@@ -308,30 +312,33 @@ class WPS_Config {
             }
         }
 
-        $roles = array('editor','administrator');
+        if( !$this->loaded ){
 
-        // Loop through each role and assign capabilities
-        foreach($roles as $the_role) {
+            $roles = array('editor','administrator');
 
-            if( !$role = get_role($the_role) )
-                continue;
+            // Loop through each role and assign capabilities
+            foreach($roles as $the_role) {
 
-            foreach ( $this->config->get('post_type', []) as $post_type => $args ){
+                if( !$role = get_role($the_role) )
+                    continue;
 
-                if( ($args['map_meta_cap']??false) && (($args['capability_type']??'') != 'page' && ($args['capability_type']??'') != 'post')){
+                foreach ( $this->config->get('post_type', []) as $post_type => $args ){
 
-                    $post_types = $this->plural($post_type);
+                    if( ($args['map_meta_cap']??false) && (($args['capability_type']??'') != 'page' && ($args['capability_type']??'') != 'post')){
 
-                    $role->add_cap( 'read_'.$post_type);
-                    $role->add_cap( 'read_private_'.$post_types );
-                    $role->add_cap( 'edit_'.$post_type );
-                    $role->add_cap( 'edit_'.$post_types );
-                    $role->add_cap( 'edit_others_'.$post_types );
-                    $role->add_cap( 'edit_published_'.$post_types );
-                    $role->add_cap( 'publish_'.$post_types );
-                    $role->add_cap( 'delete_others_'.$post_types );
-                    $role->add_cap( 'delete_private_'.$post_types );
-                    $role->add_cap( 'delete_published_'.$post_types );
+                        $post_types = $this->plural($post_type);
+
+                        $role->add_cap( 'read_'.$post_type);
+                        $role->add_cap( 'read_private_'.$post_types );
+                        $role->add_cap( 'edit_'.$post_type );
+                        $role->add_cap( 'edit_'.$post_types );
+                        $role->add_cap( 'edit_others_'.$post_types );
+                        $role->add_cap( 'edit_published_'.$post_types );
+                        $role->add_cap( 'publish_'.$post_types );
+                        $role->add_cap( 'delete_others_'.$post_types );
+                        $role->add_cap( 'delete_private_'.$post_types );
+                        $role->add_cap( 'delete_published_'.$post_types );
+                    }
                 }
             }
         }
@@ -518,26 +525,29 @@ class WPS_Config {
             }
         }
 
-        $roles = array('editor','administrator');
+        if( !$this->loaded ){
 
-        // Loop through each role and assign capabilities
-        foreach($roles as $the_role) {
+            $roles = array('editor','administrator');
 
-            if( !$role = get_role($the_role) )
-                continue;
+            // Loop through each role and assign capabilities
+            foreach($roles as $the_role) {
 
-            $role->add_cap( 'edit_category');
-            $role->add_cap( 'delete_category' );
-            $role->add_cap( 'assign_category' );
+                if( !$role = get_role($the_role) )
+                    continue;
 
-            foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ) {
+                $role->add_cap( 'edit_category');
+                $role->add_cap( 'delete_category' );
+                $role->add_cap( 'assign_category' );
 
-                if( !empty($args['capabilities']) ){
+                foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ) {
 
-                    foreach ($args['capabilities'] as $capability=>$map){
+                    if( !empty($args['capabilities']) ){
 
-                        if( $map != 'do_not_allow')
-                            $role->add_cap( $map);
+                        foreach ($args['capabilities'] as $capability=>$map){
+
+                            if( $map != 'do_not_allow')
+                                $role->add_cap( $map);
+                        }
                     }
                 }
             }
