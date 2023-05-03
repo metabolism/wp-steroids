@@ -36,9 +36,16 @@ class WPS_Backup {
 
             if ( is_dir( $source ) === true ) {
 
-                $directory = new \RecursiveDirectoryIterator($source, FilesystemIterator::SKIP_DOTS);
-                $filtered = new WPS_Dir_Filter($directory, $exclude);
-                $iterator = new \RecursiveIteratorIterator($filtered, \RecursiveIteratorIterator::SELF_FIRST);
+                $filter = function ($file, $key, $iterator) use ($exclude) {
+
+                    if ($iterator->hasChildren() && !in_array($file->getFilename(), $exclude))
+                        return true;
+
+                    return $file->isFile();
+                };
+
+                $innerIterator = new \RecursiveDirectoryIterator($source, FilesystemIterator::SKIP_DOTS);
+                $iterator = new RecursiveIteratorIterator(new RecursiveCallbackFilterIterator($innerIterator, $filter));
 
                 foreach ( $iterator as $file ) {
 

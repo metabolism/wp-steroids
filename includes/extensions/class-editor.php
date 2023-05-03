@@ -106,7 +106,7 @@ class WPS_Editor {
         $wp_admin_bar->remove_node('updates');
         $wp_admin_bar->remove_node('wp-logo');
 
-        if( in_array('edit-comments.php', $this->config->get('remove_menu_page', [])) )
+        if( in_array('edit-comments.php', (array)$this->config->get('remove_menu_page', [])) )
             $wp_admin_bar->remove_node('comments');
     }
 
@@ -115,12 +115,12 @@ class WPS_Editor {
      */
     public function adminMenu()
     {
-        foreach ( $this->config->get('remove_menu_page', []) as $menu )
+        foreach ( (array)$this->config->get('remove_menu_page', []) as $menu )
         {
             remove_menu_page($menu);
         }
 
-        foreach ( $this->config->get('remove_submenu_page', []) as $menu=>$submenu )
+        foreach ( (array)$this->config->get('remove_submenu_page', []) as $menu=>$submenu )
         {
             remove_submenu_page($menu, $submenu);
         }

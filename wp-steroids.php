@@ -7,7 +7,6 @@
  * Author URI: https://github.com/wearemetabolism
  */
 
-use Dallgoot\Yaml;
 use Dflydev\DotAccessData\Data;
 
 
@@ -40,7 +39,7 @@ class WPS{
      * @param $classname
      * @param bool $instantiate
      */
-    private function load($file, $classname, $instantiate=false){
+    private function load($file, $classname, bool $instantiate=false){
 
         if( !file_exists($file) )
             return;
@@ -51,6 +50,10 @@ class WPS{
             new $classname();
     }
 
+    /**
+     * @param $resource
+     * @return void
+     */
     private function importConfig($resource){
 
         /**
@@ -59,23 +62,17 @@ class WPS{
 
         global $_config;
 
-        try{
+        if( !file_exists($resource) || !is_readable($resource) )
+            wp_die( 'File '.basename($resource).'does not exists');
 
-            $config = Yaml::parseFile($resource);
-            $config = json_decode(json_encode($config->jsonSerialize()),true);
-        }
-        catch (Exception $e){
-
-            wp_die(basename($resource).' loading error: '.$e->getMessage());
-        }
+        $config = Spyc::YAMLLoad($resource);
 
         $_config = new Data($config['wordpress']??$config);
-
 
         /**
          * Define constants
          */
-        foreach ($_config->get('define', []) as $constant=>$value){
+        foreach ((array)$_config->get('define', []) as $constant=>$value){
 
             if( !defined(strtoupper($constant)) ){
 

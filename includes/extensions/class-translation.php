@@ -1,7 +1,5 @@
 <?php
 
-use Dallgoot\Yaml;
-
 /**
  * Class
  */
@@ -34,8 +32,7 @@ class WPS_Translation {
 
         try{
 
-            $translations = Yaml::parseFile($resource);
-            self::$translations = json_decode(json_encode($translations->jsonSerialize()),true);
+            self::$translations = Spyc::YAMLLoad($resource);
         }
         catch (Exception $e){
 

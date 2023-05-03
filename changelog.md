@@ -1,8 +1,10 @@
 ### 1.1.8
 - Fix css in admin menu
 - Remove rewrite warning
-- allow translation for inline editor from acf-extensions plugin
-- allow privacy page edition for editor
+- Allow translation for inline editor from acf-extensions plugin
+- Allow privacy page edition for editor
+- Better php8.1 compatibility
+- Clone using Multisite language switcher plugin now copy terms
 
 ### 1.1.7
 - Fix broken clone when using blocks and Multisite language switcher plugin

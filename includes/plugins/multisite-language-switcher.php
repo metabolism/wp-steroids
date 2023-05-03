@@ -168,6 +168,15 @@ class WPS_Multisite_Language_Switcher {
             // get the original post
             $post = get_post($_GET['post_id'], ARRAY_A);
 
+            // get the original terms
+            $taxonomies = get_object_taxonomies( $post['post_type']);
+            $terms = wp_get_post_terms($_GET['post_id'], $taxonomies);
+
+            $translated_terms = [];
+
+            foreach ($terms as $term)
+                $translated_terms[$term->taxonomy][] = get_option('msls_term_'.$term->term_id);
+
             if( !is_wp_error($post) )
             {
                 //remove tags and parent
@@ -326,6 +335,16 @@ class WPS_Multisite_Language_Switcher {
                 $language = empty($language)?'en_US':$language;
 
                 $translations[$language] = $inserted_post_id;
+
+                // add existing translated terms
+                foreach ($translated_terms as $taxonomy=>$terms){
+
+                    foreach ($terms as $term){
+
+                        if( !empty($term[$language]??'') )
+                            wp_add_object_terms($inserted_post_id, $term, $taxonomy);
+                    }
+                }
 
                 //update other posts
                 foreach ( get_sites() as $site ) {
