@@ -72,7 +72,7 @@ body.mce-fullscreen .interface-complementary-area .components-panel__header{ dis
 @media screen and (max-width: 782px){
     #addtag{ padding-right: 0 }
 }
-
+svg.components-checkbox-control__checked, svg.components-checkbox-control__indeterminate{ width: 20px; height: 20px }
 .wp-list-table.table-view-list{ table-layout: auto }
 
 /* Quick redesign */
