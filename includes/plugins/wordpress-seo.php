@@ -76,40 +76,33 @@ class WPS_Wordpress_Seo
 
 	/**
 	 * Add primary flagged term in first position
-	 * @param $terms
-	 * @param $object_ids
+     * @param $clauses
 	 * @param $taxonomies
+     * @param $args
 	 * @return array
 	 */
-	public function changeTermsOrder($terms, $object_ids, $taxonomies){
+	public function changeTermsOrder($clauses, $taxonomies, $args){
 
-		if ( class_exists('WPSEO_Primary_Term') && !self::$preventRecursion ) {
+        if( self::$preventRecursion )
+            return $clauses;
 
-            if( count($taxonomies) != 1 or count($object_ids) != 1 )
-                return $terms;
+        if ( !class_exists('WPSEO_Primary_Term') )
+            return $clauses;
+
+        if( count($args['object_ids']??[]) != 1 or count($args['taxonomy']??[]) != 1 )
+            return $clauses;
 
 			self::$preventRecursion = true;
 
-			$wpseo_primary_term = new \WPSEO_Primary_Term( $taxonomies[0], $object_ids[0]);
+        $wpseo_primary_term = new \WPSEO_Primary_Term( $args['taxonomy'][0], $args['object_ids'][0]);
 			$primary_term_id = $wpseo_primary_term->get_primary_term();
 
-			if( $primary_term_id ){
-
-                $count = count($terms);
-
-				foreach ($terms as $key=>$term){
-
-					if( $term == $primary_term_id)
-						unset($terms[$key]);
-				}
-
-				$terms = array_slice(array_merge([$primary_term_id], $terms), 0 , $count);
-			}
+        if( $primary_term_id )
+            $clauses['orderby'] = 'ORDER BY CASE WHEN t.term_id='.$primary_term_id.' THEN 0 ELSE 1 END, '.str_replace('ORDER BY ', '', $clauses['orderby']);
 
 			self::$preventRecursion = false;
-		}
 
-		return $terms;
+		return $clauses;
 	}
 
 
@@ -175,7 +168,7 @@ class WPS_Wordpress_Seo
 	public function __construct()
 	{
 		add_action('admin_init', [$this, 'init'] );
-		add_filter('get_object_terms', [$this, 'changeTermsOrder'], 10, 3);
+		add_filter('terms_clauses', [$this, 'changeTermsOrder'], 10, 3);
 
         add_filter( 'wpseo_sitemap_exclude_taxonomy', function( $value, $taxonomy ) {
 

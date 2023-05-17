@@ -558,15 +558,10 @@ class WPS_Config {
 
         $taxonomy = str_replace('{', '', str_replace('}', '', $taxonomy));
 
-        $terms = get_terms($taxonomy);
+        $slugs = get_terms(['taxonomy'=> $taxonomy,'fields' => 'slugs']);
 
-        if( is_wp_error($terms) )
+        if( is_wp_error($slugs) )
             return ['default'];
-
-        $slugs = [];
-
-        foreach ($terms as $term)
-            $slugs[] = $term->slug;
 
         return $slugs;
     }
@@ -582,11 +577,7 @@ class WPS_Config {
 
             if( $slug === '{empty}'){
 
-                $terms = get_terms($taxonomy);
-                $slugs = [];
-
-                foreach ($terms as $term)
-                    $slugs[] = $term->slug;
+                $slugs = $this->getSlugs($taxonomy);
 
                 add_rewrite_rule('^('.implode('|', $slugs).')$', 'index.php?'.$taxonomy.'=$matches[1]', 'top');
             }
@@ -865,11 +856,10 @@ class WPS_Config {
                 foreach ($toks[0] as $tok){
 
                     $taxonomy = str_replace('}', '', str_replace('/{', '', $tok));
+                    $terms = wp_get_object_terms( $post->ID, $taxonomy, ['fields'=>'slugs', 'number'=>1] );
 
-                    $terms = get_the_terms( $post, $taxonomy );
-
-                    if( !is_wp_error($terms) && is_array($terms) && count($terms) )
-                        $post_link = str_replace( '{'.$taxonomy.'}', $terms[0]->slug, $post_link );
+                    if( !is_wp_error($terms) && count($terms) )
+                        $post_link = str_replace( '{'.$taxonomy.'}', $terms[0], $post_link );
                     else
                         $post_link = str_replace( '{'.$taxonomy.'}', 'default', $post_link );
                 }
