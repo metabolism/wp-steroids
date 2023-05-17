@@ -77,28 +77,33 @@ class WPS_Wordpress_Seo
 	/**
 	 * Add primary flagged term in first position
 	 * @param $terms
-	 * @param $postID
-	 * @param $taxonomy
+	 * @param $object_ids
+	 * @param $taxonomies
 	 * @return array
 	 */
-	public function changeTermsOrder($terms, $postID, $taxonomy){
+	public function changeTermsOrder($terms, $object_ids, $taxonomies){
 
 		if ( class_exists('WPSEO_Primary_Term') && !self::$preventRecursion ) {
 
+            if( count($taxonomies) != 1 or count($object_ids) != 1 )
+                return $terms;
+
 			self::$preventRecursion = true;
 
-			$wpseo_primary_term = new \WPSEO_Primary_Term( $taxonomy, $postID);
+			$wpseo_primary_term = new \WPSEO_Primary_Term( $taxonomies[0], $object_ids[0]);
 			$primary_term_id = $wpseo_primary_term->get_primary_term();
 
 			if( $primary_term_id ){
 
+                $count = count($terms);
+
 				foreach ($terms as $key=>$term){
 
-					if( $term->term_id == $primary_term_id)
+					if( $term == $primary_term_id)
 						unset($terms[$key]);
 				}
 
-				$terms = array_merge([get_term($primary_term_id)], $terms);
+				$terms = array_slice(array_merge([$primary_term_id], $terms), 0 , $count);
 			}
 
 			self::$preventRecursion = false;
@@ -170,7 +175,7 @@ class WPS_Wordpress_Seo
 	public function __construct()
 	{
 		add_action('admin_init', [$this, 'init'] );
-		add_filter('get_the_terms', [$this, 'changeTermsOrder'], 10, 3);
+		add_filter('get_object_terms', [$this, 'changeTermsOrder'], 10, 3);
 
         add_filter( 'wpseo_sitemap_exclude_taxonomy', function( $value, $taxonomy ) {
 
