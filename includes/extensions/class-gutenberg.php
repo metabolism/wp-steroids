@@ -50,11 +50,16 @@ class WPS_Gutenberg
 
 		global $_config;
 
+        if( is_multisite() )
+            $base_url = network_home_url();
+        else
+            $base_url = get_home_url();
+
 		if ( $block_editor_style = $_config->get('gutenberg.block_editor_style', false) )
-			wp_enqueue_style('block_editor_style',get_home_url().$block_editor_style);
+			wp_enqueue_style('block_editor_style',$base_url.$block_editor_style);
 
 		if ( $block_editor_script = $_config->get('gutenberg.block_editor_script', false) )
-			wp_enqueue_script('block_editor_script',get_home_url().$block_editor_script);
+			wp_enqueue_script('block_editor_script',$base_url.$block_editor_script);
 	}
 
     /**
