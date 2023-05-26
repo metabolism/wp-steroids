@@ -678,6 +678,20 @@ class WPS_Media {
             );
         }
 
+        $metadata = wp_get_attachment_metadata($post->ID);
+
+        if( empty($metadata) ){
+
+            $actions['fix_metadat'] = sprintf(
+                '<a href="%s" class="submitregenerate aria-button-if-js"%s aria-label="%s">%s</a>',
+                wp_nonce_url( "post.php?action=regenerate_metadata&amp;post=$post->ID", 'fix_metadata-post_' . $post->ID ),
+                '',
+                /* translators: %s: Attachment title. */
+                esc_attr( sprintf( __( 'Regenerate metadata &#8220;%s&#8221;', 'wp-steroids' ), $post->post_title ) ),
+                __( 'Regenerate metadata', 'wp-steroids' )
+            );
+        }
+
         return $actions;
     }
 
@@ -711,6 +725,56 @@ class WPS_Media {
             return $newPath;
 
         return false;
+    }
+
+
+    /**
+     * @param $post_id
+     * @return void
+     */
+    public function postActionRegenerateMetadata($post_id){
+
+        if( !$sendback = wp_get_referer() )
+            $sendback = admin_url( 'upload.php' );
+
+        $file = get_attached_file($post_id);
+
+        if (!empty($file)) {
+
+            $imagesize = wp_getimagesize( $file );
+
+            $image_meta = array (
+                'width' => $imagesize[0],
+                'height' => $imagesize[1],
+                'filesize' => wp_filesize($file),
+                'file' => _wp_relative_upload_path($file),
+                'sizes' => []
+            );
+
+            $exif_meta = wp_read_image_metadata( $file );
+
+            if ( $exif_meta )
+                $image_meta['image_meta'] = $exif_meta;
+
+            $pathinfo = pathinfo($file);
+            $thumbnail = str_replace('.'.$pathinfo['extension'], '-150x150.'.$pathinfo['extension'], $file);
+
+            if( is_readable($thumbnail) ){
+
+                $image_meta['sizes']['thumbnail'] = [
+                    'file' => $pathinfo['basename'],
+                    'width' => 150,
+                    'height' => 150,
+                    'mime-type' => $imagesize['mime'],
+                    'filesize' => wp_filesize($thumbnail)
+                ];
+            }
+
+            wp_update_attachment_metadata($post_id, $image_meta);
+        }
+
+        wp_redirect( $sendback );
+        exit;
     }
 
 
@@ -821,6 +885,7 @@ class WPS_Media {
 			add_filter('intermediate_image_sizes_advanced', [$this, 'intermediateImageSizesAdvanced'] );
 			add_filter('media_row_actions', [$this,'mediaRowActions'], 10, 3);
             add_action('post_action_convert', [$this,'postActionConvert']);
+            add_action('post_action_regenerate_metadata', [$this,'postActionRegenerateMetadata']);
 
             add_filter('manage_upload_columns', function( $columns ) {
                 $columns['filesize'] = 'File Size';
