@@ -133,26 +133,7 @@ class WPS_Wordpress_Seo
 	 * @param $output
 	 * @return string
 	 */
-	public static function sitemapToRobots( $output ) {
-
-		$options = get_option( 'wpseo' );
-
-        if ( class_exists( 'WPSEO_Sitemaps' ) && $options['enable_xml_sitemap'] == true ) {
-
-            if( is_multisite() ){
-
-                $sites = get_sites(['public'=>1]);
-
-                foreach ($sites as $site){
-
-					if( !is_main_site($site->blog_id) ){
-
-						$base_url = get_home_url($site->blog_id);
-						$output .= "Sitemap: $base_url/sitemap_index.xml\n";
-					}
-                }
-            }
-		}
+	public static function cleanUpRobots( $output ) {
 
 		$output = str_replace("# START YOAST BLOCK\n# ---------------------------\n", '', $output);
 		$output = str_replace("# ---------------------------\n# END YOAST BLOCK", '', $output);
@@ -186,7 +167,7 @@ class WPS_Wordpress_Seo
 
             add_filter('wpseo_debug_markers', '__return_false' );
             add_filter('wpseo_canonical', [$this, 'filterCanonical']);
-            add_filter('robots_txt', [$this, 'sitemapToRobots'], 999999, 1 );
+            add_filter('robots_txt', [$this, 'cleanUpRobots'], 999999, 1 );
 		}
 	}
 }
