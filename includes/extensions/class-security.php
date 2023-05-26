@@ -264,6 +264,9 @@ class WPS_Security {
 			add_action( 'after_setup_theme', [$this, 'cleanHeader']);
 			add_action( 'wp_footer', [$this, 'cleanFooter']);
             add_filter( 'x_redirect_by', '__return_false' );
+            add_filter( 'robots_txt', '__return_empty_string' );
+
+            remove_all_actions('do_favicon');
 
             add_action('init', function()
 			{
