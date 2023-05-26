@@ -897,7 +897,7 @@ class WPS_Media {
                 if ( 'filesize' != $column_name || !wp_attachment_is_image( $media_item ) )
                     return;
 
-                $filesize = filesize( get_attached_file( $media_item ) );
+                $filesize = wp_filesize( get_attached_file( $media_item ) );
                 $filesize = size_format($filesize, 2);
 
                 echo $filesize;
