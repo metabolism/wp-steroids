@@ -7,6 +7,8 @@ use Dflydev\DotAccessData\Data;
  */
 class WPS_Security {
 
+    private $config;
+
 	/**
 	 * hide dashboard update notices
 	 */
@@ -33,7 +35,8 @@ class WPS_Security {
 
             if ( 'unfiltered_html' === $cap ){
 
-                $caps = ['unfiltered_html'];
+                if( $this->config->get('security.unfiltered_html', false) )
+                    $caps = ['unfiltered_html'];
             }
             elseif ('manage_privacy_options' === $cap) {
 
@@ -214,6 +217,8 @@ class WPS_Security {
         /* @var Data $_config */
         global $_config;
 
+        $this->config = $_config;
+
         //prevent .htaccess writing
 		add_filter( 'flush_rewrite_rules_hard', '__return_false');
 
@@ -222,7 +227,7 @@ class WPS_Security {
 			return __('Something is wrong!', 'wp-steroids');
 		} );
 
-		if( $_config->get('security.disable_update', true) )
+		if( $this->config->get('security.disable_update', true) )
 			$this->disableUpdate();
 
         add_filter( 'map_meta_cap', [$this, 'mapMetaCap'], 1, 3 );
@@ -236,7 +241,7 @@ class WPS_Security {
 		}
 		else
 		{
-			if( !$_config->get('security.rest_api', false) ){
+			if( !$this->config->get('security.rest_api', false) ){
 
                 add_filter('rest_jsonp_enabled', '__return_false');
 
@@ -252,10 +257,10 @@ class WPS_Security {
                 });
             }
 
-			if( !$_config->get('security.xmlrpc', false) )
+			if( !$this->config->get('security.xmlrpc', false) )
 				add_filter( 'xmlrpc_enabled', '__return_false' );
 
-            if( !$_config->get('security.pings', false) )
+            if( !$this->config->get('security.pings', false) )
                 add_filter( 'pings_open', '__return_false');
 
             foreach (['html', 'xhtml', 'atom', 'rss2', 'rdf', 'comment', 'export'] as $type )

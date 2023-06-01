@@ -65,10 +65,11 @@ wordpress:
   gutenberg:
     replace_reset_styles: true
     remove_core_block: true
+    disable_classic_theme_styles: true
     remove_block_library: true
     load_remote_block_patterns: false
-    block_editor_style: '/build/bundle.css'
-    block_editor_script: '/blocks.js'
+    #block_editor_style: '/build/bundle.css'
+    #block_editor_script: '/blocks.js'
     render_template: 'blocks/{name}.html.twig'
     preview_image: true
 
@@ -154,12 +155,13 @@ wordpress:
   ## Add theme support
   ## https://developer.wordpress.org/reference/functions/add_theme_support/
   theme_support:
+    - disable-layout-styles
     - thumbnail #add thumbnails to post
     #- post-formats:
     #  - video
     #  - gallery
 
-  ## Use Wordpress as a headless cms
+  ## Use WordPress as a headless cms
   #headless:
   #  mapping: true
 
@@ -177,6 +179,7 @@ wordpress:
   ###############
 
   acf:
+    json_path: '/config/packages/acf'
     settings:
       use_entity: true #add new optimised return format
       autoload: true #autoload options
@@ -342,6 +345,7 @@ wordpress:
       #order: ASC
       #radio: true #display terms selection as radio instead of checkbox
       #publicly_queryable: false
+      show_in_rest: true
       object_type:
         - guide
       #capabilities:
@@ -490,6 +494,7 @@ wordpress:
     xmlrpc: false
     pings: false
     disable_update: true
+    unfiltered_html: false
 
   ##################
   ##    Search    ##
