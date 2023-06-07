@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => 'dev-develop',
-        'version' => 'dev-develop',
-        'reference' => '0ba02387076046be8ab4f3f699ceadd8a6431402',
+        'pretty_version' => '1.0.x-dev',
+        'version' => '1.0.9999999.9999999-dev',
+        'reference' => 'cc75692f9eef61c47800f5bdb2a15a3a1056ce2f',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-develop',
-            'version' => 'dev-develop',
-            'reference' => '0ba02387076046be8ab4f3f699ceadd8a6431402',
+            'pretty_version' => '1.0.x-dev',
+            'version' => '1.0.9999999.9999999-dev',
+            'reference' => 'cc75692f9eef61c47800f5bdb2a15a3a1056ce2f',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -47,9 +47,9 @@
             'dev_requirement' => false,
         ),
         'ifsnop/mysqldump-php' => array(
-            'pretty_version' => 'v2.11',
-            'version' => '2.11.0.0',
-            'reference' => 'ec6a777062b287cd25cb1cd916b3d14c595ebdb8',
+            'pretty_version' => 'v2.12',
+            'version' => '2.12.0.0',
+            'reference' => '2d3a43fc0c49f23bf7dee392b0dd1f8c799f89d3',
             'type' => 'library',
             'install_path' => __DIR__ . '/../ifsnop/mysqldump-php',
             'aliases' => array(),

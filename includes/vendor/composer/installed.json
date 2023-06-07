@@ -193,17 +193,17 @@
         },
         {
             "name": "ifsnop/mysqldump-php",
-            "version": "v2.11",
-            "version_normalized": "2.11.0.0",
+            "version": "v2.12",
+            "version_normalized": "2.12.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ifsnop/mysqldump-php.git",
-                "reference": "ec6a777062b287cd25cb1cd916b3d14c595ebdb8"
+                "reference": "2d3a43fc0c49f23bf7dee392b0dd1f8c799f89d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ifsnop/mysqldump-php/zipball/ec6a777062b287cd25cb1cd916b3d14c595ebdb8",
-                "reference": "ec6a777062b287cd25cb1cd916b3d14c595ebdb8",
+                "url": "https://api.github.com/repos/ifsnop/mysqldump-php/zipball/2d3a43fc0c49f23bf7dee392b0dd1f8c799f89d3",
+                "reference": "2d3a43fc0c49f23bf7dee392b0dd1f8c799f89d3",
                 "shasum": ""
             },
             "require": {
@@ -213,7 +213,7 @@
                 "phpunit/phpunit": "4.8.36",
                 "squizlabs/php_codesniffer": "1.*"
             },
-            "time": "2023-03-18T00:37:42+00:00",
+            "time": "2023-04-12T07:43:14+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -249,7 +249,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ifsnop/mysqldump-php/issues",
-                "source": "https://github.com/ifsnop/mysqldump-php/tree/v2.11"
+                "source": "https://github.com/ifsnop/mysqldump-php/tree/v2.12"
             },
             "install-path": "../ifsnop/mysqldump-php"
         },

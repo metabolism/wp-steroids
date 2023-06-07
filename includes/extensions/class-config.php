@@ -75,13 +75,19 @@ class WPS_Config {
             if( substr($args['icon']??'', -4) == '.svg' )
                 $block['icon'] = file_get_contents(ABSPATH.'/'.$args['icon']);
 
-            if( $args['preview_image']??$preview_image ){
+            if( $_preview_image = $args['preview_image']??$preview_image ){
+
+                if( is_string($_preview_image) )
+                    $_preview_image = str_replace('{name}', $name, $preview_image);
+                else
+                    $_preview_image = '/uploads/blocks/'.$name.'.jpg';
+
 
                 $block['example'] = [
                     'attributes' => [
                         'mode' => 'preview',
                         'data' => [
-                            '_preview_image' => 'uploads/blocks/'.$name.'.jpg',
+                            '_preview_image' => $_preview_image,
                         ]
                     ]
                 ];

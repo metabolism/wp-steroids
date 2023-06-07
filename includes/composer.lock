@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22dd24af0b4b30a822020c3930eab3d5",
+    "content-hash": "01e4a6738cf2763cb1075245d6829250",
     "packages": [
         {
             "name": "dflydev/dot-access-data",
@@ -190,16 +190,16 @@
         },
         {
             "name": "ifsnop/mysqldump-php",
-            "version": "v2.11",
+            "version": "v2.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ifsnop/mysqldump-php.git",
-                "reference": "ec6a777062b287cd25cb1cd916b3d14c595ebdb8"
+                "reference": "2d3a43fc0c49f23bf7dee392b0dd1f8c799f89d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ifsnop/mysqldump-php/zipball/ec6a777062b287cd25cb1cd916b3d14c595ebdb8",
-                "reference": "ec6a777062b287cd25cb1cd916b3d14c595ebdb8",
+                "url": "https://api.github.com/repos/ifsnop/mysqldump-php/zipball/2d3a43fc0c49f23bf7dee392b0dd1f8c799f89d3",
+                "reference": "2d3a43fc0c49f23bf7dee392b0dd1f8c799f89d3",
                 "shasum": ""
             },
             "require": {
@@ -243,9 +243,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ifsnop/mysqldump-php/issues",
-                "source": "https://github.com/ifsnop/mysqldump-php/tree/v2.11"
+                "source": "https://github.com/ifsnop/mysqldump-php/tree/v2.12"
             },
-            "time": "2023-03-18T00:37:42+00:00"
+            "time": "2023-04-12T07:43:14+00:00"
         },
         {
             "name": "mustangostang/spyc",
@@ -304,7 +304,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-zip": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
 }
