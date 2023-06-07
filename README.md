@@ -71,7 +71,7 @@ wordpress:
     #block_editor_style: '/build/bundle.css'
     #block_editor_script: '/blocks.js'
     render_template: 'blocks/{name}.html.twig'
-    preview_image: true
+    preview_image: '/app/blocks/{name}.png'
 
 
   #########################
