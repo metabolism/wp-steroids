@@ -530,7 +530,7 @@ class WPS_Multisite_Language_Switcher {
 
                 add_filter( 'msls_meta_box_render_select_hierarchical', function ($args){
 
-                    $args['post_status'] = 'publish,draft';
+                    $args['post_status'] = ['publish', 'pending', 'draft', 'future', 'private'];
                     return $args;
                 });
 
