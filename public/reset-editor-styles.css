@@ -1,5 +1,4 @@
 .acf-block-preview > *{ pointer-events: none }
-.editor-post-featured-image img.components-responsive-wrapper__content{ position: static; max-width: 300px }
 
 /* Force pixel sizing */
 .interface-interface-skeleton__sidebar input[type="radio"], .interface-interface-skeleton__sidebar input[type="checkbox"]{ width: 16px; height: 16px }
