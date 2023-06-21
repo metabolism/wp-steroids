@@ -1,8 +1,6 @@
 <?php
 
 
-use Dflydev\DotAccessData\Data;
-
 /**
  * Class
  */
@@ -20,12 +18,12 @@ class WPS_Query {
      */
     public function terms_clauses( $clauses, $taxonomy, $args )
     {
-        global $wpdb;
-
         if ( isset($args['post_type']) )
             $args['post_types'] = [$args['post_type']];
 
         if ( isset($args['post_types']) ) {
+
+            global $wpdb;
 
             $post_types = implode("','", array_map('esc_sql', (array) $args['post_types']));
 
@@ -49,41 +47,41 @@ class WPS_Query {
     {
         if( !$query->is_main_query() ){
 
-	        if( !$query->get('post_status') && current_user_can('administrator') ){
+            if( !$query->get('post_status') && current_user_can('administrator') ){
 
-		        $query->set('post_status', ['publish','draft']);
-		        $query->query['post_status'] =  ['publish','draft','pending','private'];
-	        }
+                $query->set('post_status', ['publish','draft']);
+                $query->query['post_status'] =  ['publish','draft','pending','private'];
+            }
 
-	        return;
+            return;
         }
 
         $object = $query->get_queried_object();
 
         if ( $query->is_archive && is_object($object) )
         {
-			$class = get_class($object);
+            $class = get_class($object);
 
-	        if( in_array($class, ['WP_Post_Type','WP_Term']) ){
+            if( in_array($class, ['WP_Post_Type','WP_Term']) ){
 
-				$class = $class == 'WP_Post_Type' ? 'post_type' : 'taxonomy';
+                $class = $class == 'WP_Post_Type' ? 'post_type' : 'taxonomy';
 
-		        if( $ppp = $this->config->get($class.'.'.$object->name.'.posts_per_page', false) ){
+                if( $ppp = $this->config->get($class.'.'.$object->name.'.posts_per_page', false) ){
 
-			        $query->set( 'posts_per_page', $ppp );
-			        $query->query[ 'posts_per_page'] = $ppp;
-		        }
+                    $query->set( 'posts_per_page', $ppp );
+                    $query->query[ 'posts_per_page'] = $ppp;
+                }
 
                 if( $orderby = $this->config->get($class.'.'.$object->name.'.orderby', false) ){
 
-	                $query->set( 'orderby', $orderby );
-	                $query->query[ 'orderby'] = $orderby;
+                    $query->set( 'orderby', $orderby );
+                    $query->query[ 'orderby'] = $orderby;
                 }
 
                 if( $order = $this->config->get($class.'.'.$object->name.'.order', false) ){
 
-	                $query->set( 'order', $order );
-	                $query->query[ 'order'] = $order;
+                    $query->set( 'order', $order );
+                    $query->query[ 'order'] = $order;
                 }
             }
         }
@@ -113,7 +111,7 @@ class WPS_Query {
                 $query->query['post_type'] = $post_type[0];
             }
         }
-	}
+    }
 
     public function search_in_meta(){
 
@@ -151,10 +149,10 @@ class WPS_Query {
     }
 
 
-	/**
-	 * constructor.
-	 */
-	public function __construct(){
+    /**
+     * constructor.
+     */
+    public function __construct(){
 
         if( !is_admin() ){
 

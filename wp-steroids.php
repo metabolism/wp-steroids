@@ -62,10 +62,7 @@ class WPS{
 
         global $_config;
 
-        if( !file_exists($resource) || !is_readable($resource) )
-            wp_die( 'File '.basename($resource).'does not exists');
-
-        $config = Spyc::YAMLLoad($resource);
+        $config = WPS_Yaml::load('wp_steroid', $resource);
 
         $_config = new Data($config['wordpress']??$config);
 
@@ -116,9 +113,10 @@ class WPS{
 
         require __DIR__ . '/includes/vendor/autoload.php';
 
+        $this->loadAll('lib');
+
         $this->importConfig(WPS_YAML_FILE);
 
-        $this->loadAll('lib');
         $this->loadAll('extensions', true);
         $this->loadAll('plugins', true);
     }

@@ -575,7 +575,7 @@ class WPS_Multisite_Language_Switcher {
             //todo: find why $url is buggy
             add_filter( 'mlsl_output_get_alternate_links', function ($url, $blog){
 
-                if( strpos($url, 'http') === false )
+                if( $url && strpos($url, 'http') === false )
                     return null;
 
                 return $url;

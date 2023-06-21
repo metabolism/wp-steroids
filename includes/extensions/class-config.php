@@ -775,8 +775,13 @@ class WPS_Config {
             }, 'permalink', 'custom_taxonomy_rewrite' );
         }
 
-        if( $updated )
+        if( $updated ){
+
+            global $wp_rewrite;
+            $wp_rewrite->flush_rules(false);
+
             do_action('reset_cache');
+        }
     }
 
 
@@ -980,8 +985,6 @@ class WPS_Config {
         // Global init action
         add_action( 'init', function()
         {
-            global $wp_rewrite;
-
             $this->disableFeatures();
 
             $this->addBlocks();
@@ -989,8 +992,6 @@ class WPS_Config {
             $this->addPostTypeSupport();
 
             $this->configureContentType();
-
-            $wp_rewrite->flush_rules(false);
 
             $this->addMenus();
             $this->addSidebars();
