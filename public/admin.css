@@ -45,7 +45,7 @@
 #the-list .attachment-thumbnail-container{ position: relative; display: inline-block }
 #the-list .attachment-thumbnail-container:hover .attachment-thumbnail{ display: block; z-index: 999 }
 #the-list .attachment-thumbnail{ width: 60px; height: auto; border-radius: 2px; display: block }
-#the-list .attachment-thumbnail+.attachment-thumbnail{ width: auto; position: absolute; left: 50%; top: 50%; display: none; transform: translate(-50%, -50%); box-shadow: 0 0 4px rgba(0,0,0,0.2) }
+#the-list .attachment-thumbnail+.attachment-thumbnail{ width: auto; max-width: 300px; position: absolute; left: 50%; top: 50%; display: none; transform: translate(-50%, -50%); box-shadow: 0 0 4px rgba(0,0,0,0.2) }
 #the-list .attachment-thumbnail-container+a{ display: none!important }
 .manage-column.num{ text-align: left }
 
@@ -215,11 +215,14 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .acf-field-inline-editor .wps-translate{ transform: none; top: auto; bottom: 2px }
 .acf-field-textarea .wps-translate, .input-wrapper--textarea .wps-translate{ bottom: 5px; transform: none; top: auto }
 textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top: auto }
-#postexcerpt .wps-translate{ bottom: 12px; transform: none; top: auto; right: 14px }
+#postexcerpt .wps-translate, .editor-post-excerpt__textarea .wps-translate{ bottom: 12px; transform: none; top: auto; right: 14px }
 #menu-to-edit label .wps-translate{ bottom: 2px; transform: none; top: auto; right: 2px }
 #menu-to-edit label textarea+.wps-translate{ bottom: 4px }
-.acf-input:hover > .wps-translate, .wp-link-text-field:hover .wps-translate, #menu-to-edit label:hover .wps-translate, #wp-content-wrap:hover .wps-translate, .input-wrapper:hover .wps-translate, #titlewrap:hover .wps-translate, #wp-advanced_description-wrap:hover .wps-translate, #postexcerpt .inside:hover .wps-translate{ display: inline-block }
-#poststuff #titlewrap,  #menu-to-edit label, .wp-link-text-field label{ position: relative; display: block }
+.acf-input:hover > .wps-translate, .wp-link-text-field:hover .wps-translate, #menu-to-edit label:hover .wps-translate,
+#wp-content-wrap:hover .wps-translate, .input-wrapper:hover .wps-translate, #titlewrap:hover .wps-translate,
+#wp-advanced_description-wrap:hover .wps-translate, #postexcerpt .inside:hover .wps-translate,
+.editor-post-excerpt__textarea:hover .wps-translate, .edit-post-visual-editor__post-title-wrapper:hover .wps-translate{ display: inline-block }
+#poststuff #titlewrap,  #menu-to-edit label, .wp-link-text-field label, .editor-post-excerpt__textarea, .edit-post-visual-editor__post-title-wrapper{ position: relative; display: block }
 
 #menu-to-edit label input, #menu-to-edit label textarea{ margin-top: 5px }
 #menu-to-edit p+p{ margin-top: 10px }

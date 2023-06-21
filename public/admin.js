@@ -30,7 +30,7 @@
 
 	function initTranslation(){
 
-		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label').append('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
+		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label, .editor-post-excerpt__textarea .components-base-control__field, .edit-post-visual-editor__post-title-wrapper').append('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
 		$('#tag-post-content #name').wrap('<div class="input-wrapper"></div>')
 		$('#tag-post-content #name').after('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
 		$('#menu-to-edit span.description').remove()
@@ -38,54 +38,74 @@
 		$(document).on('click', '.wps-translate', function (){
 
 			var $self = $(this);
-			var $inputs = $(this).parent().find('.acf-input-wrap > input, > textarea, textarea.wp-editor-area, .field, #title, #name, #excerpt')
 
-			if( !$inputs.length ){
+			var is_title = $(this).prev('.editor-post-title').length;
+			var is_excerpt = $(this).closest('.editor-post-excerpt').length;
 
-				$inputs = $(this).prev('input, textarea')
+			if( !is_title && !is_excerpt ){
 
-				if( !$inputs.length )
-					return;
+				var $inputs = $(this).parent().find('.acf-input-wrap > input, > textarea, textarea.wp-editor-area, .field, #title, #name, #excerpt')
+
+				if( !$inputs.length ){
+
+					$inputs = $(this).prev('input, textarea')
+
+					if( !$inputs.length )
+						return;
+				}
+
+				var $input = $inputs.first()
+				var $editable = $input.prev('[contenteditable]');
+				var is_editor = $input.hasClass('wp-editor-area');
 			}
 
-			var $input = $inputs.first()
-			var $editable = $input.prev('[contenteditable]');
-			var wysiwyg = $input.hasClass('wp-editor-area');
-			var value = wysiwyg ? tinymce.editors[$input.attr('id')].getContent() : $input.val();
+			var value = ''
+
+			if( is_title )
+				value = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
+			else if (is_excerpt )
+				value = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'excerpt' );
+			else
+				value = is_editor ? tinymce.editors[$input.attr('id')].getContent() : $input.val();
 
 			if( value.length <= 2)
 				return;
 
 			$self.addClass('loading')
 
-			if( wps.enable_translation ){
+			$.post(wps.ajax_url, {action: 'translate', q:value, format:(is_editor?'html':'text')}, function (response){
 
-				$.post(wps.ajax_url, {action: 'translate', q:value, format:(wysiwyg?'html':'text')}, function (response){
+				$self.removeClass('loading')
 
-					$self.removeClass('loading')
+				if( response.text.length ){
 
-					if( response.text.length ){
+					var translations = response.text;
 
-						var translations = response.text;
+					if( is_title ){
 
-						if( wysiwyg ){
-
-							tinymce.editors[$input.attr('id')].setContent(translations)
-						}
-						else{
-
-							if( $editable.length )
-								$editable.html(translations)
-
-							$input.val(translations).change()
-						}
+						wp.data.dispatch( 'core/editor' ).editPost( { title: translations } );
 					}
-				}).fail(function(response) {
+					else if( is_excerpt ){
 
-					alert( response.message )
-					$self.removeClass('loading')
-				})
-			}
+						wp.data.dispatch( 'core/editor' ).editPost( { excerpt: translations } );
+					}
+					else if( is_editor ){
+
+						tinymce.editors[$input.attr('id')].setContent(translations)
+					}
+					else{
+
+						if( $editable.length )
+							$editable.html(translations)
+
+						$input.val(translations).change()
+					}
+				}
+			}).fail(function(response) {
+
+				alert( response.message )
+				$self.removeClass('loading')
+			})
 		})
 	}
 
@@ -142,10 +162,12 @@
 				}, 10000)
 			})
 		})
+	});
+
+	$(window).load(function() {
 
 		if( wps.enable_translation )
 			initTranslation();
 	});
-
 
 })(jQuery);
