@@ -6,7 +6,7 @@
 		$('.acf-flexible-content > .values').sortable( "disable" );
 		$('.acf-flexible-content .ui-sortable-handle').removeAttr( "title" );
 	}
-
+	
 	function allowInterfaceResize(){
 
 		if( $('.interface-interface-skeleton__sidebar').length ) {
@@ -30,10 +30,16 @@
 
 	function initTranslation(){
 
-		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label, .editor-post-excerpt__textarea .components-base-control__field, .edit-post-visual-editor__post-title-wrapper').append('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
+		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label, .edit-post-visual-editor__post-title-wrapper').append('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
 		$('#tag-post-content #name').wrap('<div class="input-wrapper"></div>')
 		$('#tag-post-content #name').after('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
 		$('#menu-to-edit span.description').remove()
+
+		$(document).on('mouseenter', '.editor-post-excerpt', function (){
+
+			if( !$(this).find('.wps-translate').length )
+				$(this).find('.components-base-control__field').append('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
+		})
 
 		$(document).on('click', '.wps-translate', function (){
 
