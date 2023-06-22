@@ -203,6 +203,10 @@ class WPS_Advanced_Custom_Fields{
 
                 $field['label'] = __t($field['label']);
             }
+            elseif( $field['type'] == 'true_false'){
+
+                $field['message'] = __t($field['message']);
+            }
             elseif( in_array($field['type'], ['select', 'radio', 'checkbox']) ){
 
                 foreach($field['choices'] as $key=>&$value)
