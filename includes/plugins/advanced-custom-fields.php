@@ -192,6 +192,9 @@ class WPS_Advanced_Custom_Fields{
 
         foreach ($fields as &$field){
 
+            if( isset($field['placeholder']) )
+                $field['placeholder'] = __t($field['placeholder']);
+
             if( $field['type'] == 'flexible_content'){
 
                 $field['button_label'] = __t($field['button_label']);
