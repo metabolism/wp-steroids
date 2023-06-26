@@ -89,12 +89,15 @@ class WPS_Wordpress_Seo
         if ( !class_exists('WPSEO_Primary_Term') )
             return $clauses;
 
-        if( count($args['object_ids']??[]) != 1 or count($args['taxonomy']??[]) != 1 )
+        if( count($args['object_ids']??[]) != 1 || count($args['taxonomy']??[]) != 1 )
             return $clauses;
 
 			self::$preventRecursion = true;
 
-        $wpseo_primary_term = new \WPSEO_Primary_Term( $args['taxonomy'][0], $args['object_ids'][0]);
+        $taxonomies = array_values($args['taxonomy']);
+        $object_ids = array_values($args['object_ids']);
+
+        $wpseo_primary_term = new \WPSEO_Primary_Term( $taxonomies[0], $object_ids[0]);
 			$primary_term_id = $wpseo_primary_term->get_primary_term();
 
         if( $primary_term_id )
