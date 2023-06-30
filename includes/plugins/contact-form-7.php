@@ -24,5 +24,22 @@ class WPS_Contact_Form_7 {
     {
         add_filter( 'wpcf7_load_js', '__return_false' );
         add_filter( 'wpcf7_load_css', '__return_false' );
+
+        global $_config;
+
+        if( !$_config->get('security.rest_api', false) ){
+
+            add_filter( 'rest_authentication_errors', function( $result ) {
+
+                if( !is_wp_error($result) || !defined('REST_REQUEST') || !REST_REQUEST )
+                    return  $result;
+
+                if( $result->get_error_code() == 'restricted_rest_api_access' && strpos($_SERVER['REQUEST_URI'], 'contact-form-7') !== false )
+                    return false;
+
+                return  $result;
+
+            }, 11 );
+        }
     }
 }

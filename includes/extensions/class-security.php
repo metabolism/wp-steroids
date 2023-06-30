@@ -251,7 +251,7 @@ class WPS_Security {
                         return $result;
 
                     if ( ! is_user_logged_in() )
-                        $this->redirect();
+                        return new wp_error('restricted_rest_api_access','Rest API access have been restricted for security reasons');
 
                     return $result;
                 });
