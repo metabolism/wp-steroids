@@ -29,20 +29,16 @@ class WPS_Security {
     {
         if ( !is_user_logged_in() ) return $caps;
 
-        $user_meta = get_userdata($user_id);
+        if ( 'unfiltered_html' === $cap ){
 
-        if( array_intersect(['editor', 'administrator'], $user_meta->roles??[]) ){
+            if( $this->config->get('security.unfiltered_html', false) )
+                $caps = ['unfiltered_html'];
+        }
 
-            if ( 'unfiltered_html' === $cap ){
+        if ('manage_privacy_options' === $cap && current_user_can('edit_others_pages') ) {
 
-                if( $this->config->get('security.unfiltered_html', false) )
-                    $caps = ['unfiltered_html'];
-            }
-            elseif ('manage_privacy_options' === $cap) {
-
-                $manage_name = is_multisite() ? 'manage_network' : 'manage_options';
-                $caps = array_diff($caps, [ $manage_name ]);
-            }
+            $manage_name = is_multisite() ? 'manage_network' : 'manage_options';
+            $caps = array_diff($caps, [ $manage_name ]);
         }
 
         return $caps;
