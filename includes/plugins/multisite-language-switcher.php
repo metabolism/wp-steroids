@@ -512,6 +512,100 @@ class WPS_Multisite_Language_Switcher {
     }
 
 
+    public function syncIds(){
+
+        $msls_options = get_blog_option( get_current_blog_id(), 'msls' );
+        $copy_blog_id = $msls_options['blog_id'];
+        $current_blog_id = get_current_blog_id();
+
+        //erase blog id to prevent multiple sync
+        unset($msls_options['blog_id']);
+        update_blog_option(get_current_blog_id(), 'msls', $msls_options);
+
+        // update current blog
+        global $wpdb;
+        $options = $wpdb->get_results( "SELECT * FROM $wpdb->options WHERE `option_name` LIKE 'msls_%'" );
+
+        $copy_lang = get_blog_option($copy_blog_id, 'WPLANG');
+        $languages = [];
+
+        foreach ($options as $option){
+
+            $name = str_replace('msls_', '', $option->option_name);
+            $id = str_replace('term_', '', $name);
+
+            $value = maybe_unserialize($option->option_value);
+
+            if( is_array($value) ){
+
+                //build a references array for other languages
+                foreach ($value as $lang=>$target_id){
+
+                    if( $name != $id )
+                        $languages[$lang]['term_'.$target_id] = $id;
+                    else
+                        $languages[$lang][$target_id] = $id;
+                }
+
+                $value[$copy_lang] = $id;
+                update_option($option->option_name, $value);
+            }
+        }
+
+        $current_lang = get_blog_option($current_blog_id, 'WPLANG');
+
+        //copy on other blogs
+        foreach (get_sites() as $site){
+
+            if( $site->blog_id == $current_blog_id )
+                continue;
+
+            switch_to_blog($site->blog_id);
+
+            $options = $wpdb->get_results( "SELECT * FROM $wpdb->options WHERE `option_name` LIKE 'msls_%'" );
+            $lang = get_blog_option($site->blog_id, 'WPLANG');
+
+            foreach ($options as $option){
+
+                $name = str_replace('msls_', '', $option->option_name);
+
+                $value = maybe_unserialize($option->option_value);
+
+                if( is_array($value) && $target_id = $languages[$lang][$name]??false ){
+
+                    $value[$current_lang] = $target_id;
+                    update_option($option->option_name, $value);
+                }
+            }
+
+            restore_current_blog();
+        }
+    }
+
+    public function syncSettings(){
+
+        $current_blog_id = get_current_blog_id();
+        ?>
+        <table class="form-table" role="presentation">
+            <tbody>
+            <tr>
+                <th scope="row"><label for="rewrite_page">Copy ids from</label></th>
+                <td>
+                    <select name="msls[blog_id]">
+                        <option value=""></option>
+                        <?php foreach (get_sites() as $site): ?>
+                            <?php if($site->blog_id != $current_blog_id):?>
+                                <option value="<?=$site->blog_id?>"><?=get_blog_option($site->blog_id, 'WPLANG')?></option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <?php
+    }
+
     /**
      * MSLSProvider constructor.
      */
@@ -545,6 +639,16 @@ class WPS_Multisite_Language_Switcher {
 
                     return $classes.' multisite-language-switcher';
                 });
+
+                add_action( 'msls_admin_register', function ($class){
+
+                    add_settings_section( 'sync', 'Sync', [ $this, 'syncSettings' ], $class );
+                });
+
+                $msls_options = get_blog_option( get_current_blog_id(), 'msls' );
+
+                if( isset($msls_options['blog_id']))
+                    $this->syncIds();
             }
             else{
 
