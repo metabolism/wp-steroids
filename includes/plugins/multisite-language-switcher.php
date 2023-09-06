@@ -527,6 +527,10 @@ class WPS_Multisite_Language_Switcher {
         $options = $wpdb->get_results( "SELECT * FROM $wpdb->options WHERE `option_name` LIKE 'msls_%'" );
 
         $copy_lang = get_blog_option($copy_blog_id, 'WPLANG');
+
+        if( empty($copy_lang) )
+            return;
+
         $languages = [];
 
         foreach ($options as $option){
@@ -554,6 +558,9 @@ class WPS_Multisite_Language_Switcher {
 
         $current_lang = get_blog_option($current_blog_id, 'WPLANG');
 
+        if( empty($current_lang) )
+            return;
+
         //copy on other blogs
         foreach (get_sites() as $site){
 
@@ -564,6 +571,9 @@ class WPS_Multisite_Language_Switcher {
 
             $options = $wpdb->get_results( "SELECT * FROM $wpdb->options WHERE `option_name` LIKE 'msls_%'" );
             $lang = get_blog_option($site->blog_id, 'WPLANG');
+
+            if( empty($lang) )
+                continue;
 
             foreach ($options as $option){
 
