@@ -647,7 +647,7 @@ class WPS_Multisite_Language_Switcher {
 
                 $msls_options = get_blog_option( get_current_blog_id(), 'msls' );
 
-                if( isset($msls_options['blog_id']))
+                if( !empty($msls_options['blog_id']??'') )
                     $this->syncIds();
             }
             else{
