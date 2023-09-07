@@ -287,6 +287,35 @@ class WPS_Editor {
         return $mimes;
     }
 
+    /**
+     * @param $classes
+     * @return mixed
+     */
+    public function addBodyClass($classes)
+    {
+        $data = get_userdata( get_current_user_id() );
+
+        $caps = [];
+
+        foreach($data->allcaps as $cap=>$value)
+            $caps[] = $value ? $cap : 'no-'.$cap;
+
+        $roles = $this->config->get('role', []);
+
+        foreach ($data->roles as $role){
+
+            if( $capabilities = $roles[$role]['capabilities']??false ){
+
+                foreach ($capabilities as $cap=>$value)
+                    $caps[] = $value ? $cap : 'no-'.$cap;
+            }
+        }
+
+        $caps = array_unique($caps);
+
+        return implode(' ', $caps).$classes.(HEADLESS?' headless':'').(URL_MAPPING?' url-mapping':'');
+    }
+
 
     /**
      * Editor constructor.
@@ -317,16 +346,7 @@ class WPS_Editor {
             add_filter( 'post_row_actions', [$this, 'rowActions'], 10, 2);
             add_filter( 'page_row_actions', [$this, 'rowActions'], 10, 2);
 
-            add_filter( 'admin_body_class', function ( $classes ) {
-
-                $data = get_userdata( get_current_user_id() );
-                $caps = [];
-
-                foreach($data->allcaps as $cap=>$value)
-                    $caps[] = $value ? $cap : 'no-'.$cap;
-
-                return implode(' ', $caps).$classes.(HEADLESS?' headless':'').(URL_MAPPING?' url-mapping':'');
-            });
+            add_filter( 'admin_body_class', [$this, 'addBodyClass']);
         }
 
         add_action('init', function (){

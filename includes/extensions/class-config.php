@@ -15,11 +15,17 @@ class WPS_Config {
     /**
      * Get plural from name
      * @param $name
+     * @param bool $space
      * @return string
      */
-    public function plural($name)
+    public function plural($name, $space=true)
     {
-        return substr($name, -1) == 's' ? $name : (substr($name, -1) == 'y' && !in_array(substr($name, -2, 1), ['a','e','i','o','u']) ? substr($name, 0, -1).'ies' : $name.'s');
+        $name = substr($name, -1) == 's' ? $name : (substr($name, -1) == 'y' && !in_array(substr($name, -2, 1), ['a','e','i','o','u']) ? substr($name, 0, -1).'ies' : $name.'s');
+
+        if( $space )
+            return $name;
+        else
+            return str_replace(' ', '_', $name);
     }
 
 
@@ -112,18 +118,17 @@ class WPS_Config {
                 'feeds'=>false
             ],
             'supports' => [],
-            'menu_position' => 25,
-            'map_meta_cap' => true,
-            'capability_type' => 'post'
+            'menu_position' => 25
         ];
 
         $is_admin = is_admin();
 
         $current_blog_id = get_current_blog_id();
 
-        foreach ( $this->config->get('post_type', []) as $post_type => $args )
-        {
+        $registered_post_types = $this->config->get('post_type', []);
 
+        foreach ( $registered_post_types as $post_type => &$args )
+        {
             if( !in_array($post_type, ['post', 'page', 'edition']) )
             {
                 if( (isset($args['enable_for_blogs']) && !in_array($current_blog_id, (array)$args['enable_for_blogs'])) || (isset($args['disable_for_blogs']) && in_array($current_blog_id, (array)$args['disable_for_blogs'])))
@@ -158,8 +163,8 @@ class WPS_Config {
                 if( isset($args['menu_icon']) )
                     $args['menu_icon'] = 'dashicons-'.$args['menu_icon'];
 
-                if( !isset($args['capability_type']) && $args['map_meta_cap'] )
-                    $args['capability_type'] = [$post_type, $this->plural($post_type)];
+                if( !isset($args['capability_type']) )
+                    $args['capability_type'] = [$post_type, $this->plural($post_type, false)];
 
                 if( is_bool($args['rewrite']) && $args['rewrite'] )
                     $args['rewrite'] = ['slug'=>$post_type];
@@ -328,11 +333,11 @@ class WPS_Config {
                 if( !$role = get_role($the_role) )
                     continue;
 
-                foreach ( $this->config->get('post_type', []) as $post_type => $args ){
+                foreach ( $registered_post_types as $post_type => $args ){
 
-                    if( ($args['map_meta_cap']??false) && (($args['capability_type']??'') != 'page' && ($args['capability_type']??'') != 'post')){
+                    if( ($args['capability_type']??'') != 'page' && ($args['capability_type']??'') != 'post' ){
 
-                        $post_types = $this->plural($post_type);
+                        $post_types = $this->plural($post_type, false);
 
                         $role->add_cap( 'read_'.$post_type);
                         $role->add_cap( 'read_private_'.$post_types );
@@ -456,16 +461,12 @@ class WPS_Config {
             'public' => true,
             'hierarchical' => true,
             'rewrite' => [],
-            'show_admin_column' => true,
-            'capabilities'=> [
-                'manage_terms' => 'manage_categories',
-                'edit_terms'   => 'edit_category',
-                'delete_terms' => 'delete_category',
-                'assign_terms' => 'assign_category'
-            ]
+            'show_admin_column' => true
         ];
 
-        foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ) {
+        $registered_taxonomies = $this->config->get('taxonomy', []);
+
+        foreach ( $registered_taxonomies as $taxonomy => &$args ) {
 
             if( !in_array($taxonomy, ['category', 'tag', 'edition', 'theme', 'type']) ) {
 
@@ -481,6 +482,16 @@ class WPS_Config {
                     'not_found' => ucfirst($name) . ' not found',
                     'search_items' => 'Search in ' . $this->plural($name)
                 ];
+
+                if( !isset($args['capabilities']) ){
+
+                    $args['capabilities'] = [
+                        'manage_terms' => 'manage_'.$this->plural($taxonomy, false),
+                        'edit_terms'   => 'edit_'.$taxonomy,
+                        'delete_terms' => 'delete_'.$taxonomy,
+                        'assign_terms' => 'assign_'.$taxonomy
+                    ];
+                }
 
                 if( is_bool($args['rewrite']) && $args['rewrite'] )
                     $args['rewrite'] = ['slug'=>$taxonomy];
@@ -545,14 +556,14 @@ class WPS_Config {
                 $role->add_cap( 'delete_category' );
                 $role->add_cap( 'assign_category' );
 
-                foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ) {
+                foreach ( $registered_taxonomies as $taxonomy => $args ) {
 
                     if( !empty($args['capabilities']) ){
 
                         foreach ($args['capabilities'] as $capability=>$map){
 
                             if( $map != 'do_not_allow')
-                                $role->add_cap( $map);
+                                $role->add_cap( $map );
                         }
                     }
                 }
@@ -664,7 +675,7 @@ class WPS_Config {
             if( is_admin() && isset($_GET['reload_role']) && $_GET['reload_role'] )
                 remove_role($role);
 
-            if( isset($args['inherit']) && !empty($args['inherit']) ){
+            if( !empty($args['inherit']??'') ){
 
                 $inherited_role = get_role( $args['inherit'] );
                 $args['capabilities'] = array_merge($inherited_role->capabilities, $args['capabilities']);

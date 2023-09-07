@@ -49,7 +49,7 @@ class WPS_Query {
 
             if( !$query->get('post_status') && current_user_can('administrator') ){
 
-                $query->set('post_status', ['publish','draft']);
+                $query->set('post_status', ['publish','draft','pending','private']);
                 $query->query['post_status'] =  ['publish','draft','pending','private'];
             }
 
@@ -148,6 +148,26 @@ class WPS_Query {
         });
     }
 
+    public function preview_access( $posts ) {
+
+        if ( !count($posts) )
+            return $posts;
+
+        $post = $posts[0];
+
+        if( is_main_query() ){
+
+            if( $post->post_status == 'draft' && current_user_can('read_draft_posts') )
+                $post->post_status = 'publish';
+            elseif( $post->post_status == 'pending' && current_user_can('read_pending_posts') )
+                $post->post_status = 'publish';
+            elseif( $post->post_status == 'future' && current_user_can('read_future_posts') )
+                $post->post_status = 'publish';
+        }
+
+        return $posts;
+    }
+
 
     /**
      * constructor.
@@ -163,7 +183,8 @@ class WPS_Query {
                 add_action( 'init', [$this, 'search_in_meta']);
 
             add_action( 'pre_get_posts', [$this, 'pre_get_posts'] );
-            add_filter('terms_clauses', [$this, 'terms_clauses'], 99999, 3);
+            add_filter( 'terms_clauses', [$this, 'terms_clauses'], 99999, 3);
+            add_filter( 'posts_results', [$this, 'preview_access'], 10, 2 );
         }
     }
 }
