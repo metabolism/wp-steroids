@@ -25,6 +25,12 @@ class WPS_Contact_Form_7 {
         add_filter( 'wpcf7_load_js', '__return_false' );
         add_filter( 'wpcf7_load_css', '__return_false' );
 
+        add_action( 'wp_enqueue_scripts', function (){
+
+            wp_dequeue_script('google-recaptcha');
+            remove_action( 'wp_enqueue_scripts', 'wpcf7_recaptcha_enqueue_scripts', 20 );
+        });
+
         global $_config;
 
         if( !$_config->get('security.rest_api', false) ){
