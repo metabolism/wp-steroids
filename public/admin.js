@@ -28,6 +28,40 @@
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
 
+	function watchDataChanges(){
+
+		let editor = wp.data.select('core/editor');
+
+		let post = {
+			post_title: editor.getEditedPostAttribute('title'),
+			post_excerpt: editor.getEditedPostAttribute('excerpt'),
+			thumbnail : editor.getEditedPostAttribute('featured_media')
+		}
+
+		wp.data.subscribe(() => {
+
+			let data = {
+				post_title: editor.getEditedPostAttribute('title'),
+				post_excerpt: editor.getEditedPostAttribute('excerpt'),
+				thumbnail_id : editor.getEditedPostAttribute('featured_media')
+			}
+
+			if( JSON.stringify(data) !== JSON.stringify(post) ){
+
+				post = data;
+				let blocks = wp.data.select( 'core/block-editor' ).getBlocks();
+
+				blocks.forEach(block=>{
+
+					let data = block.attributes.data ?? {}
+					data.post = post;
+
+					wp.data.dispatch('core/block-editor').updateBlockAttributes(block.clientId, data)
+				})
+			}
+		});
+	}
+
 	function initTranslation(){
 
 		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label, .edit-post-visual-editor__post-title-wrapper').append('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
@@ -174,6 +208,9 @@
 
 		if( wps.enable_translation )
 			initTranslation();
+
+		if( typeof wp != 'undefined' && typeof wp.data != 'undefined' )
+			watchDataChanges()
 	});
 
 })(jQuery);

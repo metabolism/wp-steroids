@@ -41,7 +41,40 @@ class WPS_Config {
         $this->updateSearchStructure();
         $this->updatePageStructure();
 
+
+
         $this->loaded = true;
+    }
+
+    public function block_render_callback($block, $content = '', $is_preview = false){
+
+        if( isset($block['post']) && $id = get_the_ID() ){
+
+            $post = get_post($id);
+
+            if( $post_cache = wp_cache_get($post->ID, 'posts') ){
+
+                foreach ($block['post'] as $key=>$value){
+
+                    if( isset($post_cache->$key) )
+                        $post_cache->$key = $value;
+                }
+
+                wp_cache_set( $post->ID, $post_cache,'posts' );
+            }
+
+            if( isset($block['post']['thumbnail_id']) ){
+
+                $thumbnail_id = get_post_thumbnail_id($post->ID);
+
+                if( $meta_cache = wp_cache_get($post->ID, 'post_meta') )
+                    $meta_cache['_thumbnail_id'] = [$block['post']['thumbnail_id']];
+
+                wp_cache_set($post->ID, $meta_cache, 'post_meta');
+            }
+        }
+
+        return apply_filters('block_render_callback', $block, $content, $is_preview);
     }
 
     /**
@@ -72,7 +105,7 @@ class WPS_Config {
                 'front'             => $args['front']??true
             ];
 
-            $block['render_callback'] = apply_filters('block_render_callback', false);
+            $block['render_callback'] = [$this, 'block_render_callback'];
 
             $block['supports']['align'] = boolval($args['supports']['align']??false);
             $block['supports']['align_text'] = boolval($args['supports']['align_text']??false);
