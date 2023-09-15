@@ -51,13 +51,14 @@
 				post = data;
 				let blocks = wp.data.select( 'core/block-editor' ).getBlocks();
 
-				blocks.forEach(block=>{
+				if( blocks.length ){
 
+					let block = blocks[0];
 					let data = block.attributes.data ?? {}
 					data.post = post;
 
 					wp.data.dispatch('core/block-editor').updateBlockAttributes(block.clientId, data)
-				})
+				}
 			}
 		});
 	}
