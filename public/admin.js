@@ -64,7 +64,7 @@
 
 	function initTranslation(){
 
-		$('#wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label, .edit-post-visual-editor__post-title-wrapper').append('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
+		$('#edittag .term-name-wrap td, #edittag .term-slug-wrap td, #edittag .term-description-wrap td, #wp-content-wrap, #titlewrap, #wp-advanced_description-wrap, #postexcerpt .inside, #menu-to-edit .menu-item-settings label, #link-selector .wp-link-text-field label, .edit-post-visual-editor__post-title-wrapper').append('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
 		$('#tag-post-content #name').wrap('<div class="input-wrapper"></div>')
 		$('#tag-post-content #name').after('<a class="wps-translate wps-translate--'+wps.enable_translation+'" title="Translate with '+ucfirst(wps.enable_translation)+'"></a>')
 		$('#menu-to-edit span.description').remove()
@@ -90,8 +90,13 @@
 
 					$inputs = $(this).prev('input, textarea')
 
-					if( !$inputs.length )
-						return;
+					if( !$inputs.length ){
+
+						$inputs = $(this).prev().prev('input, textarea')
+
+						if( !$inputs.length )
+							return;
+					}
 				}
 
 				var $input = $inputs.first()

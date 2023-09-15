@@ -63,6 +63,8 @@ class WPS_Translation {
 
         $response = $translated_text = false;
 
+        $text = str_replace("'", "`", $text);
+
         if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY ){
 
             $response = wp_remote_post('https://translation.googleapis.com/language/translate/v2?key='.GOOGLE_TRANSLATE_KEY, [
