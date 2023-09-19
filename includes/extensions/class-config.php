@@ -366,7 +366,7 @@ class WPS_Config {
                 if( !$role = get_role($the_role) )
                     continue;
 
-                foreach ( $registered_post_types as $post_type => $args ){
+                foreach ( $registered_post_types as $post_type => &$args ){
 
                     if( ($args['capability_type']??'') != 'page' && ($args['capability_type']??'') != 'post' ){
 
@@ -589,7 +589,7 @@ class WPS_Config {
                 $role->add_cap( 'delete_category' );
                 $role->add_cap( 'assign_category' );
 
-                foreach ( $registered_taxonomies as $taxonomy => $args ) {
+                foreach ( $registered_taxonomies as $taxonomy => &$args ) {
 
                     if( !empty($args['capabilities']) ){
 
