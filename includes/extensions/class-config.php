@@ -1024,7 +1024,7 @@ class WPS_Config {
         $this->support = $this->config->get('support', []);
 
         if( $jpeg_quality = $this->config->get('image.compression', false) )
-            add_filter( 'jpeg_quality', function() use ($jpeg_quality){ return $jpeg_quality; });
+            add_filter( 'wp_editor_set_quality', function() use ($jpeg_quality){ return $jpeg_quality; });
 
         // Global init action
         add_action( 'init', function()
