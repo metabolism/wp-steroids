@@ -179,7 +179,7 @@ wordpress:
   ###############
 
   acf:
-    json_path: '/config/packages/acf'
+    json_path: '/config/acf'
     settings:
       use_entity: true #add new optimised return format
       autoload: true #autoload options
