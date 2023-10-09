@@ -1,10 +1,15 @@
-### 1.1.8
+### 1.2.0
 - Fix css in admin menu
 - Remove rewrite warning
 - Allow translation for inline editor from acf-extensions plugin
 - Allow privacy page edition for editor
 - Better php8.1 compatibility
+- Better roles
 - Clone using Multisite language switcher plugin now copy terms
+
+#### Breaking change :
+when using 'block_render_callback', call your function directly:
+> add_filter( 'block_render_callback', [$this, 'renderBlock']);
 
 ### 1.1.7
 - Fix broken clone when using blocks and Multisite language switcher plugin
