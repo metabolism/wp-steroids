@@ -47,6 +47,10 @@ YML file allows to configure :
 
 Documentation is available on [Gitbook](https://metabolism.gitbook.io/symfony-wordpress-bundle/guides/wp-steroids-plugin)
 
+## Demo
+
+Bedrock install using Wp Steroids : https://github.com/jerome-barbato/wp-steroids-demo
+
 ## YML Sample
 
 ```yaml
