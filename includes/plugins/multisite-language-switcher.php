@@ -70,43 +70,41 @@ class WPS_Multisite_Language_Switcher {
                     if(empty($value))
                         continue;
 
-                    if( function_exists('get_field_object') && is_string($value) )
-                    {
+                    if( function_exists('get_field_object') && is_string($value) ) {
+
                         $field = get_field_object($value);
 
-                        if( isset($field['type']) && in_array($field['type'], ['image', 'file']) )
-                        {
+                        if( in_array($field['type']??'', ['image', 'file']) ) {
+
                             $meta_key = substr($key, 1);
                             $meta_value = $meta[$meta_key][0]??'';
 
                             if( !empty($meta_value)){
 
-                                if( $current_site_id == $main_site_id )
-                                {
-                                    switch_to_blog($_GET['blog_id']);
-                                    $original_id = get_post_meta($meta_value, '_wp_original_attachment_id', true);
-                                    restore_current_blog();
+                                $original_id = $this->getOriginalId($current_site_id, $main_site_id, $meta_value);
 
-                                    if( $original_id )
-                                    {
-                                        $meta[$meta_key][0] = $original_id;
-                                        update_post_meta($inserted_tag_id, substr($key, 1), $original_id);
+                                $meta[$meta_key][0] = $original_id;
+                                update_term_meta($inserted_tag_id, $meta_key, $original_id);
 
-                                        continue;
-                                    }
-                                }
-                                else
-                                {
-                                    $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$meta_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
+                                continue;
+                            }
+                        }
+                        elseif( ($field['type']??'') == 'gallery' ) {
 
-                                    if( count($attachments) ) {
+                            $meta_key = substr($key, 1);
+                            $meta_value = maybe_unserialize($meta[$meta_key][0]??'');
 
-                                        $meta[$meta_key][0] = $attachments[0];
-                                        update_post_meta($inserted_tag_id, substr($key, 1), $attachments[0]);
+                            if( !empty($meta_value)){
 
-                                        continue;
-                                    }
-                                }
+                                $new_values = [];
+
+                                foreach ($meta_value as $_value)
+                                    $new_values[] = $this->getOriginalId($current_site_id, $main_site_id, $_value);
+
+                                $meta[$meta_key][0] = $new_values;
+                                update_term_meta($inserted_tag_id, $meta_key, $new_values);
+
+                                continue;
                             }
                         }
                     }
@@ -216,29 +214,30 @@ class WPS_Multisite_Language_Switcher {
 
                                 $field = get_field_object($value);
 
-                                if( isset($field['type']) && in_array($field['type'], ['image', 'file']) )
+                                if( in_array($field['type']??'', ['image', 'file']) )
                                 {
                                     $_key  = substr($key, 1);
                                     $_value = $block['attrs']['data'][$_key]??'';
 
                                     if( !empty($_value)){
 
-                                        if( $current_site_id == $main_site_id )
-                                        {
-                                            switch_to_blog($_GET['blog_id']);
-                                            $original_id = get_post_meta($_value, '_wp_original_attachment_id', true);
-                                            restore_current_blog();
+                                        $new_value = $this->getOriginalId($current_site_id, $main_site_id, $_value);
+                                        $post['post_content'] = str_replace('"'.$_key.'":'.$_value.',"'.$key.'":"'.$value.'"', '"'.$_key.'":'.$new_value.',"'.$key.'":"'.$value.'"', $post['post_content']);
+                                    }
+                                }
+                                elseif( ($field['type']??'') == 'gallery' )
+                                {
+                                    $_key  = substr($key, 1);
+                                    $_values = $block['attrs']['data'][$_key]??'';
 
-                                            if( $original_id )
-                                                $post['post_content'] = str_replace('"'.$_key.'":'.$_value, '"'.$_key.'":'.$original_id, $post['post_content']);
-                                        }
-                                        else
-                                        {
-                                            $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
+                                    if( !empty($_values)){
 
-                                            if( count($attachments) )
-                                                $post['post_content'] = str_replace('"'.$_key.'":'.$_value, '"'.$_key.'":'.$attachments[0], $post['post_content']);
-                                        }
+                                        $new_values = [];
+
+                                        foreach ($_values as $_value)
+                                            $new_values[] = $this->getOriginalId($current_site_id, $main_site_id, $_value);
+
+                                        $post['post_content'] = str_replace('"'.$_key.'":["'.implode('","', $_values).'"],"'.$key.'":"'.$value.'"', '"'.$_key.'":["'.implode('","', array_filter($new_values)).'"],"'.$key.'":"'.$value.'"', $post['post_content']);
                                     }
                                 }
                             }
@@ -267,61 +266,46 @@ class WPS_Multisite_Language_Switcher {
 
                     if($key === '_thumbnail_id' && is_string($value)) {
 
-                        if( $current_site_id == $main_site_id )
-                        {
-                            switch_to_blog($_GET['blog_id']);
-                            $original_id = get_post_meta($value, '_wp_original_attachment_id', true);
-                            restore_current_blog();
-
-                            update_post_meta($inserted_post_id, $key, $original_id);
-                        }
-                        else
-                        {
-                            $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
-
-                            if( count($attachments) )
-                                update_post_meta($inserted_post_id, $key, $attachments[0]);
-                        }
+                        $original_id = $this->getOriginalId($current_site_id, $main_site_id, $value);
+                        update_post_meta($inserted_post_id, $key, $original_id);
                     }
                     else{
 
-                        if( function_exists('get_field_object') && is_string($value) )
-                        {
+                        if( function_exists('get_field_object') && is_string($value) ) {
+
                             $field = get_field_object($value);
 
-                            if( isset($field['type']) && in_array($field['type'], ['image', 'file']) )
-                            {
+                            if( in_array($field['type']??'', ['image', 'file']) ) {
+
                                 $meta_key = substr($key, 1);
                                 $meta_value = $meta[$meta_key][0]??'';
 
                                 if( !empty($meta_value)){
 
-                                    if( $current_site_id == $main_site_id )
-                                    {
-                                        switch_to_blog($_GET['blog_id']);
-                                        $original_id = get_post_meta($meta_value, '_wp_original_attachment_id', true);
-                                        restore_current_blog();
+                                    $original_id = $this->getOriginalId($current_site_id, $main_site_id, $meta_value);
 
-                                        if( $original_id )
-                                        {
-                                            $meta[$meta_key][0] = $original_id;
-                                            update_post_meta($inserted_post_id, substr($key, 1), $original_id);
+                                    $meta[$meta_key][0] = $original_id;
+                                    update_post_meta($inserted_post_id, $meta_key, $original_id);
 
-                                            continue;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$meta_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
+                                    continue;
+                                }
+                            }
+                            elseif( ($field['type']??'') == 'gallery' ) {
 
-                                        if( count($attachments) ) {
+                                $meta_key = substr($key, 1);
+                                $meta_value = maybe_unserialize($meta[$meta_key][0]??'');
 
-                                            $meta[$meta_key][0] = $attachments[0];
-                                            update_post_meta($inserted_post_id, substr($key, 1), $attachments[0]);
+                                if( !empty($meta_value)){
 
-                                            continue;
-                                        }
-                                    }
+                                    $new_values = [];
+
+                                    foreach ($meta_value as $_value)
+                                        $new_values[] = $this->getOriginalId($current_site_id, $main_site_id, $_value);
+
+                                    $meta[$meta_key][0] = $new_values;
+                                    update_post_meta($inserted_post_id, $meta_key, $new_values);
+
+                                    continue;
                                 }
                             }
                         }
@@ -379,6 +363,34 @@ class WPS_Multisite_Language_Switcher {
         }
     }
 
+    /**
+     * @param $current_site_id
+     * @param $main_site_id
+     * @param $_value
+     * @return int|null
+     */
+    private function getOriginalId($current_site_id, $main_site_id, $_value){
+
+        if( $current_site_id == $main_site_id )
+        {
+            switch_to_blog($_GET['blog_id']);
+            $original_id = get_post_meta($_value, '_wp_original_attachment_id', true);
+            restore_current_blog();
+
+            if( $original_id )
+                return $original_id;
+        }
+        else
+        {
+            $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
+
+            if( count($attachments) )
+                return $attachments[0];
+        }
+
+        return null;
+    }
+
     function get_edit_new($path){
 
         global $current_blog;
@@ -386,8 +398,15 @@ class WPS_Multisite_Language_Switcher {
         $args = parse_url($path);
         parse_str($args['query']??'', $args);
 
-        if( !isset($args['msls_id']) )
-            return $path;
+        if( !isset($args['msls_id']) ){
+
+            if( isset($_GET['post'], $args['post_type']) )
+                $args['msls_id'] = $_GET['post'];
+            elseif( isset($_GET['tag_ID'], $args['taxonomy']) )
+                $args['msls_id'] = $_GET['tag_ID'];
+            else
+                return $path;
+        }
 
         if( isset($args['taxonomy']) ) {
 

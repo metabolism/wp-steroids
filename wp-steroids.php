@@ -2,9 +2,8 @@
 /**
  * Plugin Name: WordPress on Steroids
  * Description: Configure WordPress using yml and add amazing features
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Metabolism
- * Author URI: https://github.com/wearemetabolism
  */
 
 use Dflydev\DotAccessData\Data;
@@ -109,7 +108,7 @@ class WPS{
 
         define('WPS_PATH', __DIR__);
         define('WPS_PLUGIN_URL', plugin_dir_url(__FILE__));
-        define('WPS_VERSION', '1.1.9');
+        define('WPS_VERSION', '1.2.1');
 
         require __DIR__ . '/includes/vendor/autoload.php';
 
