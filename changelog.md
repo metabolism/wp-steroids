@@ -1,3 +1,9 @@
+### 1.2.2
+- Remove rewrite sanitization introduced in 1.2.0
+
+### 1.2.1
+- Fix image id on post/term copy
+
 ### 1.2.0
 - Fix css in admin menu
 - Remove rewrite warning

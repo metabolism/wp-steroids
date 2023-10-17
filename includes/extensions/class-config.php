@@ -734,7 +734,7 @@ class WPS_Config {
 
         if( isset( $_POST['page_rewrite_slug'] ) && !empty($_POST['page_rewrite_slug']) )
         {
-            update_option( 'page_rewrite_slug', sanitize_title_with_dashes( $_POST['page_rewrite_slug'] ), true );
+            update_option( 'page_rewrite_slug', $_POST['page_rewrite_slug'], true );
             $updated = true;
         }
 
@@ -749,7 +749,7 @@ class WPS_Config {
 
         if( isset( $_POST['search_rewrite_slug'] ) && !empty($_POST['search_rewrite_slug']) )
         {
-            update_option( 'search_rewrite_slug', sanitize_title_with_dashes( $_POST['search_rewrite_slug'] ), true );
+            update_option( 'search_rewrite_slug', $_POST['search_rewrite_slug'], true );
             $updated = true;
         }
 
@@ -770,7 +770,7 @@ class WPS_Config {
                 {
                     if( isset( $_POST[$post_type. '_rewrite_'.$type] ) && !empty($_POST[$post_type. '_rewrite_'.$type]) )
                     {
-                        update_option( $post_type. '_rewrite_'.$type, sanitize_title_with_dashes($_POST[$post_type. '_rewrite_'.$type]), true );
+                        update_option( $post_type. '_rewrite_'.$type, $_POST[$post_type. '_rewrite_'.$type], true );
                         $updated = true;
                     }
 
@@ -803,7 +803,7 @@ class WPS_Config {
 
             if( isset( $_POST[$taxonomy. '_rewrite_slug'] ) && !empty($_POST[$taxonomy. '_rewrite_slug']) )
             {
-                update_option( $taxonomy. '_rewrite_slug', sanitize_title_with_dashes($_POST[$taxonomy. '_rewrite_slug']), true );
+                update_option( $taxonomy. '_rewrite_slug', $_POST[$taxonomy. '_rewrite_slug'], true );
                 $updated = true;
             }
 
