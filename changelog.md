@@ -1,3 +1,6 @@
+### 1.2.3
+- Fix editor roles when using map meta cap on cpt
+
 ### 1.2.2
 - Remove rewrite sanitization introduced in 1.2.0
 

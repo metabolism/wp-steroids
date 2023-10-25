@@ -372,16 +372,22 @@ class WPS_Config {
 
                         $post_types = $this->plural($post_type, false);
 
-                        $role->add_cap( 'read_'.$post_type);
-                        $role->add_cap( 'read_private_'.$post_types );
                         $role->add_cap( 'edit_'.$post_type );
+                        $role->add_cap( 'read_'.$post_type);
+                        $role->add_cap( 'delete_'.$post_type);
+
                         $role->add_cap( 'edit_'.$post_types );
                         $role->add_cap( 'edit_others_'.$post_types );
-                        $role->add_cap( 'edit_published_'.$post_types );
                         $role->add_cap( 'publish_'.$post_types );
-                        $role->add_cap( 'delete_others_'.$post_types );
+                        $role->add_cap( 'read_private_'.$post_types );
+
+                        $role->add_cap( 'delete_'.$post_types );
                         $role->add_cap( 'delete_private_'.$post_types );
                         $role->add_cap( 'delete_published_'.$post_types );
+                        $role->add_cap( 'delete_others_'.$post_types );
+                        $role->add_cap( 'edit_private_'.$post_types );
+                        $role->add_cap( 'edit_published_'.$post_types );
+                        $role->add_cap( 'edit_'.$post_types );
                     }
                 }
             }
