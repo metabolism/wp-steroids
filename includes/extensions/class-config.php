@@ -20,7 +20,7 @@ class WPS_Config {
      */
     public function plural($name, $space=true)
     {
-        $name = substr($name, -1) == 's' ? $name : (substr($name, -1) == 'y' && !in_array(substr($name, -2, 1), ['a','e','i','o','u']) ? substr($name, 0, -1).'ies' : $name.'s');
+        $name = substr($name, -1) == 's' ? ($space?'':'all ').$name : (substr($name, -1) == 'y' && !in_array(substr($name, -2, 1), ['a','e','i','o','u']) ? substr($name, 0, -1).'ies' : $name.'s');
 
         if( $space )
             return $name;
@@ -144,6 +144,7 @@ class WPS_Config {
     {
         $default_args = [
             'public' => true,
+            'map_meta_cap' => true,
             'has_archive' => true,
             'rewrite' => [
                 'pages'=>true,
@@ -352,44 +353,6 @@ class WPS_Config {
                         acf_add_options_sub_page($args);
                     }
                 }
-
-            }
-        }
-
-        if( !$this->loaded ){
-
-            $roles = array('editor','administrator');
-
-            // Loop through each role and assign capabilities
-            foreach($roles as $the_role) {
-
-                if( !$role = get_role($the_role) )
-                    continue;
-
-                foreach ( $registered_post_types as $post_type => &$args ){
-
-                    if( ($args['capability_type']??'') != 'page' && ($args['capability_type']??'') != 'post' ){
-
-                        $post_types = $this->plural($post_type, false);
-
-                        $role->add_cap( 'edit_'.$post_type );
-                        $role->add_cap( 'read_'.$post_type);
-                        $role->add_cap( 'delete_'.$post_type);
-
-                        $role->add_cap( 'edit_'.$post_types );
-                        $role->add_cap( 'edit_others_'.$post_types );
-                        $role->add_cap( 'publish_'.$post_types );
-                        $role->add_cap( 'read_private_'.$post_types );
-
-                        $role->add_cap( 'delete_'.$post_types );
-                        $role->add_cap( 'delete_private_'.$post_types );
-                        $role->add_cap( 'delete_published_'.$post_types );
-                        $role->add_cap( 'delete_others_'.$post_types );
-                        $role->add_cap( 'edit_private_'.$post_types );
-                        $role->add_cap( 'edit_published_'.$post_types );
-                        $role->add_cap( 'edit_'.$post_types );
-                    }
-                }
             }
         }
     }
@@ -497,6 +460,7 @@ class WPS_Config {
     public function addTaxonomies(){
 
         $default_args = [
+            'map_meta_cap' => true,
             'public' => true,
             'hierarchical' => true,
             'rewrite' => [],
@@ -524,11 +488,13 @@ class WPS_Config {
 
                 if( !isset($args['capabilities']) ){
 
+                    $taxonomies = $this->plural($taxonomy, false);
+
                     $args['capabilities'] = [
-                        'manage_terms' => 'manage_'.$this->plural($taxonomy, false),
-                        'edit_terms'   => 'edit_'.$taxonomy,
-                        'delete_terms' => 'delete_'.$taxonomy,
-                        'assign_terms' => 'assign_'.$taxonomy
+                        'manage_terms' => 'manage_'.$taxonomies,
+                        'edit_terms'   => 'edit_'.$taxonomies,
+                        'delete_terms' => 'delete_'.$taxonomies,
+                        'assign_terms' => 'assign_'.$taxonomies
                     ];
                 }
 
@@ -580,36 +546,12 @@ class WPS_Config {
                 wp_die($taxonomy. ' is not allowed, reserved keyword');
             }
         }
-
-        if( !$this->loaded ){
-
-            $roles = array('editor','administrator');
-
-            // Loop through each role and assign capabilities
-            foreach($roles as $the_role) {
-
-                if( !$role = get_role($the_role) )
-                    continue;
-
-                $role->add_cap( 'edit_category');
-                $role->add_cap( 'delete_category' );
-                $role->add_cap( 'assign_category' );
-
-                foreach ( $registered_taxonomies as $taxonomy => &$args ) {
-
-                    if( !empty($args['capabilities']) ){
-
-                        foreach ($args['capabilities'] as $capability=>$map){
-
-                            if( $map != 'do_not_allow')
-                                $role->add_cap( $map );
-                        }
-                    }
-                }
-            }
-        }
     }
 
+    /**
+     * @param $taxonomy
+     * @return int[]|string|string[]|WP_Error|WP_Term[]
+     */
     private function getSlugs($taxonomy){
 
         $taxonomy = str_replace('{', '', str_replace('}', '', $taxonomy));
