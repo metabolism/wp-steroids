@@ -197,7 +197,7 @@ class WPS_Config {
                 if( isset($args['menu_icon']) )
                     $args['menu_icon'] = 'dashicons-'.$args['menu_icon'];
 
-                if( !isset($args['capability_type']) )
+                if( !isset($args['capability_type']) && !isset($args['capabilities']) && !$args['map_meta_cap'] )
                     $args['capability_type'] = [$post_type, $this->plural($post_type, false)];
 
                 if( is_bool($args['rewrite']) && $args['rewrite'] )
@@ -486,7 +486,7 @@ class WPS_Config {
                     'search_items' => 'Search in ' . $this->plural($name)
                 ];
 
-                if( !isset($args['capabilities']) ){
+                if( !isset($args['capabilities']) && !$args['map_meta_cap'] ){
 
                     $taxonomies = $this->plural($taxonomy, false);
 

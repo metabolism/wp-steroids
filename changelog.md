@@ -1,3 +1,9 @@
+### 1.2.5
+- Fix editor roles when using map meta cap on custom taxonomy
+
+### 1.2.4
+- Fix editor roles typo
+
 ### 1.2.3
 - Fix editor roles when using map meta cap on cpt
 
