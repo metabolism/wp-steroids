@@ -1,3 +1,7 @@
+### 1.2.6
+- Fix possible sql injection and unsecured csv export in list-table.php
+- Update vendors
+
 ### 1.2.5
 - Fix editor roles when using map meta cap on custom taxonomy
 

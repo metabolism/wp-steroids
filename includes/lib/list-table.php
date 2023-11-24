@@ -1,325 +1,335 @@
 <?php
 
 if(!class_exists('WP_List_Table'))
-	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+    require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 
 class WPS_List_Table extends \WP_List_Table {
 
-	private $table, $args, $fields, $column_title, $total_items, $delimiter;
+    private $table, $args, $fields, $column_title, $total_items, $delimiter;
 
-	/**
-	 * TableHelper constructor.
-	 * @param $table
-	 * @param $args
-	 */
-	function __construct($table, $args=[])
-	{
-		if( isset($args['columns'], $args['columns']['email']) )
-		{
-			add_filter( 'wp_privacy_personal_data_exporters', [$this, 'registerTableDataExporter'], 10 );
-			add_filter( 'wp_privacy_personal_data_erasers', [$this, 'registerTableDataEraser'], 10 );
-		}
+    /**
+     * TableHelper constructor.
+     * @param $table
+     * @param $args
+     */
+    function __construct($table, $args=[])
+    {
+        if( isset($args['columns'], $args['columns']['email']) )
+        {
+            add_filter( 'wp_privacy_personal_data_exporters', [$this, 'registerTableDataExporter'], 10 );
+            add_filter( 'wp_privacy_personal_data_erasers', [$this, 'registerTableDataEraser'], 10 );
+        }
 
-		global $wpdb;
+        global $wpdb;
 
-		$this->table = $table;
-		$this->column_title = $args['columns']['title'] ?? 'Title';
+        $this->table = $table;
+        $this->column_title = $args['columns']['title'] ?? 'Title';
 
-		$structure = $wpdb->get_col( "DESCRIBE {$wpdb->prefix}{$this->table}" );
+        $structure = $wpdb->get_col( "DESCRIBE {$wpdb->prefix}{$this->table}" );
 
-		if(!$structure || !is_array($structure) )
-			wp_die("Table {$wpdb->prefix}{$this->table} is missing");
+        if(!$structure || !is_array($structure) )
+            wp_die("Table {$wpdb->prefix}{$this->table} is missing");
 
-		if( !in_array('id', $structure))
-			wp_die("Field `id` is missing from table {$wpdb->prefix}{$this->table}");
+        if( !in_array('id', $structure))
+            wp_die("Field `id` is missing from table {$wpdb->prefix}{$this->table}");
 
-		if( isset($args['columns']['title']) )
-			unset($args['columns']['title']);
+        if( isset($args['columns']['title']) )
+            unset($args['columns']['title']);
 
-		if( $args['export'] && isset($args['export']['delimiter']) )
-			$this->delimiter = $args['export']['delimiter'];
-		else
-			$this->delimiter = ',';
+        if( $args['export'] && isset($args['export']['delimiter']) )
+            $this->delimiter = $args['export']['delimiter'];
+        else
+            $this->delimiter = ',';
 
-		$this->args  = $args;
+        $this->args  = $args;
 
-		$this->doActions();
-	}
+        $this->doActions();
+    }
 
 
-	function init() {
+    function init() {
 
-		parent::__construct([
-			'singular'  => $this->args['singular'],
-			'plural'    => $this->args['plural'],
-			'ajax'      => false
-		]);
-	}
+        parent::__construct([
+            'singular'  => $this->args['singular'],
+            'plural'    => $this->args['plural'],
+            'ajax'      => false
+        ]);
+    }
 
 
-	/**
-	 * @param $erasers
-	 * @return mixed
-	 */
-	function registerTableDataEraser($erasers ) {
-		$erasers[$this->table.'-eraser'] = array(
-			'eraser_friendly_name' => __t( $this->args['page_title'].' eraser' ),
-			'callback'  => function( $email ) {
+    /**
+     * @param $erasers
+     * @return mixed
+     */
+    function registerTableDataEraser($erasers ) {
+        $erasers[$this->table.'-eraser'] = array(
+            'eraser_friendly_name' => __t( $this->args['page_title'].' eraser' ),
+            'callback'  => function( $email ) {
 
-				if ( !is_email($email) )
-					return ['items_removed' => false, 'items_retained' => false, 'messages' => [], 'done' => true];
+                if ( !is_email($email) )
+                    return ['items_removed' => false, 'items_retained' => false, 'messages' => [], 'done' => true];
 
-				global $wpdb;
+                global $wpdb;
 
-				$count = $wpdb->delete( $wpdb->prefix.$this->table, ['email'=>$email]);
+                $count = $wpdb->delete( $wpdb->prefix.$this->table, ['email'=>$email]);
 
-				return ['items_removed' => $count, 'items_retained' => false, 'messages' => [], 'done' => true];
+                return ['items_removed' => $count, 'items_retained' => false, 'messages' => [], 'done' => true];
 
-			}
-		);
+            }
+        );
 
-		return $erasers;
-	}
+        return $erasers;
+    }
 
-	/**
-	 * @param $exporters
-	 * @return mixed
-	 */
-	function registerTableDataExporter($exporters ) {
+    /**
+     * @param $exporters
+     * @return mixed
+     */
+    function registerTableDataExporter($exporters ) {
 
-		$exporters[$this->table.'-exporter'] = [
-			'exporter_friendly_name' => __t( $this->args['page_title'] . ' exporter' ),
-			'callback' => function( $email ) {
+        $exporters[$this->table.'-exporter'] = [
+            'exporter_friendly_name' => __t( $this->args['page_title'] . ' exporter' ),
+            'callback' => function( $email ) {
 
-				if( !is_email($email) )
-					return [ 'data' => false, 'done' => true];
+                if( !is_email($email) )
+                    return [ 'data' => false, 'done' => true];
 
-				global $wpdb;
+                global $wpdb;
 
-				$results = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}{$this->table} WHERE `email`='".$email."'", ARRAY_A );
+                $results = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}{$this->table} WHERE `email`='".$email."'", ARRAY_A );
 
-				$data = [];
+                $data = [];
 
-				foreach ($results as $row)
-				{
-					$entry = [];
+                foreach ($results as $row)
+                {
+                    $entry = [];
 
-					foreach ($row as $key=>$value)
-					{
-						if( $key != 'id' )
-							$entry[] = ['name'=>ucfirst(str_replace('_', ' ', $key)), 'value'=>$value];
-					}
+                    foreach ($row as $key=>$value)
+                    {
+                        if( $key != 'id' )
+                            $entry[] = ['name'=>ucfirst(str_replace('_', ' ', $key)), 'value'=>$value];
+                    }
 
-					$data[] = [
-						'group_id'    => $this->table,
-						'group_label' => __t( $this->args['page_title'] ),
-						'item_id'     => $row['id'],
-						'data'        => $entry
-					];
-				}
+                    $data[] = [
+                        'group_id'    => $this->table,
+                        'group_label' => __t( $this->args['page_title'] ),
+                        'item_id'     => $row['id'],
+                        'data'        => $entry
+                    ];
+                }
 
-				return [ 'data' => $data, 'done' => true];
-			}
-		];
+                return [ 'data' => $data, 'done' => true];
+            }
+        ];
 
-		return $exporters;
-	}
+        return $exporters;
+    }
 
 
-	function doActions() {
+    function doActions() {
 
-		if( $this->args['export'] && isset($_REQUEST['action'], $_REQUEST['page']) && $_REQUEST['action'] == "export"  && $_REQUEST['page'] == "table_".$this->table ){
+        if( $this->args['export'] && ($_REQUEST['action']??'') == "export" && ($_REQUEST['page']??'') == "table_".$this->table ){
 
-			if( isset($_REQUEST['id']) )
-				$ids = implode( ',', array_map( 'absint', (array)$_REQUEST['id'] ) );
-			else
-				$ids = false;
+            global $wpdb;
 
-			global $wpdb;
+            if( isset($_REQUEST['id']) ){
 
-			$query = apply_filters('list_table_export_query', "SELECT * FROM {$wpdb->prefix}{$this->table}".($ids?" WHERE `id` IN({$ids})":""), $this->table, $ids);
-			$items = apply_filters('list_table_export_results', $wpdb->get_results( $query, ARRAY_A ), $this->table);
-			$filename = apply_filters('list_table_export_filename', 'export-'.$this->table.'.'.date('YmdHis').'.csv', $this->table);
+                $ids = (array)$_REQUEST['id'];
+                $arr = implode(',', array_fill(0, count($ids), '%d') );
 
-			header("Content-type: application/force-download");
-			header('Content-Disposition: inline; filename="'.$filename.'"');
+                $query = apply_filters('list_table_export_query', $wpdb->prepare("SELECT * FROM {$wpdb->prefix}{$this->table} WHERE `id` IN({$arr})", $ids), $this->table, $ids);
+            }
+            else{
 
-			if( count($items) )
-			{
-				$out = fopen('php://output', 'w');
+                $query = apply_filters('list_table_export_query', "SELECT * FROM {$wpdb->prefix}{$this->table}", $this->table, false);
+            }
 
-				fputcsv($out, array_keys($items[0]), $this->delimiter);
+            $items = apply_filters('list_table_export_results', $wpdb->get_results( $query, ARRAY_A ), $this->table);
+            $filename = apply_filters('list_table_export_filename', 'export-'.$this->table.'.'.date('YmdHis').'.csv', $this->table);
 
-				foreach ($items as $item)
-					fputcsv($out, array_values($item), $this->delimiter);
+            header("Content-type: application/force-download");
+            header('Content-Disposition: inline; filename="'.$filename.'"');
 
-				fclose($out);
-			}
+            if( count($items) )
+            {
+                $out = fopen('php://output', 'w');
 
-			exit(0);
-		}
-	}
+                fputcsv($out, array_keys($items[0]), $this->delimiter);
 
+                foreach ($items as $item)
+                    fputcsv($out, array_values($item), $this->delimiter);
 
-	/**
-	 * @param $which
-	 */
-	function extra_tablenav($which ) {
+                fclose($out);
+            }
 
-		if( $this->args['export'] && $this->total_items )
-			echo '<a class="button button-primary" href="'.sprintf('?page=%s&action=export', $_REQUEST['page']).'" style="display: inline-block;float: right;margin-left: 10px;margin-right: 0;margin-bottom: 10px;">'.__('Export all', 'wp-steroids').'</a>';
-	}
+            exit(0);
+        }
+    }
 
 
-	/**
-	 * @param $item
-	 * @param $column_name
-	 * @return mixed
-	 */
-	function column_default($item, $column_name)
-	{
-		$value = '';
+    /**
+     * @param $which
+     */
+    function extra_tablenav($which ) {
 
-		if( in_array($column_name, $this->fields) )
-			$value = $item[$column_name];
+        if( $this->args['export'] && $this->total_items )
+            echo '<a class="button button-primary" href="'.sprintf('?page=%s&action=export', $_REQUEST['page']).'" style="display: inline-block;float: right;margin-left: 10px;margin-right: 0;margin-bottom: 10px;">'.__('Export all', 'wp-steroids').'</a>';
+    }
 
-		return apply_filters('list_table_column', $value, $column_name, $this->table, $item);
-	}
 
+    /**
+     * @param $item
+     * @param $column_name
+     * @return mixed
+     */
+    function column_default($item, $column_name)
+    {
+        $value = '';
 
-	/**
-	 * @param $item
-	 * @return string
-	 */
-	function column_title($item){
+        if( in_array($column_name, $this->fields) )
+            $value = $item[$column_name];
 
-		$actions = [];
+        return apply_filters('list_table_column', $value, $column_name, $this->table, $item);
+    }
 
-		$actions['delete'] = sprintf('<a href="?page=%s&action=%s&id=%s" target="_blank">'.__('Delete', 'wp-steroids').'</a>', $_REQUEST['page'], 'delete', $item['id']);
 
-		if( $this->args['export'] )
-			$actions['export'] = sprintf('<a href="?page=%s&action=%s&id=%s" target="_blank">'.__('Export', 'wp-steroids').'</a>', $_REQUEST['page'], 'export', $item['id']);
+    /**
+     * @param $item
+     * @return string
+     */
+    function column_title($item){
 
-		$value = [];
+        $actions = [];
 
-		foreach ((array)$this->args['column_title'] as $column_title )
-			$value[] = $item[$column_title];
+        $actions['delete'] = sprintf('<a href="?page=%s&action=%s&id=%s" target="_blank">'.__('Delete', 'wp-steroids').'</a>', $_REQUEST['page'], 'delete', $item['id']);
 
-		$value = apply_filters('list_table_column', implode(' ', $value), 'title', $this->table, $item);
+        if( $this->args['export'] )
+            $actions['export'] = sprintf('<a href="?page=%s&action=%s&id=%s" target="_blank">'.__('Export', 'wp-steroids').'</a>', $_REQUEST['page'], 'export', $item['id']);
 
-		return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s',
-			$value,
-			$item['id'],
-			$this->row_actions($actions)
-		);
-	}
+        $value = [];
 
+        foreach ((array)$this->args['column_title'] as $column_title )
+            $value[] = $item[$column_title];
 
-	/**
-	 * @param $item
-	 * @return string
-	 */
-	function column_cb($item)
-	{
-		return sprintf('<input type="checkbox" name="%1$s[]" value="%2$s" />','id', $item['id']);
-	}
+        $value = apply_filters('list_table_column', implode(' ', $value), 'title', $this->table, $item);
 
+        return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s',
+            $value,
+            $item['id'],
+            $this->row_actions($actions)
+        );
+    }
 
-	function get_columns()
-	{
-		return array_merge(['cb' => '<input type="checkbox" />', 'title'=>__t($this->column_title)], $this->args['columns']);
-	}
 
+    /**
+     * @param $item
+     * @return string
+     */
+    function column_cb($item)
+    {
+        return sprintf('<input type="checkbox" name="%1$s[]" value="%2$s" />','id', $item['id']);
+    }
 
-	function get_sortable_columns()
-	{
-		$sortable_columns = [];
 
-		foreach ($this->args['columns'] as $column=>$name)
-		{
-			$sortable_columns[$column] = [$column, false];
-		}
+    function get_columns()
+    {
+        return array_merge(['cb' => '<input type="checkbox" />', 'title'=>__t($this->column_title)], $this->args['columns']);
+    }
 
-		return $sortable_columns;
-	}
 
+    function get_sortable_columns()
+    {
+        $sortable_columns = [];
 
-	function get_bulk_actions()
-	{
-		$actions = ['delete' => __('Delete', 'wp-steroids')];
+        foreach ($this->args['columns'] as $column=>$name)
+        {
+            $sortable_columns[$column] = [$column, false];
+        }
 
-		if( $this->args['export'] )
-			$actions['export'] = __('Export', 'wp-steroids');
+        return $sortable_columns;
+    }
 
-		return $actions;
-	}
 
+    function get_bulk_actions()
+    {
+        $actions = ['delete' => __('Delete', 'wp-steroids')];
 
+        if( $this->args['export'] )
+            $actions['export'] = __('Export', 'wp-steroids');
 
-	function process_bulk_action()
-	{
-		global $wpdb;
+        return $actions;
+    }
 
-		if( 'delete' === $this->current_action() && isset($_REQUEST['id']) )
-		{
-			$ids = implode( ',', array_map( 'absint', (array)$_REQUEST['id'] ) );
 
-			if( !$wpdb->query("DELETE FROM {$wpdb->prefix}{$this->table} WHERE ID IN({$ids})") )
-				wp_die('Unable to delete '.$ids.' from table '.$this->table);
 
-			$redirect = admin_url('admin.php?page='.$_REQUEST['page']);
+    function process_bulk_action()
+    {
+        global $wpdb;
 
-			echo '<script type="text/javascript">'.
-				    'window.location = "' . $redirect . '"'.
-			     '</script>';
+        if( 'delete' === $this->current_action() && isset($_REQUEST['id']) )
+        {
+            $ids = (array)$_REQUEST['id'];
+            $arr = implode(',', array_fill(0, count($ids), '%d') );
 
-			exit();
-		}
-	}
+            if( !$wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}{$this->table} WHERE ID IN({$arr})", $ids) ))
+                wp_die($wpdb->last_error);
 
+            $redirect = admin_url('admin.php?page='.$_REQUEST['page']);
 
-	function display()
-	{
-		echo '<div class="wrap">'.
-			     '<h2>'.$this->args['page_title'].'</h2>'.
-			     '<form id="'.$this->table.'-filter" method="get">'.
-			         '<input type="hidden" name="page" value="'.sanitize_text_field($_REQUEST['page']).'" />';
-		             parent::display();
-		echo     '</form>'.
-			 '</div>';
-	}
+            echo '<script type="text/javascript">'.
+                'window.location = "' . $redirect . '"'.
+                '</script>';
 
+            exit();
+        }
+    }
 
-	function prepare_items()
-	{
-		global $wpdb;
 
-		$per_page     = $this->args['per_page'];
-		$order        = isset($_REQUEST['orderby'], $_REQUEST['order'])? 'ORDER BY '.sanitize_text_field($_REQUEST['orderby']).' '.sanitize_text_field($_REQUEST['order']):'';
-		$current_page = $this->get_pagenum();
+    function display()
+    {
+        echo '<div class="wrap">'.
+            '<h2>'.$this->args['page_title'].'</h2>'.
+            '<form id="'.$this->table.'-filter" method="get">'.
+            '<input type="hidden" name="page" value="'.sanitize_text_field($_REQUEST['page']).'" />';
+        parent::display();
+        echo     '</form>'.
+            '</div>';
+    }
 
-		$column_title = $this->args['column_title'];
 
-		if( is_array($column_title) )
-			$column_title[] = 'id';
-		else
-			$column_title = [$column_title, 'id'];
+    function prepare_items()
+    {
+        global $wpdb;
 
-		$this->fields = array_unique(array_merge($column_title, array_keys($this->args['columns'])));
+        $per_page     = $this->args['per_page'];
+        $order        = isset($_REQUEST['orderby'], $_REQUEST['order']) ? $wpdb->prepare('ORDER BY %s %s', $_REQUEST['orderby'], $_REQUEST['order']) : '';
+        $current_page = $this->get_pagenum();
 
-		$this->_column_headers = array($this->get_columns(), [], $this->get_sortable_columns());
+        $column_title = $this->args['column_title'];
 
-		$this->process_bulk_action();
+        if( is_array($column_title) )
+            $column_title[] = 'id';
+        else
+            $column_title = [$column_title, 'id'];
 
-		$this->total_items = $wpdb->get_var( "SELECT count(`id`) FROM {$wpdb->prefix}{$this->table}");
+        $this->fields = array_unique(array_merge($column_title, array_keys($this->args['columns'])));
 
-		$query       = "SELECT `".implode("`,`", $this->fields)."` FROM {$wpdb->prefix}{$this->table} {$order} LIMIT ".(($current_page-1)*$per_page).", ".($current_page*$per_page);
-		$this->items = $wpdb->get_results( $query, ARRAY_A );
+        $this->_column_headers = array($this->get_columns(), [], $this->get_sortable_columns());
 
-		$this->set_pagination_args( array(
-			'total_items' => $this->total_items,
-			'per_page'    => $per_page,
-			'total_pages' => ceil($this->total_items/$per_page)
-		) );
-	}
+        $this->process_bulk_action();
+
+        $this->total_items = $wpdb->get_var( "SELECT count(`id`) FROM {$wpdb->prefix}{$this->table}");
+
+        $arr = implode(',', array_fill(0, count($this->fields), '%i') );
+        $args = array_merge($this->fields, [($current_page-1)*$per_page, $current_page*$per_page]);
+
+        $query = $wpdb->prepare("SELECT ".$arr." FROM {$wpdb->prefix}{$this->table} {$order} LIMIT %d, %d", $args);
+        $this->items = $wpdb->get_results( $query, ARRAY_A );
+
+        $this->set_pagination_args( array(
+            'total_items' => $this->total_items,
+            'per_page'    => $per_page,
+            'total_pages' => ceil($this->total_items/$per_page)
+        ) );
+    }
 }

@@ -643,7 +643,7 @@ class WPS_Config {
      */
     public function addRoles()
     {
-        if( is_admin() && isset($_GET['populate_roles']) && $_GET['populate_roles'] ){
+        if( is_admin() && current_user_can('administrator') && ($_GET['populate_roles']??false) ){
 
             if ( !function_exists( 'populate_roles' ) )
                 require_once( ABSPATH . 'wp-admin/includes/schema.php' );
@@ -653,7 +653,7 @@ class WPS_Config {
 
         foreach ( $this->config->get('role', []) as $role => $args )
         {
-            if( is_admin() && isset($_GET['reload_role']) && $_GET['reload_role'] )
+            if( is_admin() && current_user_can('administrator') && ($_GET['reload_role']??false) )
                 remove_role($role);
 
             if( !empty($args['inherit']??'') ){
@@ -999,7 +999,8 @@ class WPS_Config {
 
             if( is_admin() ){
 
-                $this->addTableViews();
+                if( current_user_can('editor') || current_user_can('administrator') )
+                    $this->addTableViews();
 
                 if( $editor_style = $this->config->get('editor_style', false) )
                     add_editor_style( $editor_style );
