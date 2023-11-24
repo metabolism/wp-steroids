@@ -46,6 +46,12 @@ class WPS_Config {
         $this->loaded = true;
     }
 
+    /**
+     * @param $block
+     * @param $content
+     * @param $is_preview
+     * @return mixed|null
+     */
     public function block_render_callback($block, $content = '', $is_preview = false){
 
         if( isset($block['post']) && $id = get_the_ID() ){
@@ -197,8 +203,13 @@ class WPS_Config {
                 if( isset($args['menu_icon']) )
                     $args['menu_icon'] = 'dashicons-'.$args['menu_icon'];
 
-                if( !isset($args['capability_type']) && !isset($args['capabilities']) && !$args['map_meta_cap'] )
-                    $args['capability_type'] = [$post_type, $this->plural($post_type, false)];
+                if( isset($args['capability_type']) && !isset($args['capabilities']) && $args['capability_type'] != 'post' ){
+
+                    if( is_string($args['capability_type']) )
+                        $args['capability_type'] = [$args['capability_type'], $this->plural($args['capability_type'], false)];
+                    else
+                        $args['capability_type'] = [$post_type, $this->plural($post_type, false)];
+                }
 
                 if( is_bool($args['rewrite']) && $args['rewrite'] )
                     $args['rewrite'] = ['slug'=>$post_type];
@@ -486,15 +497,18 @@ class WPS_Config {
                     'search_items' => 'Search in ' . $this->plural($name)
                 ];
 
-                if( !isset($args['capabilities']) && !$args['map_meta_cap'] ){
+                if( !isset($args['capabilities']) && isset($args['capability_type']) && $args['capability_type'] != 'category' ){
 
-                    $taxonomies = $this->plural($taxonomy, false);
+                    if( is_string($args['capability_type']) )
+                        $capability = $this->plural($args['capability_type'], false);
+                    else
+                        $capability = $this->plural($taxonomy, false);
 
                     $args['capabilities'] = [
-                        'manage_terms' => 'manage_'.$taxonomies,
-                        'edit_terms'   => 'edit_'.$taxonomies,
-                        'delete_terms' => 'delete_'.$taxonomies,
-                        'assign_terms' => 'assign_'.$taxonomies
+                        'manage_terms' => 'manage_'.$capability,
+                        'edit_terms'   => 'edit_'.$capability,
+                        'delete_terms' => 'delete_'.$capability,
+                        'assign_terms' => 'assign_'.$capability
                     ];
                 }
 

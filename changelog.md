@@ -1,3 +1,6 @@
+### 1.2.7
+- setting capability_type: true in post_type or taxonomy will now generate the right capabilities
+
 ### 1.2.6
 - Fix possible sql injection and unsecured csv export in list-table.php
 - Update vendors
