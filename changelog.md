@@ -1,3 +1,6 @@
+### 1.2.8
+- better post and term copy using Multisite language switcher plugin
+
 ### 1.2.7
 - setting capability_type: true in post_type or taxonomy will now generate the right capabilities
 

@@ -35,24 +35,27 @@ class WPS_Multisite_Language_Switcher {
             // get the original $term
             $term = get_term($_GET['tag_ID']);
 
-            if( !is_wp_error($term) )
-            {
+            if( !is_wp_error($term) ) {
+
                 //get original translations
                 $translations = get_option('msls_term_'.$_GET['tag_ID'],[]);
 
                 // get the original meta
                 $meta = get_term_meta($_GET['tag_ID']);
 
-                // get the original language, fallback to en
-                $language = get_option('WPLANG');
-                $language = empty($language)?'en_US':$language;
+                // get the original language
+                $language = self::getLocale();
 
                 $translations[$language] = $_GET['tag_ID'];
 
                 // return to target blog
                 restore_current_blog();
 
-                $inserted_tag_id = wp_insert_term($term->name, $term->taxonomy, ['description'=>$term->description]);
+                //filter parent
+                $parent = $this->getOriginalId($current_site_id, $main_site_id, $term->parent, 'taxonomy');
+
+                //insert term
+                $inserted_tag_id = wp_insert_term($term->name, $term->taxonomy, ['description'=>$term->description, 'parent'=>$parent]);
 
                 if( is_wp_error($inserted_tag_id) )
                     wp_die($inserted_tag_id->get_error_message());
@@ -67,54 +70,48 @@ class WPS_Multisite_Language_Switcher {
 
                     $value = maybe_unserialize($value[0]);
 
-                    if(empty($value))
+                    add_term_meta($inserted_tag_id, $key, $value);
+
+                    if( empty($value) )
                         continue;
 
-                    if( function_exists('get_field_object') && is_string($value) ) {
+                    if( $key === '_thumbnail_id' ) {
 
-                        $field = get_field_object($value);
+                        $original_id = $this->getOriginalId($current_site_id, $main_site_id, $value, 'image');
+                        update_term_meta($inserted_tag_id, $key, $original_id);
+                    }
+                    elseif( class_exists('ACF') ){
 
-                        if( in_array($field['type']??'', ['image', 'file']) ) {
+                        if( str_starts_with($key, '_') && str_starts_with($value, 'field_') ) {
 
-                            $meta_key = substr($key, 1);
-                            $meta_value = $meta[$meta_key][0]??'';
+                            $field = get_field_object($value);
 
-                            if( !empty($meta_value)){
+                            if( in_array($field['type']??'', ['image', 'file', 'post_object', 'taxonomy', 'relationship', 'gallery']) ) {
 
-                                $original_id = $this->getOriginalId($current_site_id, $main_site_id, $meta_value);
+                                $meta_key = substr($key, 1);
+                                $meta_value = maybe_unserialize($meta[$meta_key][0]??'');
 
-                                $meta[$meta_key][0] = $original_id;
-                                update_term_meta($inserted_tag_id, $meta_key, $original_id);
+                                if( is_array($meta_value) ){
 
-                                continue;
-                            }
-                        }
-                        elseif( ($field['type']??'') == 'gallery' ) {
+                                    $new_meta_values = [];
 
-                            $meta_key = substr($key, 1);
-                            $meta_value = maybe_unserialize($meta[$meta_key][0]??'');
+                                    foreach ($meta_value as $_meta_value)
+                                        $new_meta_values[] = $this->getOriginalId($current_site_id, $main_site_id, $_meta_value, $field['type']);
 
-                            if( !empty($meta_value)){
+                                    update_term_meta($inserted_tag_id, $meta_key, array_filter($new_meta_values));
+                                }
+                                else{
 
-                                $new_values = [];
-
-                                foreach ($meta_value as $_value)
-                                    $new_values[] = $this->getOriginalId($current_site_id, $main_site_id, $_value);
-
-                                $meta[$meta_key][0] = $new_values;
-                                update_term_meta($inserted_tag_id, $meta_key, $new_values);
-
-                                continue;
+                                    $new_meta_value = $this->getOriginalId($current_site_id, $main_site_id, $meta_value, $field['type']);
+                                    update_term_meta($inserted_tag_id, $meta_key, $new_meta_value);
+                                }
                             }
                         }
                     }
-
-                    update_term_meta($inserted_tag_id, $key, $value);
                 }
 
-                // get the target language, fallback to us
-                $language = get_option('WPLANG');
-                $language = empty($language)?'en_US':$language;
+                // get the target language
+                $language = self::getLocale();
 
                 $translations[$language] = $inserted_tag_id;
 
@@ -125,8 +122,7 @@ class WPS_Multisite_Language_Switcher {
 
                         switch_to_blog( $site->blog_id );
 
-                        $blog_language = get_option('WPLANG');
-                        $blog_language = empty($blog_language)?'en_US':$blog_language;
+                        $blog_language = self::getLocale();
 
                         foreach ($translations as $_language=>$tag_id){
 
@@ -147,6 +143,10 @@ class WPS_Multisite_Language_Switcher {
                 // return to edit term
                 wp_redirect( get_admin_url($current_site_id, 'term.php?taxonomy='.$term->taxonomy.'&tag_ID='.$inserted_tag_id));
                 exit;
+            }
+            else{
+
+                restore_current_blog();
             }
         }
     }
@@ -170,15 +170,10 @@ class WPS_Multisite_Language_Switcher {
             $taxonomies = get_object_taxonomies( $post['post_type']);
             $terms = wp_get_post_terms($_GET['post_id'], $taxonomies);
 
-            $translated_terms = [];
+            if( !is_wp_error($post) ) {
 
-            foreach ($terms as $term)
-                $translated_terms[$term->taxonomy][] = get_option('msls_term_'.$term->term_id);
-
-            if( !is_wp_error($post) )
-            {
                 //remove tags and parent
-                unset($post['tags_input'], $post['post_parent']);
+                unset($post['tags_input']);
 
                 //get original translations
                 $translations = get_option('msls_'.$_GET['post_id'],[]);
@@ -187,8 +182,7 @@ class WPS_Multisite_Language_Switcher {
                 $meta = get_post_meta($_GET['post_id']);
 
                 // get the original language, fallback to en
-                $language = get_option('WPLANG');
-                $language = empty($language)?'en_US':$language;
+                $language = self::getLocale();
 
                 $translations[$language] = $_GET['post_id'];
 
@@ -198,136 +192,119 @@ class WPS_Multisite_Language_Switcher {
                 // return to target blog
                 restore_current_blog();
 
+                //filter parent
+                $post['post_parent'] = $this->getOriginalId($current_site_id, $main_site_id, $post['post_parent'], 'post_object');
+
                 // insert the post as draft
                 $post['post_status'] = 'draft';
 
-                // parse block
-                $blocks = parse_blocks($post['post_content']);
+                // parse blocks
+                if( has_blocks($post['post_content']) && class_exists('ACF') ) {
 
-                foreach ($blocks as $block){
+                    $blocks = parse_blocks($post['post_content']);
 
-                    if( class_exists('ACF') && !empty($block['attrs']) ){
+                    foreach ($blocks as &$block) {
 
-                        foreach ( $block['attrs']['data']??[] as $key=>$value ){
+                        foreach ($block['attrs']['data']??[] as $key => $value) {
 
-                            if( substr($key, 0, 1) == '_' && substr($value, 0, 6) == 'field_' ){
+                            //filter fields
+                            if ( str_starts_with($key, '_') && str_starts_with($value, 'field_') ) {
 
                                 $field = get_field_object($value);
 
-                                if( in_array($field['type']??'', ['image', 'file']) )
-                                {
-                                    $_key  = substr($key, 1);
-                                    $_value = $block['attrs']['data'][$_key]??'';
+                                if (in_array($field['type'] ?? '', ['image', 'file', 'post_object', 'taxonomy', 'relationship', 'gallery'])) {
 
-                                    if( !empty($_value)){
+                                    $_key = substr($key, 1);
+                                    $_value = $block['attrs']['data'][$_key] ?? '';
 
-                                        $new_value = $this->getOriginalId($current_site_id, $main_site_id, $_value);
-                                        $post['post_content'] = str_replace('"'.$_key.'":'.$_value.',"'.$key.'":"'.$value.'"', '"'.$_key.'":'.$new_value.',"'.$key.'":"'.$value.'"', $post['post_content']);
-                                    }
-                                }
-                                elseif( ($field['type']??'') == 'gallery' )
-                                {
-                                    $_key  = substr($key, 1);
-                                    $_values = $block['attrs']['data'][$_key]??'';
-
-                                    if( !empty($_values)){
+                                    if (is_array($_value)) {
 
                                         $new_values = [];
 
-                                        foreach ($_values as $_value)
-                                            $new_values[] = $this->getOriginalId($current_site_id, $main_site_id, $_value);
+                                        foreach ($_value as $__value)
+                                            $new_values[] = $this->getOriginalId($current_site_id, $main_site_id, $__value, $field['type']);
 
-                                        $post['post_content'] = str_replace('"'.$_key.'":["'.implode('","', $_values).'"],"'.$key.'":"'.$value.'"', '"'.$_key.'":["'.implode('","', array_filter($new_values)).'"],"'.$key.'":"'.$value.'"', $post['post_content']);
+                                        $block['attrs']['data'][$_key] = array_filter($new_values);
+                                    }
+                                    else {
+
+                                        $new_value = $this->getOriginalId($current_site_id, $main_site_id, $_value, $field['type']);
+                                        $block['attrs']['data'][$_key] = $new_value;
                                     }
                                 }
                             }
                         }
                     }
+
+                    $post['post_content'] = serialize_blocks($blocks);
                 }
 
                 $inserted_post_id = wp_insert_post($post);
 
-                if( is_wp_error($inserted_post_id) )
+                if (is_wp_error($inserted_post_id))
                     wp_die($inserted_post_id->get_error_message());
 
                 // update raw content
-                $wpdb->update($wpdb->posts, ['post_name'=>'', 'post_content'=>$post['post_content']], ['ID'=>$inserted_post_id]);
+                $wpdb->update($wpdb->posts, ['post_name' => '', 'post_content' => $post['post_content']], ['ID' => $inserted_post_id]);
 
                 // register original post
-                add_option('msls_'.$inserted_post_id, $translations, '', 'no');
+                add_option('msls_' . $inserted_post_id, $translations, '', 'no');
 
                 // add and filter meta
                 foreach($meta as $key=>$value){
 
                     $value = maybe_unserialize($value[0]);
 
-                    if(empty($value))
+                    add_post_meta($inserted_post_id, $key, $value);
+
+                    if( empty($value) )
                         continue;
 
-                    if($key === '_thumbnail_id' && is_string($value)) {
+                    if( $key === '_thumbnail_id' ) {
 
-                        $original_id = $this->getOriginalId($current_site_id, $main_site_id, $value);
+                        $original_id = $this->getOriginalId($current_site_id, $main_site_id, $value, 'image');
                         update_post_meta($inserted_post_id, $key, $original_id);
                     }
-                    else{
+                    elseif( class_exists('ACF') ){
 
-                        if( function_exists('get_field_object') && is_string($value) ) {
+                        if( str_starts_with($key, '_') && str_starts_with($value, 'field_') ) {
 
                             $field = get_field_object($value);
 
-                            if( in_array($field['type']??'', ['image', 'file']) ) {
-
-                                $meta_key = substr($key, 1);
-                                $meta_value = $meta[$meta_key][0]??'';
-
-                                if( !empty($meta_value)){
-
-                                    $original_id = $this->getOriginalId($current_site_id, $main_site_id, $meta_value);
-
-                                    $meta[$meta_key][0] = $original_id;
-                                    update_post_meta($inserted_post_id, $meta_key, $original_id);
-
-                                    continue;
-                                }
-                            }
-                            elseif( ($field['type']??'') == 'gallery' ) {
+                            if( in_array($field['type']??'', ['image', 'file', 'post_object', 'taxonomy', 'relationship', 'gallery']) ) {
 
                                 $meta_key = substr($key, 1);
                                 $meta_value = maybe_unserialize($meta[$meta_key][0]??'');
 
-                                if( !empty($meta_value)){
+                                if( is_array($meta_value) ){
 
-                                    $new_values = [];
+                                    $new_meta_values = [];
 
-                                    foreach ($meta_value as $_value)
-                                        $new_values[] = $this->getOriginalId($current_site_id, $main_site_id, $_value);
+                                    foreach ($meta_value as $_meta_value)
+                                        $new_meta_values[] = $this->getOriginalId($current_site_id, $main_site_id, $_meta_value, $field['type']);
 
-                                    $meta[$meta_key][0] = $new_values;
-                                    update_post_meta($inserted_post_id, $meta_key, $new_values);
+                                    update_post_meta($inserted_post_id, $meta_key, array_filter($new_meta_values));
+                                }
+                                else{
 
-                                    continue;
+                                    $new_meta_value = $this->getOriginalId($current_site_id, $main_site_id, $meta_value, $field['type']);
+                                    update_post_meta($inserted_post_id, $meta_key, $new_meta_value);
                                 }
                             }
                         }
-
-                        update_post_meta($inserted_post_id, $key, $value);
                     }
                 }
 
-                // get the target language, fallback to us
-                $language = get_option('WPLANG');
-                $language = empty($language)?'en_US':$language;
+                // get the target language
+                $language = self::getLocale();
 
                 $translations[$language] = $inserted_post_id;
 
-                // add existing translated terms
-                foreach ($translated_terms as $taxonomy=>$terms){
+                // add terms
+                foreach ($terms as $term){
 
-                    foreach ($terms as $term){
-
-                        if( !empty($term[$language]??'') )
-                            wp_add_object_terms($inserted_post_id, $term, $taxonomy);
-                    }
+                    if( $term_id = $this->getOriginalId($current_site_id, $main_site_id, $term->term_id, 'taxonomy') )
+                        wp_add_object_terms($inserted_post_id, [$term_id], $term->taxonomy);
                 }
 
                 //update other posts
@@ -337,8 +314,7 @@ class WPS_Multisite_Language_Switcher {
 
                         switch_to_blog( $site->blog_id );
 
-                        $blog_language = get_option('WPLANG');
-                        $blog_language = empty($blog_language)?'en_US':$blog_language;
+                        $blog_language = self::getLocale();
 
                         foreach ($translations as $_language=>$post_id){
 
@@ -360,6 +336,10 @@ class WPS_Multisite_Language_Switcher {
                 wp_redirect( get_admin_url($current_site_id, 'post.php?post='.$inserted_post_id.'&action=edit'));
                 exit;
             }
+            else{
+
+                restore_current_blog();
+            }
         }
     }
 
@@ -367,25 +347,55 @@ class WPS_Multisite_Language_Switcher {
      * @param $current_site_id
      * @param $main_site_id
      * @param $_value
+     * @param $type
      * @return int|null
      */
-    private function getOriginalId($current_site_id, $main_site_id, $_value){
+    private function getOriginalId($current_site_id, $main_site_id, $_value, $type){
 
-        if( $current_site_id == $main_site_id )
-        {
+        if( empty($_value) || !isset($_GET['blog_id']) )
+            return null;
+
+        global $wpdb;
+
+        if( in_array($type, ['image', 'file', 'gallery']) ){
+
+            if( $current_site_id == $main_site_id ) {
+
+                // switch to origin blog
+                switch_to_blog($_GET['blog_id']);
+                $original_id = get_post_meta($_value, '_wp_original_attachment_id', true);
+                restore_current_blog();
+
+                if( $original_id )
+                    return $original_id;
+            }
+            else {
+
+                $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
+
+                if( count($attachments) )
+                    return $attachments[0];
+            }
+        }
+        elseif( in_array($type, ['post_object', 'taxonomy', 'relationship'])){
+
+            $lang = self::getLocale();
+
+            $value = null;
+            $option_name = $type == 'taxonomy' ? 'msls_term_%d' : 'msls_%d';
+
+            // switch to origin blog
             switch_to_blog($_GET['blog_id']);
-            $original_id = get_post_meta($_value, '_wp_original_attachment_id', true);
+
+            $options = $wpdb->get_var( $wpdb->prepare("SELECT `option_value` FROM $wpdb->options WHERE `option_name` LIKE '$option_name'", $_value) );
+            $options = maybe_unserialize($options);
+
+            if( isset($options[$lang]) )
+                $value = $options[$lang];
+
             restore_current_blog();
 
-            if( $original_id )
-                return $original_id;
-        }
-        else
-        {
-            $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
-
-            if( count($attachments) )
-                return $attachments[0];
+            return $value;
         }
 
         return null;
@@ -545,10 +555,7 @@ class WPS_Multisite_Language_Switcher {
         global $wpdb;
         $options = $wpdb->get_results( "SELECT * FROM $wpdb->options WHERE `option_name` LIKE 'msls_%'" );
 
-        $copy_lang = get_blog_option($copy_blog_id, 'WPLANG');
-
-        if( empty($copy_lang) )
-            return;
+        $copy_lang = self::getLocale($copy_blog_id);
 
         $languages = [];
 
@@ -575,10 +582,7 @@ class WPS_Multisite_Language_Switcher {
             }
         }
 
-        $current_lang = get_blog_option($current_blog_id, 'WPLANG');
-
-        if( empty($current_lang) )
-            return;
+        $current_lang = self::getLocale($current_blog_id);
 
         //copy on other blogs
         foreach (get_sites() as $site){
@@ -589,10 +593,7 @@ class WPS_Multisite_Language_Switcher {
             switch_to_blog($site->blog_id);
 
             $options = $wpdb->get_results( "SELECT * FROM $wpdb->options WHERE `option_name` LIKE 'msls_%'" );
-            $lang = get_blog_option($site->blog_id, 'WPLANG');
-
-            if( empty($lang) )
-                continue;
+            $lang = self::getLocale($site->blog_id);
 
             foreach ($options as $option){
 
@@ -624,7 +625,7 @@ class WPS_Multisite_Language_Switcher {
                         <option value=""></option>
                         <?php foreach (get_sites() as $site): ?>
                             <?php if($site->blog_id != $current_blog_id):?>
-                                <option value="<?=$site->blog_id?>"><?=get_blog_option($site->blog_id, 'WPLANG')?></option>
+                                <option value="<?=$site->blog_id?>"><?=self::getLocale($site->blog_id)?></option>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </select>

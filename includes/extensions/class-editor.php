@@ -62,7 +62,7 @@ class WPS_Editor {
     {
         $object = get_queried_object();
 
-        if( is_post_type_archive() && !is_admin() )
+        if( is_post_type_archive() && !is_admin() && current_user_can( $object->cap->edit_posts ) )
         {
             $args = [
                 'id'    => 'edit',
@@ -353,8 +353,8 @@ class WPS_Editor {
 
             if( is_admin_bar_showing() )
                 wp_enqueue_style('wp_steroid_adminbar', WPS_PLUGIN_URL.'public/admin_bar.css');
-        });
 
+        }, 99);
 
         add_action( 'password_protected_login_head', [$this, 'addCustomLoginHeader']);
         add_action( 'login_head', [$this, 'addCustomLoginHeader']);
