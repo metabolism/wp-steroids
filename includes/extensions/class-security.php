@@ -227,6 +227,7 @@ class WPS_Security {
             $this->disableUpdate();
 
         add_filter( 'map_meta_cap', [$this, 'mapMetaCap'], 1, 3 );
+        add_filter( 'x_redirect_by', '__return_false' );
 
         if( is_admin() )
         {
@@ -264,7 +265,6 @@ class WPS_Security {
 
             add_action( 'after_setup_theme', [$this, 'cleanHeader']);
             add_action( 'wp_footer', [$this, 'cleanFooter']);
-            add_filter( 'x_redirect_by', '__return_false' );
             add_filter( 'robots_txt', '__return_empty_string' );
 
             remove_all_actions('do_favicon');

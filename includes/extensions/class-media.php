@@ -696,6 +696,28 @@ class WPS_Media {
     }
 
     /**
+     * @param $html
+     * @param WP_Post $post
+     * @return string
+     */
+    function mediaMeta($html, $post ){
+
+        if($post->post_mime_type === 'image/png'){
+
+            $html .= sprintf(
+                '<a href="%s" class="submitconvert aria-button-if-js"%s aria-label="%s">%s</a>',
+                wp_nonce_url( "post.php?action=convert&amp;post=$post->ID", 'convert-post_' . $post->ID ),
+                '',
+                /* translators: %s: Attachment title. */
+                esc_attr( sprintf( __( 'Convert &#8220;%s&#8221;', 'wp-steroids' ), $post->post_title ) ),
+                __( 'Convert to jpg', 'wp-steroids' )
+            );
+        }
+
+        return $html;
+    }
+
+    /**
      * @param $path
      * @return false|string
      */
@@ -893,6 +915,7 @@ class WPS_Media {
             add_action('wpmu_options', [$this, 'wpmuOptions'] );
             add_action('wp_handle_upload', [$this, 'uploadResize']);
             add_filter('intermediate_image_sizes_advanced', [$this, 'intermediateImageSizesAdvanced'] );
+            add_filter('media_meta', [$this,'mediaMeta'], 10, 2);
             add_filter('media_row_actions', [$this,'mediaRowActions'], 10, 3);
             add_action('post_action_convert', [$this,'postActionConvert']);
             add_action('post_action_regenerate_metadata', [$this,'postActionRegenerateMetadata']);

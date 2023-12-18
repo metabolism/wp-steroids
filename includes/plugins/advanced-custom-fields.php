@@ -122,7 +122,7 @@ class WPS_Advanced_Custom_Fields{
      */
     public function preLoadValue($unused, $post_id, $field){
 
-        if( $field['type'] == 'message' || $field['type'] == 'tab' )
+        if( is_array($field) && ($field['type'] == 'message' || $field['type'] == 'tab') )
             return '';
 
         return null;

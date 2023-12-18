@@ -1,3 +1,8 @@
+### 1.2.9
+- add "convert to jpg" option for png file in media selector
+- remove "x-redirect-by" on ajax call
+- 
+
 ### 1.2.8
 - better post and term copy using Multisite language switcher plugin
 
