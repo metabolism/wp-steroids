@@ -1,7 +1,9 @@
+### 1.2.10
+- added options in General settings to change default email address and sender name
+
 ### 1.2.9
 - add "convert to jpg" option for png file in media selector
 - remove "x-redirect-by" on ajax call
-- 
 
 ### 1.2.8
 - better post and term copy using Multisite language switcher plugin
