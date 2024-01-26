@@ -199,6 +199,26 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .acf-fields.acf-menu-item-fields > .acf-field .acf-label label{ margin-bottom: 5px; color: #646970; font-style: normal }
 .meta-box-sortables *+.acf-postbox{ border-top: 1px solid #e0e0e0!important }
 
+/* Carbon fields */
+.cf-text__input, .cf-textarea__input{ font-size: 13px }
+.cf-block__fields .cf-complex__group-body{ border-top: 0 }
+.edit-post-sidebar .cf-complex__group-head,
+.edit-post-sidebar .cf-complex__group-body,
+.edit-post-sidebar .cf-complex .cf-field{ border-color:#c4cdd5; }
+.cf-block__fields > .cf-field{ padding: 0 }
+.cf-block__fields > .cf-field +.cf-field{ padding-top: 16px }
+.cf-field__label{ font-weight: normal }
+.cf-field .cf-select__input{ max-width: none }
+.cf-complex__group-body[hidden]{ display: none }
+.cf-complex__group--collapsed .cf-complex__group-head{ border-bottom: 1px solid #c4cdd5 }
+.cf-complex--grid .cf-complex__group{ margin-bottom: -1px }
+.cf-complex__group-action{ margin-left: 4px }
+.cf-complex__group-title{ white-space: nowrap; max-width: calc(100% - 115px); text-overflow: ellipsis; overflow: hidden; display: inline-block }
+.cf-complex__group-head{ align-items: center }
+.carbon-fields--urlpicker strong{ color: #135e96 }
+.carbon-fields--urlpicker{ border: #ccd0d4 solid 1px; padding: 10px; border-radius: 3px; display: block }
+.carbon-fields--urlpicker__remove{ font-size: 1.5em; right: 5px; }
+
 /* Translation */
 #edittag .term-name-wrap td, #edittag .term-slug-wrap td, #edittag .term-description-wrap td{ position: relative }
 .wps-translate{ cursor: pointer; display: none; background: no-repeat center; background-size: contain; position: absolute; right: 5px; top: 50%; transform: translateY(-50%) }

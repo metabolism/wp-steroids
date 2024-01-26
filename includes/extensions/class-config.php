@@ -84,65 +84,6 @@ class WPS_Config {
     }
 
     /**
-     * Adds Gutenberg blocks
-     * @see https://www.advancedcustomfields.com/resources/acf_register_block_type/
-     */
-    public function addBlocks()
-    {
-        if( !class_exists('ACF') || !function_exists('acf_register_block_type') )
-            return;
-
-        $render_template = $this->config->get('gutenberg.render_template', '');
-        $preview_image = $this->config->get('gutenberg.preview_image', false);
-
-        foreach ( $this->config->get('block', []) as $name => $args )
-        {
-            $block = [
-                'name'              => $name,
-                'title'             => __t($args['title']??$name),
-                'description'       => __t($args['description']??''),
-                'render_template'   => $args['render_template']??str_replace('{name}', $name, $render_template),
-                'category'          => $args['category']??'layout',
-                'icon'              => $args['icon']??'admin-comments',
-                'mode'              => $args['mode']??'preview',
-                'keywords'          => $args['keywords']??[],
-                'post_types'        => $args['post_types']??[],
-                'supports'          => $args['supports']??[],
-                'front'             => $args['front']??true
-            ];
-
-            $block['render_callback'] = [$this, 'block_render_callback'];
-
-            $block['supports']['align'] = boolval($args['supports']['align']??false);
-            $block['supports']['align_text'] = boolval($args['supports']['align_text']??false);
-            $block['supports']['align_content'] = boolval($args['supports']['align_content']??false);
-
-            if( substr($args['icon']??'', -4) == '.svg' )
-                $block['icon'] = file_get_contents(ABSPATH.'/'.$args['icon']);
-
-            if( $_preview_image = $args['preview_image']??$preview_image ){
-
-                if( is_string($_preview_image) )
-                    $_preview_image = str_replace('{name}', $name, $preview_image);
-                else
-                    $_preview_image = '/uploads/blocks/'.$name.'.jpg';
-
-
-                $block['example'] = [
-                    'attributes' => [
-                        'mode' => 'preview',
-                        'data' => [
-                            '_preview_image' => $_preview_image,
-                        ]
-                    ]
-                ];
-            }
-
-            acf_register_block_type($block);
-        }
-    }
-
-    /**
      * Adds specific post types here
      * @see CustomPostType
      */
@@ -346,23 +287,6 @@ class WPS_Config {
                             }
                         }, 10, 2 );
                     }
-
-                    if( isset($args['has_options']) && function_exists('acf_add_options_sub_page') ) {
-
-                        if( is_bool($args['has_options']) ) {
-
-                            $args = [
-                                'page_title' 	=> ucfirst($name).' archive options',
-                                'menu_title' 	=> __t('Archive options'),
-                                'autoload'   	=> true
-                            ];
-                        }
-
-                        $args['menu_slug']   = 'options_'.$post_type;
-                        $args['parent_slug'] = 'edit.php?post_type='.$post_type;
-
-                        acf_add_options_sub_page($args);
-                    }
                 }
             }
         }
@@ -411,23 +335,6 @@ class WPS_Config {
 
             if( !in_array($feature, $this->support) )
                 add_theme_support($feature);
-        }
-    }
-
-
-    /**
-     * Register menus
-     * @see Menu
-     */
-    public function addMenus()
-    {
-        $register = $this->config->get('menu.register', false);
-        $register = $register ? 'menu.register' : 'menu';
-
-        foreach ($this->config->get($register, []) as $location => $description)
-        {
-            $location = str_replace('-', '_', sanitize_title($location));
-            register_nav_menu($location, __t($description));
         }
     }
 
@@ -993,13 +900,11 @@ class WPS_Config {
         {
             $this->disableFeatures();
 
-            $this->addBlocks();
             $this->defineThemeSupport();
             $this->addPostTypeSupport();
 
             $this->configureContentType();
 
-            $this->addMenus();
             $this->addSidebars();
             $this->addRoles();
 
@@ -1033,6 +938,7 @@ class WPS_Config {
         // When viewing admin
         if( is_admin() )
         {
+
             if( !HEADLESS || URL_MAPPING )
                 add_action( 'load-options-permalink.php', [$this, 'LoadPermalinks']);
         }

@@ -238,19 +238,19 @@ class WPS_Advanced_Custom_Fields{
     }
 
     /**
+     * @param $allowed_block_types
      * @param $block_editor_context
-     * @param $editor_context
      * @return array|bool
      */
-    public function allowedBlockTypes($block_editor_context, $editor_context) {
+    public function allowedBlockTypes($allowed_block_types, $block_editor_context) {
 
-        if ( empty( $editor_context->post ) || !$block_types = acf_get_store( 'block-types' ) )
-            return $block_editor_context;
+        if ( empty( $block_editor_context->post ) || !$block_types = acf_get_store( 'block-types' ) )
+            return $allowed_block_types;
 
         $blocks = $block_types->get();
         $field_groups = acf_get_field_groups();
 
-        $block_editor_context = [];
+        $allowed_block_types = [];
 
         foreach ($blocks as $name=>$block){
 
@@ -261,12 +261,12 @@ class WPS_Advanced_Custom_Fields{
                     unset($blocks[$name]);
 
                     if( acf_get_field_group_visibility($field_group, ['block'=>$name, 'post_id'=>get_the_ID()]) )
-                        $block_editor_context[] = $name;
+                        $allowed_block_types[] = $name;
                 }
             }
         }
 
-        return array_merge(array_unique($block_editor_context), array_keys($blocks));
+        return array_merge(array_unique($allowed_block_types), array_keys($blocks));
     }
 
     /**
@@ -297,6 +297,103 @@ class WPS_Advanced_Custom_Fields{
         return $result;
     }
 
+    /**
+     * Adds Gutenberg blocks
+     * @see https://www.advancedcustomfields.com/resources/acf_register_block_type/
+     */
+    public function addBlocks()
+    {
+        if( !function_exists('acf_register_block_type') )
+            return;
+
+        $render_template = $this->config->get('gutenberg.render_template', '');
+        $preview_image = $this->config->get('gutenberg.preview_image', false);
+
+        $upload_dir = wp_upload_dir();
+
+        foreach ( $this->config->get('block', []) as $name => $args )
+        {
+            $block = [
+                'name'              => $name,
+                'title'             => __t($args['title']??$name),
+                'description'       => __t($args['description']??''),
+                'render_template'   => $args['render_template']??str_replace('{name}', $name, $render_template),
+                'category'          => $args['category']??'layout',
+                'icon'              => $args['icon']??'admin-comments',
+                'mode'              => $args['mode']??'preview',
+                'keywords'          => $args['keywords']??[],
+                'post_types'        => $args['post_types']??[],
+                'supports'          => $args['supports']??[],
+                'front'             => $args['front']??true
+            ];
+
+            $block['render_callback'] = [$this, 'block_render_callback'];
+
+            $block['supports']['align'] = boolval($args['supports']['align']??false);
+            $block['supports']['align_text'] = boolval($args['supports']['align_text']??false);
+            $block['supports']['align_content'] = boolval($args['supports']['align_content']??false);
+
+            if( substr($args['icon']??'', -4) == '.svg' )
+                $block['icon'] = file_get_contents(ABSPATH.'/'.$args['icon']);
+
+            if( $_preview_image = $args['preview_image']??$preview_image ){
+
+                if( is_string($_preview_image) )
+                    $_preview_image = str_replace('{name}', $name, $preview_image);
+                else
+                    $_preview_image = $upload_dir['relative'].'/blocks/'.$name.'.jpg';
+
+
+                $block['example'] = [
+                    'attributes' => [
+                        'mode' => 'preview',
+                        'data' => [
+                            '_preview_image' => $_preview_image,
+                        ]
+                    ]
+                ];
+            }
+
+            acf_register_block_type($block);
+        }
+    }
+
+
+
+    /**
+     * Adds specific post types here
+     * @see CustomPostType
+     */
+    public function addPostTypesArchivePage()
+    {
+        $registered_post_types = $this->config->get('post_type', []);
+
+        foreach ( $registered_post_types as $post_type => &$args )
+        {
+            if( !in_array($post_type, ['post', 'page', 'edition']) )
+            {
+                if( isset($args['has_options']) && function_exists('acf_add_options_sub_page') ) {
+
+                    $name = str_replace('_', ' ', $post_type);
+
+                    if( is_bool($args['has_options']) ) {
+
+                        $args = [
+                            'page_title' 	=> ucfirst($name).' archive options',
+                            'menu_title' 	=> __t('Archive options'),
+                            'autoload'   	=> true
+                        ];
+                    }
+
+                    $args['menu_slug']   = 'options_'.$post_type;
+                    $args['parent_slug'] = 'edit.php?post_type='.$post_type;
+
+                    acf_add_options_sub_page($args);
+                }
+            }
+        }
+    }
+
 
     /**
      * ACFPlugin constructor.
@@ -306,6 +403,11 @@ class WPS_Advanced_Custom_Fields{
         global $_config;
 
         $this->config = $_config;
+
+        if( !class_exists('ACF') )
+            return;
+
+        add_action('init', [$this, 'addBlocks']);
 
         add_filter('acf/pre_load_value', [$this, 'preLoadValue'], 10, 3);
         add_filter('acf/prepare_field', [$this, 'prepareField']);
@@ -326,6 +428,7 @@ class WPS_Advanced_Custom_Fields{
         {
             // Setup ACFHelper Settings
             add_action( 'acf/init', [$this, 'addSettings'] );
+            add_action( 'acf/init', [$this, 'addPostTypesArchivePage'] );
             add_filter( 'acf/fields/wysiwyg/toolbars' , [$this, 'editToolbars']  );
             add_action( 'init', [$this, 'addOptionPages'] );
             add_filter( 'acf/settings/show_admin', function() {

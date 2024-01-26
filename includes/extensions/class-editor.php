@@ -164,7 +164,7 @@ class WPS_Editor {
     /**
      * add Custom css
      */
-    function addCustomAdminHeader()
+    function customAdminScripts()
     {
         wp_enqueue_script('wps-admin', WPS_PLUGIN_URL.'public/admin.js', ['jquery', 'jquery-ui-resizable'], WPS_VERSION, true);
         wp_enqueue_style('wps-admin-bar', WPS_PLUGIN_URL.'public/admin_bar.css', [], WPS_VERSION, false);
@@ -316,6 +316,26 @@ class WPS_Editor {
         return implode(' ', $caps).$classes.(HEADLESS?' headless':'').(URL_MAPPING?' url-mapping':'');
     }
 
+    /**
+     * @param $post
+     * @return void
+     */
+    public function showSettings($post) {
+
+        if ( current_user_can( 'edit_others_posts' ) && post_type_supports( $post->post_type, 'sticky' ) ) {
+
+            $sticky_checkbox_checked = is_sticky( $post->post_id ) ? 'checked="checked"' : '';
+            echo '<span id="sticky-span" style="margin-left:0"><input id="sticky" name="sticky" type="checkbox" value="sticky" ' . $sticky_checkbox_checked . ' /> <label for="sticky" class="selectit">' . __( 'Make this post sticky' ) . '</label><br /></span>';
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function add_meta_boxes()
+    {
+       add_meta_box('wps_settings', __('Settings'), [$this, 'showSettings'] , null, 'side', 'high');
+    }
 
     /**
      * Editor constructor.
@@ -333,13 +353,15 @@ class WPS_Editor {
 
         if( is_admin() )
         {
+            add_action( 'add_meta_boxes', [$this, 'add_meta_boxes'] );
+
             add_filter( 'upload_mimes', [$this, 'uploadMimes']);
             add_filter( 'wp_link_query', [$this, 'linkQueryTermLinking'], 99, 2 );
             add_filter( 'mce_buttons', [$this, 'tinyMceButtons']);
             add_filter( 'tiny_mce_before_init', [$this,'tinyMceInit']);
             add_action( 'admin_menu', [$this, 'adminMenu']);
             add_action( 'wp_dashboard_setup', [$this, 'disableDashboardWidgets']);
-            add_action( 'admin_head', [$this, 'addCustomAdminHeader']);
+            add_action( 'admin_print_footer_scripts', [$this, 'customAdminScripts']);
             add_action( 'admin_init', [$this, 'adminInit'] );
             add_action( 'dashboard_glance_items', [$this, 'cptAtAGlance'] );
 
