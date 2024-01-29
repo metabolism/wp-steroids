@@ -160,6 +160,8 @@ input.large-text, textarea.large-text { width: 35.7rem }
     font-size: 13px;
 }
 
+.wp-editor-container{ border-color: #ccd0d4!important; box-shadow: none!important }
+
 .menu-item-settings input[type="text"], .menu-item-settings textarea{ font-size: 13px }
 
 /* ACF */
@@ -218,6 +220,7 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .carbon-fields--urlpicker strong{ color: #135e96 }
 .carbon-fields--urlpicker{ border: #ccd0d4 solid 1px; padding: 10px; border-radius: 3px; display: block }
 .carbon-fields--urlpicker__remove{ font-size: 1.5em; right: 5px; }
+.edit-post-sidebar .cf-file__content, .edit-post-sidebar .cf-file__name { border-color: #ccd0d4 }
 
 /* Translation */
 #edittag .term-name-wrap td, #edittag .term-slug-wrap td, #edittag .term-description-wrap td{ position: relative }
