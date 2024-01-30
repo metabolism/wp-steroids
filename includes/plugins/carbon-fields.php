@@ -10,6 +10,8 @@ class WPS_Carbon_Fields{
     /* @var Data $config */
     private $config;
 
+    private $shared_fields;
+
     public function addContent(){
 
         $this->addBlocks();
@@ -34,6 +36,22 @@ class WPS_Carbon_Fields{
             $carbon_container->add_fields( $fields);
 
             $this->callMethods($carbon_container, $option_args);
+        }
+
+        foreach ( $this->config->get('post_type', []) as $post_type => $args )
+        {
+            if( $option_args = $args['has_options']??false ){
+
+                $carbon_container = \Carbon_Fields\Container::make( 'theme_options', __t('Archive options') );
+                $carbon_container->set_page_parent( 'edit.php?post_type='.$post_type );
+
+                $fields = [];
+
+                foreach ($option_args as $field_name=>$field_args)
+                    $fields[] = $this->createField($field_name, $field_args);
+
+                $carbon_container->add_fields( $fields);
+            }
         }
     }
 
@@ -122,7 +140,16 @@ class WPS_Carbon_Fields{
      */
     public function createField($field_name, $field_args)
     {
-        $type = $field_args['type'];
+        if( ($field_args['type']??'') == 'clone' ){
+
+            $component = $this->shared_fields[$field_args['id']??$field_name]??[];
+            unset($field_args['type'], $field_args['id']);
+
+            $field_args = array_merge($component, $field_args);
+
+        }
+
+        $type = $field_args['type']??'text';
 
         $field = \Carbon_Fields\Field::make($type, $field_name, __t($field_args['label']));
 
@@ -184,6 +211,7 @@ class WPS_Carbon_Fields{
         global $_config;
 
         $this->config = $_config;
+        $this->shared_fields = $this->config->get('carbon_fields.shared_fields', []);
 
         add_filter( 'allowed_block_types_all', [$this, 'allowedBlockTypes'], 99, 2 );
 

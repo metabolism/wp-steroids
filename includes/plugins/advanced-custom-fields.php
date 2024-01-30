@@ -44,7 +44,7 @@ class WPS_Advanced_Custom_Fields{
     {
         if( function_exists('acf_add_options_page') )
         {
-            $args = ['autoload' => true, 'page_title' => __('Options', 'wp-steroids'), 'menu_slug' => 'acf-options'];
+            $args = ['autoload' => true, 'page_title' => __t('Options'), 'menu_slug' => 'acf-options'];
 
             acf_add_options_page($args);
 
@@ -107,7 +107,7 @@ class WPS_Advanced_Custom_Fields{
                     $all_templates['template_'.$type.':'.$key] = ucfirst(str_replace('_', ' ', $type)).' : '.$name;
                 }
             }
-            $field['choices'][__('Template', 'wp-steroids')] = $all_templates;
+            $field['choices'][__t('Template')] = $all_templates;
         }
 
         return $field;
@@ -229,9 +229,9 @@ class WPS_Advanced_Custom_Fields{
         if( in_array($field['type'], ['text','textarea','wysiwyg','inline_editor']) ){
 
             if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY )
-                echo '<a class="wps-translate wps-translate--google" title="'.__('Translate with Google', 'wp-steroids').'"></a>';
+                echo '<a class="wps-translate wps-translate--google" title="'.__t('Translate with Google').'"></a>';
             elseif( defined('DEEPL_KEY') && DEEPL_KEY )
-                echo '<a class="wps-translate wps-translate--deepl" title="'.__('Translate with Deepl', 'wp-steroids').'"></a>';
+                echo '<a class="wps-translate wps-translate--deepl" title="'.__t('Translate with Deepl').'"></a>';
         }
 
         return $field;
