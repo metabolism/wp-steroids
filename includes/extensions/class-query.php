@@ -168,72 +168,15 @@ class WPS_Query {
         return $posts;
     }
 
-    public function add_sticky_posts($posts, $wp_query)
+    /**
+     * @param $orderby
+     * @return string
+     */
+    public function add_sticky_posts($orderby)
     {
-        $q = $wp_query->query_vars;
-        $post_type = $wp_query->get( 'post_type' );
-
-        $page = absint( $q['paged'] );
-
-        if ( ! $page )
-            $page = 1;
-
-        if( $wp_query->is_main_query() || $page > 1 || !post_type_supports( $post_type, 'sticky' ) )
-            return $posts;
-
-        // Code copied from class-wp-query.php line 3471
-
         $sticky_posts = get_option( 'sticky_posts' );
 
-        if ( is_array( $sticky_posts ) && ! empty( $sticky_posts ) && ! $q['ignore_sticky_posts'] ) {
-            $num_posts     = count( $posts );
-            $sticky_offset = 0;
-            // Loop over posts and relocate stickies to the front.
-            for ( $i = 0; $i < $num_posts; $i++ ) {
-                if ( in_array( $posts[ $i ]->ID, $sticky_posts, true ) ) {
-                    $sticky_post = $posts[ $i ];
-                    // Remove sticky from current position.
-                    array_splice( $posts, $i, 1 );
-                    // Move to front, after other stickies.
-                    array_splice( $posts, $sticky_offset, 0, array( $sticky_post ) );
-                    // Increment the sticky offset. The next sticky will be placed at this offset.
-                    ++$sticky_offset;
-                    // Remove post from sticky posts array.
-                    $offset = array_search( $sticky_post->ID, $sticky_posts, true );
-                    unset( $sticky_posts[ $offset ] );
-                }
-            }
-
-            // If any posts have been excluded specifically, Ignore those that are sticky.
-            if ( ! empty( $sticky_posts ) && ! empty( $q['post__not_in'] ) ) {
-                $sticky_posts = array_diff( $sticky_posts, $q['post__not_in'] );
-            }
-
-            // Fetch sticky posts that weren't in the query results.
-            if ( ! empty( $sticky_posts ) ) {
-                $stickies = get_posts(
-                    array(
-                        'post__in'               => $sticky_posts,
-                        'post_type'              => $post_type,
-                        'post_status'            => 'publish',
-                        'posts_per_page'         => count( $sticky_posts ),
-                        'suppress_filters'       => $q['suppress_filters'],
-                        'cache_results'          => $q['cache_results'],
-                        'update_post_meta_cache' => $q['update_post_meta_cache'],
-                        'update_post_term_cache' => $q['update_post_term_cache'],
-                        'lazy_load_term_meta'    => $q['lazy_load_term_meta'],
-                    )
-                );
-
-                foreach ( $stickies as $sticky_post ) {
-                    array_splice( $posts, $sticky_offset, 0, array( $sticky_post ) );
-                    ++$sticky_offset;
-                }
-            }
-        }
-
-        //limit count to requested
-        return array_slice($posts,0, $q['posts_per_page']);
+        return 'CASE WHEN wp_posts.ID IN ('.implode(',', $sticky_posts).') THEN -1 ELSE 0 END, '.$orderby;
     }
 
 
@@ -250,10 +193,11 @@ class WPS_Query {
             if( $this->config->get('search.use_metafields', false) )
                 add_action( 'init', [$this, 'search_in_meta']);
 
-            add_filter( 'posts_results', [$this, 'add_sticky_posts'], 10, 2 );
             add_action( 'pre_get_posts', [$this, 'pre_get_posts'] );
             add_filter( 'terms_clauses', [$this, 'terms_clauses'], 99999, 3);
             add_filter( 'posts_results', [$this, 'preview_access'], 10, 2 );
         }
+
+        add_filter( 'posts_orderby', [$this, 'add_sticky_posts'], 10, 2 );
     }
 }

@@ -72,18 +72,6 @@ class WPS_Editor {
             ];
 
             $wp_admin_bar->add_node( $args );
-
-            if( $this->config->get('post_type.'.$object->name.'.has_options', false) ){
-
-                $args = [
-                    'id'    => 'archive_options',
-                    'title' => __t('Edit archive options'),
-                    'href'  => get_admin_url( null, '/edit.php?post_type='.$object->name.'&page=options_'.$object->name ),
-                    'meta'   => ['class' => 'ab-item']
-                ];
-
-                $wp_admin_bar->add_node( $args );
-            }
         }
 
         global $pagenow;

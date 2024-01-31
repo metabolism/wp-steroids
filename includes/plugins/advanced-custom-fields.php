@@ -394,18 +394,42 @@ class WPS_Advanced_Custom_Fields{
         }
     }
 
+    /**
+     * Add quick link top bar archive button
+     * @param $wp_admin_bar
+     */
+    public function editBarMenu($wp_admin_bar)
+    {
+        $object = get_queried_object();
+
+        if( is_post_type_archive() && !is_admin() && current_user_can( $object->cap->edit_posts ) )
+        {
+            if( $this->config->get('post_type.'.$object->name.'.has_options', false) ){
+
+                $args = [
+                    'id'    => 'archive_options',
+                    'title' => __t('Edit archive options'),
+                    'href'  => get_admin_url( null, '/edit.php?post_type='.$object->name.'&page=options_'.$object->name ),
+                    'meta'   => ['class' => 'ab-item']
+                ];
+
+                $wp_admin_bar->add_node( $args );
+            }
+        }
+    }
+
 
     /**
      * ACFPlugin constructor.
      */
     public function __construct()
     {
+        if( !class_exists('ACF') )
+            return;
+
         global $_config;
 
         $this->config = $_config;
-
-        if( !class_exists('ACF') )
-            return;
 
         add_action('init', [$this, 'addBlocks']);
 
@@ -422,6 +446,8 @@ class WPS_Advanced_Custom_Fields{
             add_filter('acf/settings/save_json', function() use($path){ return ABSPATH.'../..'.$path; });
             add_filter('acf/settings/load_json', function() use($path){ return [ABSPATH.'../..'.$path]; });
         }
+
+        add_action( 'admin_bar_menu', [$this, 'editBarMenu'], 80);
 
         // When viewing admin
         if( is_admin() )

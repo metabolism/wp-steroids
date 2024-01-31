@@ -151,7 +151,7 @@ class WPS_Carbon_Fields{
 
         $type = $field_args['type']??'text';
 
-        $field = \Carbon_Fields\Field::make($type, $field_name, __t($field_args['label']));
+        $field = \Carbon_Fields\Field::make($type, $field_name, __t($field_args['label']??null));
 
         if( $type == 'complex' && isset($field_args['fields']) ){
 
@@ -202,12 +202,38 @@ class WPS_Carbon_Fields{
         return array_diff($allowed_block_types, $disabled_block_types);
     }
 
+    /**
+     * Add quick link top bar archive button
+     * @param $wp_admin_bar
+     */
+    public function editBarMenu($wp_admin_bar)
+    {
+        $object = get_queried_object();
+
+        if( is_post_type_archive() && !is_admin() && current_user_can( $object->cap->edit_posts ) )
+        {
+            if( $this->config->get('post_type.'.$object->name.'.has_options', false) ){
+
+                $args = [
+                    'id'    => 'archive_options',
+                    'title' => __t('Edit archive options'),
+                    'href'  => get_admin_url( null, '/edit.php?post_type='.$object->name.'&page=crb_carbon_fields_container_archive_options.php' ),
+                    'meta'   => ['class' => 'ab-item']
+                ];
+
+                $wp_admin_bar->add_node( $args );
+            }
+        }
+    }
 
     /**
      * ACFPlugin constructor.
      */
     public function __construct()
     {
+        if( !class_exists('\Carbon_Fields\Carbon_Fields') )
+            return;
+
         global $_config;
 
         $this->config = $_config;
@@ -215,10 +241,9 @@ class WPS_Carbon_Fields{
 
         add_filter( 'allowed_block_types_all', [$this, 'allowedBlockTypes'], 99, 2 );
 
-        add_action( 'after_setup_theme', function (){
+        add_action( 'admin_bar_menu', [$this, 'editBarMenu'], 80);
 
-            \Carbon_Fields\Carbon_Fields::boot();
-        } );
+        add_action( 'after_setup_theme', ['\Carbon_Fields\Carbon_Fields', 'boot']);
 
         add_action( 'carbon_fields_register_fields', [$this, 'addContent']);
     }
