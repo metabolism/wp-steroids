@@ -739,25 +739,25 @@ class WPS_Config {
     {
         if( !in_array('post', $this->support) ){
 
-            register_post_type('post', []);
+            register_post_type('post', ['public'=>false]);
             remove_permastruct('post');
         }
 
         if( !in_array('page', $this->support) ){
 
-            register_post_type('page', []);
+            register_post_type('page', ['public'=>false]);
             remove_permastruct('page');
         }
 
         if( !in_array('category', $this->support) ){
 
-            register_taxonomy( 'category', []);
+            register_taxonomy( 'category', 'post', ['public'=>false]);
             remove_permastruct('category');
         }
 
         if( !in_array('tag', $this->support) ){
 
-            register_taxonomy( 'post_tag', array() );
+            register_taxonomy( 'post_tag', 'post', ['public'=>false] );
             remove_permastruct('post_tag');
         }
     }
