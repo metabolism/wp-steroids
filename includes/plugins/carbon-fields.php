@@ -199,7 +199,7 @@ class WPS_Carbon_Fields{
                 $disabled_block_types[] = 'carbon-fields/'.$block_name;
         }
 
-        return array_diff($allowed_block_types, $disabled_block_types);
+        return array_values(array_diff($allowed_block_types, $disabled_block_types));
     }
 
     /**
