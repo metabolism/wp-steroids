@@ -146,10 +146,13 @@ class WPS_Carbon_Fields{
             unset($field_args['type'], $field_args['id']);
 
             $field_args = array_merge($component, $field_args);
-
         }
 
         $type = $field_args['type']??'text';
+
+        // not very nice but type is already used for the field type
+        if( $type == 'file' && isset($field_args['allow']) )
+            $field_args['type'] = $field_args['allow'];
 
         $field = \Carbon_Fields\Field::make($type, $field_name, __t($field_args['label']??null));
 
