@@ -69,7 +69,7 @@ class WPS_Carbon_Fields{
             if( method_exists($field, 'set_'.$field_arg) )
                 $field->$method($value);
         }
-}
+    }
 
     /**
      * Adds Gutenberg blocks
@@ -151,8 +151,17 @@ class WPS_Carbon_Fields{
         $type = $field_args['type']??'text';
 
         // not very nice but type is already used for the field type
-        if( $type == 'file' && isset($field_args['allow']) )
+        if( $type == 'file' && isset($field_args['allow']) ){
+
             $field_args['type'] = $field_args['allow'];
+        }
+        elseif( $type == 'menu' ){
+
+            $type = 'select';
+
+            $menus = get_terms( 'nav_menu' );
+            $field_args['options'] = array_combine( wp_list_pluck( $menus, 'term_id' ), wp_list_pluck( $menus, 'name' ) );
+        }
 
         $field = \Carbon_Fields\Field::make($type, $field_name, __t($field_args['label']??null));
 
