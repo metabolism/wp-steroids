@@ -47,43 +47,6 @@ class WPS_Config {
     }
 
     /**
-     * @param $block
-     * @param $content
-     * @param $is_preview
-     * @return mixed|null
-     */
-    public function block_render_callback($block, $content = '', $is_preview = false){
-
-        if( isset($block['post']) && $id = get_the_ID() ){
-
-            $post = get_post($id);
-
-            if( $post_cache = wp_cache_get($post->ID, 'posts') ){
-
-                foreach ($block['post'] as $key=>$value){
-
-                    if( isset($post_cache->$key) )
-                        $post_cache->$key = $value;
-                }
-
-                wp_cache_set( $post->ID, $post_cache,'posts' );
-            }
-
-            if( isset($block['post']['thumbnail_id']) ){
-
-                $thumbnail_id = get_post_thumbnail_id($post->ID);
-
-                if( $meta_cache = wp_cache_get($post->ID, 'post_meta') )
-                    $meta_cache['_thumbnail_id'] = [$block['post']['thumbnail_id']];
-
-                wp_cache_set($post->ID, $meta_cache, 'post_meta');
-            }
-        }
-
-        return apply_filters('block_render_callback', $block, $content, $is_preview);
-    }
-
-    /**
      * Adds specific post types here
      * @see CustomPostType
      */

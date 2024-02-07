@@ -48,19 +48,28 @@ class WPS_Advanced_Custom_Fields{
 
             acf_add_options_page($args);
 
-            $options = $this->config->get('acf.options_page', []);
+            $options = $this->config->get('options_page', []);
 
             //retro compat
-            $options = array_merge($options, $this->config->get('options_page', []));
+            $options = array_merge($options, $this->config->get('acf.options_page', []));
 
-            foreach ( $options as $args ){
+            foreach ( $options as $name=>$args ){
 
-                if( is_array($args) )
-                    $args['autoload'] = true;
-                else
-                    $args = ['page_title'=>__t($args), 'menu_slug'=>sanitize_title($args), 'autoload'=>true];
+                if( is_array($args) ){
+
+                    $args = array_merge(['page_title'=>__t(ucfirst($name)), 'menu_slug'=>$name, 'autoload'=>true], $args);
+                }
+                else{
+
+                    if( !empty($args) )
+                        $name = $args;
+
+                    $args = ['page_title'=>__t(ucfirst($name)), 'menu_slug'=>sanitize_title($name), 'autoload'=>true];
+                }
 
                 acf_add_options_sub_page($args);
+
+                $this->addFields($args['menu_slug'], $args, 'group', 'options_page');
             }
         }
     }
@@ -298,6 +307,48 @@ class WPS_Advanced_Custom_Fields{
     }
 
     /**
+     * @param $block
+     * @param $content
+     * @param $is_preview
+     * @return mixed|null
+     */
+    public function block_render_callback($block, $content = '', $is_preview = false){
+
+        if( isset($block['post']) && $id = get_the_ID() ){
+
+            $post = get_post($id);
+
+            if( $post_cache = wp_cache_get($post->ID, 'posts') ){
+
+                foreach ($block['post'] as $key=>$value){
+
+                    if( isset($post_cache->$key) )
+                        $post_cache->$key = $value;
+                }
+
+                wp_cache_set( $post->ID, $post_cache,'posts' );
+            }
+
+            if( isset($block['post']['thumbnail_id']) ){
+
+                $thumbnail_id = get_post_thumbnail_id($post->ID);
+
+                if( $meta_cache = wp_cache_get($post->ID, 'post_meta') )
+                    $meta_cache['_thumbnail_id'] = [$block['post']['thumbnail_id']];
+
+                wp_cache_set($post->ID, $meta_cache, 'post_meta');
+            }
+        }
+
+        return apply_filters('block_render_callback', $block, $content, $is_preview);
+    }
+
+    public function generateHash($prefix, $key)
+    {
+        return $prefix.'_'.substr(md5($key), 0, 12);
+    }
+
+    /**
      * Adds Gutenberg blocks
      * @see https://www.advancedcustomfields.com/resources/acf_register_block_type/
      */
@@ -355,10 +406,87 @@ class WPS_Advanced_Custom_Fields{
             }
 
             acf_register_block_type($block);
+
+            $this->addFields($name, $args, 'group', 'block');
+        }
+    }
+
+    /**
+     * @param $name
+     * @param $args
+     * @param $prefix
+     * @param $location
+     * @return void
+     */
+    public function addFields($name, $args, $prefix, $location)
+    {
+        if( isset($args['fields']) ){
+
+            $fields = [];
+            $key = $name;
+
+            foreach ($args['fields'] as $field_name=>$field_args)
+                $fields[] = $this->createField($key, $field_name, $field_args);
+
+            $field_group = [
+                'key' => $this->generateHash($prefix, $key),
+                'title' => 'Fields',
+                'fields' => $fields,
+                'location' => [
+                    [
+                        [
+                            'param' => $location,
+                            'operator' => '==',
+                            'value' => ($location=='block'?'acf/':'').$name
+                        ]
+                    ]
+                ]
+            ];
+
+            if( $location == 'options_page')
+                $field_group['style'] = 'seamless';
+
+            acf_add_local_field_group($field_group);
         }
     }
 
 
+    /**
+     * @param $parent_name
+     * @param $field_name
+     * @param $field_args
+     * @return array
+     */
+    public function createField($parent_name, $field_name, $field_args)
+    {
+        if( ($field_args['type']??'') == 'clone' ){
+
+            $component = $this->shared_fields[$field_args['id']??$field_name]??[];
+            unset($field_args['type'], $field_args['id']);
+
+            $field_args = array_merge($component, $field_args);
+        }
+
+        $type = $field_args['type']??'text';
+
+        $key = $parent_name.'_'.$field_name;
+
+        $field = array_merge($field_args, [
+            'key' => $this->generateHash('field', $key),
+            'label' => $field_args['label']??ucfirst($field_name),
+            'name' => $field_name,
+            'type' => $type
+        ]);
+
+        $subfields = [];
+
+        foreach ($field_args['sub_fields'] as $subfield_name=>$subfield_args)
+            $subfields[] = $this->createField($key, $subfield_name, $subfield_args);
+
+        $field['sub_fields'] = $subfields;
+
+        return $field;
+    }
 
     /**
      * Adds specific post types here
@@ -389,6 +517,8 @@ class WPS_Advanced_Custom_Fields{
                     $args['parent_slug'] = 'edit.php?post_type='.$post_type;
 
                     acf_add_options_sub_page($args);
+
+                    $this->addFields($args['menu_slug'], $args, 'group', 'options_page');
                 }
             }
         }
