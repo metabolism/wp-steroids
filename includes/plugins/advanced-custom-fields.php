@@ -36,6 +36,27 @@ class WPS_Advanced_Custom_Fields{
         }
     }
 
+    public function addGroupFields()
+    {
+        foreach ( $this->config->get('post_type', []) as $post_type => $args ) {
+
+            $this->addFields($post_type, $args, 'group', 'post_type');
+        }
+
+        foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ) {
+
+            $this->addFields($taxonomy, $args, 'group', 'taxonomy');
+        }
+
+        $register = $this->config->get('menu.register', false);
+        $register = $register ? 'menu.register' : 'menu';
+
+        foreach ($this->config->get($register, []) as $location => $args)
+        {
+            $this->addFields($location, $args, 'group', 'nav_menu');
+        }
+    }
+
 
     /**
      * Add WordPress configuration 'options_page' fields as ACFHelper Options pages
@@ -428,6 +449,13 @@ class WPS_Advanced_Custom_Fields{
             foreach ($args['fields'] as $field_name=>$field_args)
                 $fields[] = $this->createField($key, $field_name, $field_args);
 
+            $location_prefix = '';
+
+            if( $location == 'block' )
+                $location_prefix = 'acf/';
+            elseif( $location == 'nav_menu' )
+                $location_prefix = 'location/';
+
             $field_group = [
                 'key' => $this->generateHash($prefix, $key),
                 'title' => 'Fields',
@@ -437,7 +465,7 @@ class WPS_Advanced_Custom_Fields{
                         [
                             'param' => $location,
                             'operator' => '==',
-                            'value' => ($location=='block'?'acf/':'').$name
+                            'value' => $location_prefix.$name
                         ]
                     ]
                 ]
@@ -445,6 +473,12 @@ class WPS_Advanced_Custom_Fields{
 
             if( $location == 'options_page')
                 $field_group['style'] = 'seamless';
+
+            if( $location == 'post_type')
+                $field_group['position'] = 'side';
+
+            if( $_field_group = $args['field_group']??false )
+                $field_group = array_merge($field_group, $_field_group);
 
             acf_add_local_field_group($field_group);
         }
@@ -562,6 +596,7 @@ class WPS_Advanced_Custom_Fields{
         $this->config = $_config;
 
         add_action('init', [$this, 'addBlocks']);
+        add_action('init', [$this, 'addGroupFields']);
 
         add_filter('acf/pre_load_value', [$this, 'preLoadValue'], 10, 3);
         add_filter('acf/prepare_field', [$this, 'prepareField']);

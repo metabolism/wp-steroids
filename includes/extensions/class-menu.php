@@ -19,10 +19,18 @@ class WPS_Menu {
         $register = $this->config->get('menu.register', false);
         $register = $register ? 'menu.register' : 'menu';
 
-        foreach ($this->config->get($register, []) as $location => $description)
+        foreach ($this->config->get($register, []) as $location => $args)
         {
-            $location = str_replace('-', '_', sanitize_title($location));
-            register_nav_menu($location, __t($description));
+            if( is_array($args) ){
+
+                $location = str_replace('-', '_', sanitize_title($location));
+                register_nav_menu($location, __t($args['title']??$location));
+            }
+            else{
+
+                $location = str_replace('-', '_', sanitize_title($location));
+                register_nav_menu($location, __t($args));
+            }
         }
     }
 

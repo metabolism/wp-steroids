@@ -176,6 +176,9 @@ class WPS_Query {
     {
         $sticky_posts = get_option( 'sticky_posts' );
 
+        if( empty($sticky_posts) )
+            return $orderby;
+
         return 'CASE WHEN wp_posts.ID IN ('.implode(',', $sticky_posts).') THEN -1 ELSE 0 END, '.$orderby;
     }
 

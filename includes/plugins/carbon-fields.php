@@ -16,6 +16,59 @@ class WPS_Carbon_Fields{
 
         $this->addBlocks();
         $this->addOptionsPages();
+        $this->addGroupFields();
+    }
+
+    public function addGroupFields()
+    {
+        foreach ( $this->config->get('post_type', []) as $post_type => $args ) {
+
+            if( isset($args['fields']) ){
+
+                $container = Carbon_Fields\Container::make( 'post_meta', __t( 'Settings' ) );
+                $container->where( 'post_type', '=', $post_type );
+                $container->set_context( 'side' );
+
+                $this->addFields($container, $args);
+            }
+        }
+
+        foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ) {
+
+            if( isset($args['fields']) ){
+
+                $container = Carbon_Fields\Container::make( 'term_meta', __t( 'Settings' ) );
+                $container->where( 'term_taxonomy', '=', $taxonomy );
+
+                $this->addFields($container, $args);
+            }
+        }
+
+        $register = $this->config->get('menu.register', false);
+        $register = $register ? 'menu.register' : 'menu';
+
+        foreach ($this->config->get($register, []) as $location => $args) {
+
+            if( isset($args['fields']) ){
+                $container = Carbon_Fields\Container::make( 'nav_menu_item', __t( 'Settings' ) );
+                $this->addFields($container, $args);
+            }
+        }
+    }
+
+    /**
+     * @param \Carbon_Fields\Container\Container $container
+     * @param $args
+     * @return void
+     */
+    private function addFields($container, $args){
+
+        $fields = [];
+
+        foreach ($args['fields']??[] as $field_name=>$field_args)
+            $fields[] = $this->createField($field_name, $field_args);
+
+        $container->add_fields($fields);
     }
 
     /**
@@ -28,13 +81,7 @@ class WPS_Carbon_Fields{
         {
             $carbon_container = \Carbon_Fields\Container::make( 'theme_options', __t( $option_args['title']??$option_name ) );
 
-            $fields = [];
-
-            foreach ($option_args['fields']??[] as $field_name=>$field_args)
-                $fields[] = $this->createField($field_name, $field_args);
-
-            $carbon_container->add_fields( $fields);
-
+            $this->addFields($carbon_container, $option_args);
             $this->callMethods($carbon_container, $option_args);
         }
 
@@ -45,12 +92,7 @@ class WPS_Carbon_Fields{
                 $carbon_container = \Carbon_Fields\Container::make( 'theme_options', __t('Archive options') );
                 $carbon_container->set_page_parent( 'edit.php?post_type='.$post_type );
 
-                $fields = [];
-
-                foreach ($option_args as $field_name=>$field_args)
-                    $fields[] = $this->createField($field_name, $field_args);
-
-                $carbon_container->add_fields( $fields);
+                $this->addFields($carbon_container, ['fields'=>$option_args]);
             }
         }
     }
@@ -70,6 +112,7 @@ class WPS_Carbon_Fields{
                 $field->$method($value);
         }
     }
+
 
     /**
      * Adds Gutenberg blocks
@@ -121,13 +164,7 @@ class WPS_Carbon_Fields{
             };
 
             $carbon_block = \Carbon_Fields\Block::make($block_name, $block['title']);
-
-            $fields = [];
-
-            foreach ($block_args['fields']??[] as $field_name=>$field_args)
-                $fields[] = $this->createField($field_name, $field_args);
-
-            $carbon_block->add_fields($fields);
+            $this->addFields($carbon_block, $block_args);
 
             $this->callMethods($carbon_block, $block);
         }
@@ -252,11 +289,8 @@ class WPS_Carbon_Fields{
         $this->shared_fields = $this->config->get('carbon_fields.shared_fields', []);
 
         add_filter( 'allowed_block_types_all', [$this, 'allowedBlockTypes'], 99, 2 );
-
         add_action( 'admin_bar_menu', [$this, 'editBarMenu'], 80);
-
         add_action( 'after_setup_theme', ['\Carbon_Fields\Carbon_Fields', 'boot']);
-
         add_action( 'carbon_fields_register_fields', [$this, 'addContent']);
     }
 }

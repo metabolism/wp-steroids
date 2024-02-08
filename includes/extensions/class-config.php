@@ -41,8 +41,6 @@ class WPS_Config {
         $this->updateSearchStructure();
         $this->updatePageStructure();
 
-
-
         $this->loaded = true;
     }
 
