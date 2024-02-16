@@ -288,6 +288,7 @@ class WPS_Carbon_Fields{
         $this->config = $_config;
         $this->shared_fields = $this->config->get('carbon_fields.shared_fields', []);
 
+        add_filter( 'carbon_fields_theme_options_container_admin_only_access', '__return_false' );
         add_filter( 'allowed_block_types_all', [$this, 'allowedBlockTypes'], 99, 2 );
         add_action( 'admin_bar_menu', [$this, 'editBarMenu'], 80);
         add_action( 'after_setup_theme', ['\Carbon_Fields\Carbon_Fields', 'boot']);
