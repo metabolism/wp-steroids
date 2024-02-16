@@ -113,6 +113,9 @@ class WPS_Editor {
             remove_submenu_page($menu, $submenu);
         }
 
+        if( !current_user_can('administrator') )
+            remove_submenu_page('themes.php', 'themes.php');
+
         if( HEADLESS && !URL_MAPPING ){
 
             remove_submenu_page('options-general.php', 'options-reading.php');
