@@ -49,7 +49,7 @@ Documentation is available on [Gitbook](https://metabolism.gitbook.io/symfony-wo
 
 ## Demo
 
-Bedrock install using Wp Steroids : https://github.com/jerome-barbato/wp-steroids-demo
+Bedrock install using Wp Steroids : https://github.com/metabolism/wp-steroids-demo
 
 ## YML Sample
 
@@ -508,3 +508,7 @@ wordpress:
   # use_metafields: false
   # posts_per_page: 12
 ```
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
