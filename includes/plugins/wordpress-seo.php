@@ -92,7 +92,7 @@ class WPS_Wordpress_Seo
         if( count($args['object_ids']??[]) != 1 || count($args['taxonomy']??[]) != 1 )
             return $clauses;
 
-			self::$preventRecursion = true;
+        self::$preventRecursion = true;
 
         $taxonomies = array_values($args['taxonomy']);
         $object_ids = array_values($args['object_ids']);
@@ -100,10 +100,10 @@ class WPS_Wordpress_Seo
         $wpseo_primary_term = new \WPSEO_Primary_Term( $taxonomies[0], $object_ids[0]);
 			$primary_term_id = $wpseo_primary_term->get_primary_term();
 
-        if( $primary_term_id )
+        if( $primary_term_id && !empty($clauses['orderby']) )
             $clauses['orderby'] = 'ORDER BY CASE WHEN t.term_id='.$primary_term_id.' THEN 0 ELSE 1 END, '.str_replace('ORDER BY ', '', $clauses['orderby']);
 
-			self::$preventRecursion = false;
+        self::$preventRecursion = false;
 
 		return $clauses;
 	}

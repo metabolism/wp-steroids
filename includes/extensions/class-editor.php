@@ -350,7 +350,7 @@ class WPS_Editor {
             add_filter( 'wp_link_query', [$this, 'linkQueryTermLinking'], 99, 2 );
             add_filter( 'mce_buttons', [$this, 'tinyMceButtons']);
             add_filter( 'tiny_mce_before_init', [$this,'tinyMceInit']);
-            add_action( 'admin_menu', [$this, 'adminMenu']);
+            add_action( 'admin_menu', [$this, 'adminMenu'], 99);
             add_action( 'wp_dashboard_setup', [$this, 'disableDashboardWidgets']);
             add_action( 'admin_print_footer_scripts', [$this, 'customAdminScripts']);
             add_action( 'admin_init', [$this, 'adminInit'] );
