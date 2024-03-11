@@ -250,6 +250,20 @@ class WPS_Advanced_Custom_Fields{
         return $fields;
     }
 
+
+    /**
+     * @param $posts
+     * @return array
+     */
+    public function translateGroupTitle($posts) {
+
+        foreach ($posts as &$post)
+            $post['title'] = __t($post['title']);
+
+        return $posts;
+    }
+
+
     /**
      * @param $field
      * @return mixed
@@ -627,6 +641,7 @@ class WPS_Advanced_Custom_Fields{
             });
 
             add_filter( 'acf/location/match_rule', [$this, 'matchRules'], 10, 4);
+            add_filter( 'acf/load_field_groups', [$this, 'translateGroupTitle'], 99 );
 
             add_filter( 'acf/location/screen', function($screen) {
 

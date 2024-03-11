@@ -165,6 +165,7 @@ class WPS_Config {
 
                 if( isset($args['publicly_queryable']) && !$args['publicly_queryable'] ){
 
+                    $args['show_in_nav_menus'] = $args['show_in_nav_menus']??false;
                     $args['query_var'] = $args['query_var']??false;
                     $args['exclude_from_search'] = $args['exclude_from_search']??false;
                     $args['rewrite'] = $args['rewrite']??false;
@@ -193,6 +194,7 @@ class WPS_Config {
                             $columns = array_merge ( $columns, $args['custom_columns']);
 
                             if( isset($columns['date']) ){
+
                                 $date = $columns['date'];
                                 unset($columns['date']);
                                 $columns['date'] = $date;
@@ -243,7 +245,7 @@ class WPS_Config {
                                         $value = str_replace(',00', '', number_format($value, 2, ',', ' '));
 
                                     if( $value )
-                                        echo $value.' '.$params;
+                                        echo __t($value).(!empty($params)?' '.$params:'');
                                 }
                             }
                         }, 10, 2 );
@@ -261,8 +263,18 @@ class WPS_Config {
     {
         $support = $this->config->get('post_type_support', []);
 
-        foreach ($support as $post_type=>$feature)
-            add_post_type_support( $post_type, $feature);
+        foreach ($support as $post_type=>$features){
+
+            if( is_array($features) ){
+
+                foreach ($features as $feature )
+                    add_post_type_support( $post_type, $feature);
+            }
+            else{
+
+                add_post_type_support( $post_type, $features);
+            }
+        }
     }
 
     /**
@@ -720,6 +732,12 @@ class WPS_Config {
 
             register_taxonomy( 'post_tag', 'post', ['public'=>false] );
             remove_permastruct('post_tag');
+        }
+
+        if( in_array('edit-comments.php', (array)$this->config->get('remove_menu_page', [])) ){
+
+            remove_post_type_support( 'post', 'comments' );
+            remove_post_type_support( 'page', 'comments' );
         }
     }
 

@@ -184,6 +184,25 @@ class WPS_Query {
 
 
     /**
+     * @param $query
+     * @return array
+     */
+    public function wp_link_query_args($query)
+    {
+        $post_types = get_post_types( array( 'public' => true ), 'objects' );
+
+        foreach ($post_types as $post_type=>$args){
+
+            if( !$args->publicly_queryable && $key = array_search($post_type, $query['post_type']) ){
+                unset($query['post_type'][$key]);
+            }
+        }
+
+        return $query;
+    }
+
+
+    /**
      * constructor.
      */
     public function __construct(){
@@ -201,6 +220,7 @@ class WPS_Query {
             add_filter( 'posts_results', [$this, 'preview_access'], 10, 2 );
         }
 
+        add_filter( 'wp_link_query_args', [$this, 'wp_link_query_args'] );
         add_filter( 'posts_orderby', [$this, 'add_sticky_posts'], 10, 2 );
     }
 }

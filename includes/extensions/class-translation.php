@@ -29,8 +29,11 @@ class WPS_Translation {
 
         self::$translations = WPS_Yaml::load('wp_steroid_'.$this->locale, $resource);
 
-        if( is_admin() && ($_GET['debug']??'') == 'translations' )
-            add_action('shutdown', [$this, 'shutdown']);
+        if( is_admin() ){
+
+            if( $_GET['debug']??'' == 'translations' )
+                add_action('shutdown', [$this, 'shutdown']);
+        }
     }
 
     /**
@@ -48,7 +51,7 @@ class WPS_Translation {
      */
     public static function translate($key){
 
-        if( !isset(self::$translations[$key]) )
+        if( !isset(self::$translations[$key]) && !in_array($key, self::$missing_translations) )
             self::$missing_translations[] = $key;
 
         return self::$translations[$key]??$key;
