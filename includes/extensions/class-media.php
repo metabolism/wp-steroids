@@ -907,8 +907,8 @@ class WPS_Media {
 
         $select = '<select name="attachments['.$post->ID.'][crop]">';
 
-        foreach (['center', 'top', 'bottom', 'left', 'right'] as $option)
-            $select .= '<option value="'.$option.'" '.($field_value==$option?'selected':'').'>'.__t(ucfirst($option)).'</option>';
+        foreach (['center', 'top', 'bottom', 'left', 'right', 'top-center', 'bottom-center'] as $option)
+            $select .= '<option value="'.$option.'" '.($field_value==$option?'selected':'').'>'.__t(ucfirst(str_replace('-', ' ', $option))).'</option>';
 
         $select .= '</select>';
 
