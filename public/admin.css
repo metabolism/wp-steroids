@@ -57,9 +57,9 @@
 
 /* Bugfix */
 .js .tmce-active .wp-editor-area { color: inherit!important }
-.compat-item .label { min-width: 20%; margin-right: 3% }
-.compat-item .field { width: 77%; margin: 0; padding-top: 5px }
-.compat-item .field > input { margin-left: 0!important; margin-top: 0!important }
+.media-sidebar .compat-item .label, .attachment-details .compat-item .label { min-width: 30%; margin-right: 4% }
+.media-sidebar .compat-item .field, .attachment-details .compat-item .field { width: 65%; margin: 0; padding-top: 5px }
+.compat-item .field > * { margin-left: 0!important; margin-top: 0!important; width: 100% }
 .media-modal .compat-item label { font-size: 12px }
 #editable-post-name input{ min-height: 0 }
 .form-field textarea, .form-field input{ width: 100%!important; }
@@ -74,6 +74,7 @@ body.mce-fullscreen .interface-complementary-area .components-panel__header{ dis
 }
 svg.components-checkbox-control__checked, svg.components-checkbox-control__indeterminate{ width: 20px; height: 20px }
 .wp-list-table.table-view-list{ table-layout: auto }
+.media-types-required-info{ display: none }
 
 /* Quick redesign */
 #footer-thankyou{ display: none }

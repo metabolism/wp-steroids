@@ -896,6 +896,45 @@ class WPS_Media {
         exit;
     }
 
+    /**
+     * @param $form_fields
+     * @param $post
+     * @return mixed
+     */
+    function addCropField($form_fields, $post ) {
+
+        $field_value = get_post_meta( $post->ID, 'crop', true );
+
+        $select = '<select name="attachments['.$post->ID.'][crop]">';
+
+        foreach (['default', 'center', 'top', 'bottom', 'left', 'right'] as $option)
+            $select .= '<option value="'.$option.'" '.($field_value==$option?'selected':'').'>'.__t(ucfirst($option)).'</option>';
+
+        $select .= '</select>';
+
+        $form_fields['crop'] = array(
+            'value' => $field_value ? $field_value : '',
+            'label' => __t( 'Crop' ),
+            'input'  => 'select',
+            'select'  => $select
+        );
+
+        return $form_fields;
+    }
+
+    /**
+     * @param $attachment_id
+     * @return void
+     */
+    function SaveAttachment($attachment_id ) {
+
+        if ( isset( $_REQUEST['attachments'][ $attachment_id ]['crop'] ) ) {
+
+            $custom_media_style = $_REQUEST['attachments'][ $attachment_id ]['crop'];
+            update_post_meta( $attachment_id, 'crop', $custom_media_style );
+        }
+    }
+
 
     /**
      * Constructor
@@ -919,6 +958,12 @@ class WPS_Media {
             add_filter('media_row_actions', [$this,'mediaRowActions'], 10, 3);
             add_action('post_action_convert', [$this,'postActionConvert']);
             add_action('post_action_regenerate_metadata', [$this,'postActionRegenerateMetadata']);
+
+            if( !class_exists('WP_Smart_Crop') ){
+
+                add_filter('attachment_fields_to_edit', [$this, 'addCropField'], null, 2 );
+                add_action('edit_attachment', [$this, 'SaveAttachment'] );
+            }
 
             add_filter('manage_upload_columns', function( $columns ) {
                 $columns['filesize'] = 'File Size';
