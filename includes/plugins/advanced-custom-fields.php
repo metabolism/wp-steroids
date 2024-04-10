@@ -401,6 +401,7 @@ class WPS_Advanced_Custom_Fields{
         {
             $block = [
                 'name'              => $name,
+                'api_version'       => 3,
                 'title'             => __t($args['title']??$name),
                 'description'       => __t($args['description']??''),
                 'render_template'   => $args['render_template']??str_replace('{name}', $name, $render_template),
@@ -616,6 +617,7 @@ class WPS_Advanced_Custom_Fields{
         add_filter('acf/prepare_field', [$this, 'prepareField']);
         add_filter('acf/fields/relationship/query/name=items', [$this, 'filterPostsByTermTemplateMeta'], 10, 3);
         add_filter('acf/get_image_sizes', [$this, 'getImageSizes'] );
+        add_filter('acf/settings/enable_post_types', '__return_false' );
 
         add_filter('acf/get_field_label', [WPS_Translation::class, 'translate'], 9);
         add_filter('acf/load_fields', [$this, 'load_fields'], 9);

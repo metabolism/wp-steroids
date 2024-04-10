@@ -1,5 +1,6 @@
-#login{ padding-top: 10% }
+#login{ padding-top: 25vh }
 #login h1{ display: none }
+.login #nav{ text-align: center }
 .login form{ box-shadow: 0 3px 29px rgb(10 49 78 / 5%); border-radius: 4px; border: 0; margin-top: 0 }
 .login label{ font-size: 13px; opacity: 0.5 }
 .forgetmenot{ margin-top: 7px }
@@ -7,7 +8,9 @@
 .login [for="password_protected_pass"]{ width: 100% }
 .login input[type=password], .login input[type=text]{ border-radius: 0; border-top: 0; border-left: 0; border-right: 0; font-size: 14px; background: none }
 .login input[type=password]:focus, .login input[type=text]:focus{ box-shadow: none }
-
+#backtoblog{ display: none }
+#language-switcher select{ border: 0 }
 .login .language-switcher { position: absolute; top: 0; right: 0; padding: 10px }
 .login .language-switcher .dashicons-translation{ display: none }
 .login .language-switcher select, .login .language-switcher input{ font-size: 11px }
+.login .privacy-policy-page-link{ display: none }

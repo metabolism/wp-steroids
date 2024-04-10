@@ -59,7 +59,8 @@
 .js .tmce-active .wp-editor-area { color: inherit!important }
 .media-sidebar .compat-item .label, .attachment-details .compat-item .label { min-width: 30%; margin-right: 4% }
 .media-sidebar .compat-item .field, .attachment-details .compat-item .field { width: 65%; margin: 0; padding-top: 5px }
-.compat-item .field > * { margin-left: 0!important; margin-top: 0!important; width: 100% }
+.compat-item .field > input[type=text], .compat-item .field > select { margin-left: 0!important; margin-top: 0!important; width: 100% }
+.compat-item .field > input[type=checkbox]{ margin-top: 0; margin-left: 0 }
 .media-modal .compat-item label { font-size: 12px }
 #editable-post-name input{ min-height: 0 }
 .form-field textarea, .form-field input{ width: 100%!important; }
@@ -181,6 +182,9 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .acf-field .acf-label{ margin-bottom: 6px }
 .acf-field.acf-accordion .acf-label{ margin-bottom: 0 }
 .acf-field.acf-accordion{ border-top-color: #eee }
+.acf-fields.-border.acf-clone-fields{ border: 0 }
+.acf-fields.-border.acf-clone-fields > .acf-field{ margin: 0 }
+.acf-fields.-border.acf-clone-fields > .acf-field+.acf-field{ margin-top: 16px }
 .acf-fields.-border, .acf-file-uploader .file-wrap{ border-radius: 3px; overflow: hidden }
 .acf-field select{ font-size: 13px; max-width: none }
 .acf-postbox.seamless>.inside { margin-left: -10px !important; margin-right: -10px !important }

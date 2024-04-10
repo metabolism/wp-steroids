@@ -33,14 +33,15 @@ class WPS_Gutenberg
 	 */
 	function removeCoreBlock($allowed_block_types, $editor_context ) {
 
-		$blocks = WP_Block_Type_Registry::get_instance()->get_all_registered();
+        if( !is_array($allowed_block_types) )
+            $allowed_block_types = WP_Block_Type_Registry::get_instance()->get_all_registered();
 
-		foreach($blocks as $block=>$data){
+		foreach($allowed_block_types as $block=>$data){
 			if( substr($block, 0, '5') == 'core/' )
-				unset($blocks[$block]);
-		}
+				unset($allowed_block_types[$block]);
+        }
 
-		return array_keys($blocks);
+		return array_keys($allowed_block_types);
 	}
 
 	/**

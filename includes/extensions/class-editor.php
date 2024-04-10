@@ -308,24 +308,21 @@ class WPS_Editor {
     }
 
     /**
-     * @param $post
      * @return void
      */
-    public function showSettings($post) {
-
-        if ( current_user_can( 'edit_others_posts' ) && post_type_supports( $post->post_type, 'sticky' ) ) {
-
-            $sticky_checkbox_checked = is_sticky( $post->post_id ) ? 'checked="checked"' : '';
-            echo '<span id="sticky-span" style="margin-left:0"><input id="sticky" name="sticky" type="checkbox" value="sticky" ' . $sticky_checkbox_checked . ' /> <label for="sticky" class="selectit">' . __( 'Make this post sticky' ) . '</label><br /></span>';
-        }
-    }
-
-    /**
-     * @return void
-     */
-    public function add_meta_boxes()
+    public function add_meta_boxes($post_type)
     {
-       add_meta_box('wps_settings', __('Settings'), [$this, 'showSettings'] , null, 'side', 'high');
+        if( current_user_can( 'edit_others_posts' ) && post_type_supports( $post_type, 'sticky' ) ){
+
+            add_meta_box('wps_settings', __('Settings'), function($post) {
+
+                if ( current_user_can( 'edit_others_posts' ) && post_type_supports( $post->post_type, 'sticky' ) ) {
+
+                    $sticky_checkbox_checked = is_sticky( $post->post_id ) ? 'checked="checked"' : '';
+                    echo '<span id="sticky-span" style="margin-left:0"><input id="sticky" name="sticky" type="checkbox" value="sticky" ' . $sticky_checkbox_checked . ' /> <label for="sticky" class="selectit">' . __( 'Make this post sticky' ) . '</label><br /></span>';
+                }
+            } , null, 'side', 'high');
+        }
     }
 
     /**
@@ -344,22 +341,21 @@ class WPS_Editor {
 
         if( is_admin() )
         {
-            add_action( 'add_meta_boxes', [$this, 'add_meta_boxes'] );
 
             add_filter( 'upload_mimes', [$this, 'uploadMimes']);
             add_filter( 'wp_link_query', [$this, 'linkQueryTermLinking'], 99, 2 );
             add_filter( 'mce_buttons', [$this, 'tinyMceButtons']);
+            add_filter( 'post_row_actions', [$this, 'rowActions'], 10, 2);
+            add_filter( 'page_row_actions', [$this, 'rowActions'], 10, 2);
+            add_filter( 'admin_body_class', [$this, 'addBodyClass']);
             add_filter( 'tiny_mce_before_init', [$this,'tinyMceInit']);
+
+            add_action( 'add_meta_boxes', [$this, 'add_meta_boxes'] );
             add_action( 'admin_menu', [$this, 'adminMenu'], 99);
             add_action( 'wp_dashboard_setup', [$this, 'disableDashboardWidgets']);
             add_action( 'admin_print_footer_scripts', [$this, 'customAdminScripts']);
             add_action( 'admin_init', [$this, 'adminInit'] );
             add_action( 'dashboard_glance_items', [$this, 'cptAtAGlance'] );
-
-            add_filter( 'post_row_actions', [$this, 'rowActions'], 10, 2);
-            add_filter( 'page_row_actions', [$this, 'rowActions'], 10, 2);
-
-            add_filter( 'admin_body_class', [$this, 'addBodyClass']);
         }
 
         add_action('init', function (){
