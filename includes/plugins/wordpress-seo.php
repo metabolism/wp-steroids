@@ -144,28 +144,6 @@ class WPS_Wordpress_Seo
 		return $output;
 	}
 
-    /**
-     * @param $allowed_block_types
-     * @param $editor_context
-     * @return int[]|string[]
-     */
-    function removeCoreBlock($allowed_block_types, $editor_context ) {
-
-        if( !is_array($allowed_block_types) )
-            return $allowed_block_types;
-
-        $to_remove = [];
-
-        foreach($allowed_block_types as $block){
-            if( substr($block, 0, '6') == 'yoast/' || substr($block, 0, '10') == 'yoast-seo/' )
-                $to_remove[] = $block;
-        }
-
-        $allowed_block_types = array_diff($allowed_block_types, $to_remove);
-
-        return array_keys($allowed_block_types);
-    }
-
 
 
 	/**
@@ -185,7 +163,6 @@ class WPS_Wordpress_Seo
 
 		if( is_admin() ) {
 
-            add_filter('allowed_block_types_all', [$this, 'removeCoreBlock'], 26, 2 );
 			add_filter('wp_editor_settings', [$this, 'editorSettings'], 10, 2);
 			add_filter('wpseo_metabox_prio', function (){ return 'low'; });
 		}
