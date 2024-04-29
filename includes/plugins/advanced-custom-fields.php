@@ -401,7 +401,6 @@ class WPS_Advanced_Custom_Fields{
         {
             $block = [
                 'name'              => $name,
-                'api_version'       => 3,
                 'title'             => __t($args['title']??$name),
                 'description'       => __t($args['description']??''),
                 'render_template'   => $args['render_template']??str_replace('{name}', $name, $render_template),
