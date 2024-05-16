@@ -57,8 +57,12 @@
 
 /* Bugfix */
 .js .tmce-active .wp-editor-area { color: inherit!important }
+.media-sidebar .attachment-details .setting{ position: relative }
+.media-sidebar .copy-to-clipboard-container, .attachment-details .copy-to-clipboard-container{ position: absolute; right: 3px; top: 3px; margin-top: 0; padding-top: 0 }
 .media-sidebar .compat-item .label, .attachment-details .compat-item .label { min-width: 30%; margin-right: 4% }
+.media-modal .media-sidebar .compat-item .label{ min-width: 20%; margin-right: 3% }
 .media-sidebar .compat-item .field, .attachment-details .compat-item .field { width: 65%; margin: 0; padding-top: 5px }
+.media-modal .media-sidebar .compat-item .field{ width: 77% }
 .compat-item .field > input[type=text], .compat-item .field > select { margin-left: 0!important; margin-top: 0!important; width: 100% }
 .compat-item .field > input[type=checkbox]{ margin-top: 0; margin-left: 0 }
 .media-modal .compat-item label { font-size: 12px }

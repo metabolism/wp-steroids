@@ -553,7 +553,7 @@ class WPS_Config {
             if( !empty($args['inherit']??'') ){
 
                 $inherited_role = get_role( $args['inherit'] );
-                $args['capabilities'] = array_merge($inherited_role->capabilities, $args['capabilities']);
+                $args['capabilities'] = array_merge($inherited_role->capabilities, $args['capabilities']??[]);
             }
 
             add_role($role, $args['display_name'], $args['capabilities']);

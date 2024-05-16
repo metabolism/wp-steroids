@@ -131,7 +131,7 @@ class WPS_Query {
 
                 $where = preg_replace(
                     "/\(\s*".$wpdb->posts.".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
-                    "(".$wpdb->posts.".post_title LIKE $1) OR (".$wpdb->postmeta.".meta_value LIKE $1)", $where );
+                    "(".$wpdb->posts.".post_title LIKE $1) OR (".$wpdb->postmeta.".meta_value LIKE $1) OR (".$wpdb->posts.".ID LIKE $1)", $where );
             }
 
             return $where;
@@ -207,18 +207,18 @@ class WPS_Query {
      */
     public function __construct(){
 
+        global $_config;
+        $this->config = $_config;
+
         if( !is_admin() ){
-
-            global $_config;
-            $this->config = $_config;
-
-            if( $this->config->get('search.use_metafields', false) )
-                add_action( 'init', [$this, 'search_in_meta']);
-
+            
             add_action( 'pre_get_posts', [$this, 'pre_get_posts'] );
             add_filter( 'terms_clauses', [$this, 'terms_clauses'], 99999, 3);
             add_filter( 'posts_results', [$this, 'preview_access'], 10, 2 );
         }
+
+        if( $this->config->get('search.use_metafields', false) )
+            $this->search_in_meta();
 
         add_filter( 'wp_link_query_args', [$this, 'wp_link_query_args'] );
         add_filter( 'posts_orderby', [$this, 'add_sticky_posts'], 10, 2 );
