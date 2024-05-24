@@ -359,22 +359,24 @@ class WPS_Multisite_Language_Switcher {
 
         if( in_array($type, ['image', 'file', 'gallery']) ){
 
-            if( $current_site_id == $main_site_id ) {
+            if( $_GET['blog_id'] == $main_site_id ) { //copy from main site
 
-                // switch to origin blog
+                $original_id = $_value;
+            }
+            else{
+
                 switch_to_blog($_GET['blog_id']);
                 $original_id = get_post_meta($_value, '_wp_original_attachment_id', true);
                 restore_current_blog();
-
-                if( $original_id )
-                    return $original_id;
             }
-            else {
 
-                $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$_value, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
+            if( $original_id ){
 
-                if( count($attachments) )
-                    return $attachments[0];
+                if( $current_site_id == $main_site_id) //copy to main
+                    return intval($original_id);
+
+                $attachments = get_posts(['numberposts'=>1, 'post_type'=>'attachment', 'meta_value'=>$original_id, 'meta_key'=>'_wp_original_attachment_id', 'fields'=>'ids']);
+                return intval($attachments[0]??null);
             }
         }
         elseif( in_array($type, ['post_object', 'taxonomy', 'relationship'])){
@@ -395,7 +397,7 @@ class WPS_Multisite_Language_Switcher {
 
             restore_current_blog();
 
-            return $value;
+            return intval($value);
         }
 
         return null;
@@ -410,15 +412,15 @@ class WPS_Multisite_Language_Switcher {
 
         if( !isset($args['msls_id']) ){
 
-            if( isset($_GET['post'], $args['post_type']) )
+            if( isset($_GET['post']) )
                 $args['msls_id'] = $_GET['post'];
-            elseif( isset($_GET['tag_ID'], $args['taxonomy']) )
+            elseif( isset($_GET['tag_ID']) )
                 $args['msls_id'] = $_GET['tag_ID'];
             else
                 return $path;
         }
 
-        if( isset($args['taxonomy']) ) {
+        if( isset($args['taxonomy']) || isset($_GET['tag_ID']) ) {
 
             $path = add_query_arg([
                 'clone' => 'true',
@@ -426,7 +428,7 @@ class WPS_Multisite_Language_Switcher {
                 'tag_ID' => $args['msls_id']
             ], $path);
         }
-        elseif( isset($args['post_type']) ) {
+        elseif( isset($args['post_type']) || isset($_GET['post']) ) {
 
             $path = add_query_arg([
                 'clone' => 'true',
