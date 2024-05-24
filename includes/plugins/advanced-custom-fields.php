@@ -78,7 +78,7 @@ class WPS_Advanced_Custom_Fields{
 
                 if( is_array($args) ){
 
-                    $args = array_merge(['page_title'=>__t(ucfirst($name)), 'menu_slug'=>$name, 'autoload'=>true], $args);
+                    $args = array_merge(['page_title'=>__t($args['title']??ucfirst($name)), 'menu_slug'=>$name, 'autoload'=>true], $args);
                 }
                 else{
 

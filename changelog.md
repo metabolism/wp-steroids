@@ -1,15 +1,26 @@
+### 1.3.0
+- Code refactoring
+- Better methods comments to remove warning
+- Add crop selector for image
+- Add sticky option for CPT
+- Fixed radio type for custom taxonomies
+- Block/Post/Term ACF fields can be added directly in yml config file
+- Carbon Field plugin support
+- Added "Column" type for menu in admin area
+- Fixed CSS in admin area
+
 ### 1.2.10
-- added options in General settings to change default email address and sender name
+- Added options in General settings to change default email address and sender name
 
 ### 1.2.9
-- add "convert to jpg" option for png file in media selector
-- remove "x-redirect-by" on ajax call
+- Add "convert to jpg" option for png file in media selector
+- Remove "x-redirect-by" on ajax call
 
 ### 1.2.8
-- better post and term copy using Multisite language switcher plugin
+- Better post and term copy using Multisite language switcher plugin
 
 ### 1.2.7
-- setting capability_type: true in post_type or taxonomy will now generate the right capabilities
+- Setting capability_type: true in post_type or taxonomy will now generate the right capabilities
 
 ### 1.2.6
 - Fix possible sql injection and unsecured csv export in list-table.php

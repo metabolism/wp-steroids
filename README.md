@@ -19,7 +19,7 @@ Supercharge WordPress with :
 * SVG Support
 * Better Performance
 * WordPress Bugfix
-* CSS Fix
+* Radio type for taxonomies
 * Multisite post deep copy ( with multisite-language-switcher plugin )
 * Custom datatable support with view and delete actions in admin
 * Google translate or Deepl integration
@@ -178,6 +178,18 @@ wordpress:
   #define:
   #  disallow_file_edit: false
 
+  #########################
+  ##    Carbon fields    ##
+  #########################
+  carbon_fields:
+    shared_fields:
+      display:
+        type: select
+        options:
+          default: Default
+          theme: Theme
+          theme-alt: Theme alt
+
   ###############
   ##    ACF    ##
   ###############
@@ -189,9 +201,6 @@ wordpress:
       autoload: true #autoload options
     user_settings:
       gallery_height: 210
-    options_page: #add option pages https://www.advancedcustomfields.com/resources/options-page/
-      - 'Global'
-      - 'Translations'
     input:
       lock_max_length: false
     toolbars: #customize wysiwyg toolbar
@@ -239,6 +248,21 @@ wordpress:
           - fullscreen
 
 
+  ########################
+  ##    Options page    ##
+  ########################
+  options_page:
+    - 'Global'
+    - 'Translations'
+    # or
+    #global:
+    #  title: Global
+    #  fields:
+    #    blog:
+    #      type: separator
+    #    blog_search:
+    #      type: checkbox
+
   ################
   ##    Menu    ##
   ################
@@ -279,6 +303,14 @@ wordpress:
       post_types:
         - page
         - guide
+      #fields:
+      #  title:
+      #    type: text
+      #  background:
+      #    type: select
+      #    options:
+      #      grey: Grey
+      #      white: White
 
 
   ##########################
