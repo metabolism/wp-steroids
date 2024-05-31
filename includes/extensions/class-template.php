@@ -89,9 +89,6 @@ class WPS_Template {
      */
     public function __construct() {
 
-        if( !is_admin() )
-            return;
-
         global $_config;
 
         $this->config = $_config;

@@ -5,39 +5,39 @@
 [![License](http://poser.pugx.org/metabolism/wp-steroids/license)](https://packagist.org/packages/metabolism/wp-steroids)
 [![Doc - Gitbook](https://img.shields.io/badge/Doc-Gitbook-346ddb?logo=gitbook&logoColor=fff)](https://metabolism.gitbook.io/symfony-wordpress-bundle/guides/wp-steroids-plugin)
 
-Supercharge WordPress with :
+Supercharge WordPress with:
 
-* WordPress' configuration using yml
-* Permalink configuration for custom post type and taxonomy
+* WordPress configuration using yml
+* Permalink configuration for custom post types and taxonomies
 * Maintenance mode
 * Backup download in dev mode
 * Build hook
-* Disabled automatic update
-* Enhanced Security
-* Better guid using RFC 4122 compliant UUID version 5
-* Multisite images sync ( for multisite as multilangue )
-* SVG Support
-* Better Performance
-* WordPress Bugfix
+* Disabled automatic updates
+* Enhanced security
+* Better GUID using RFC 4122 compliant UUID version 5
+* Multisite images sync (for multisite as multilingual)
+* SVG support
+* Better performance
+* WordPress bug fixes
 * Radio type for taxonomies
-* Multisite post deep copy ( with multisite-language-switcher plugin )
+* Multisite post deep copy (with multisite-language-switcher plugin)
 * Custom datatable support with view and delete actions in admin
-* Google translate or Deepl integration
-* Optimisations
+* Google Translate or DeepL integration
+* Optimizations
 
-YML file allows to configure : 
+The YML file allows you to configure:
 * Image options
 * Maintenance support
 * Admin pages removal
-* WYSIWYG MCE Editor
-* Feature Support
-* Multi-site configuration
+* WYSIWYG MCE editor
+* Feature support
+* Multisite configuration
 * ACF configuration
 * Menu
-* Custom Post type
-* Custom Taxonomy
-* Block
-* Page, post, taxonomy template
+* Custom post types
+* Custom taxonomies
+* Blocks
+* Page, post, and taxonomy templates
 * Page state
 * Post format
 * External table viewer
@@ -49,7 +49,7 @@ Documentation is available on [Gitbook](https://metabolism.gitbook.io/symfony-wo
 
 ## Demo
 
-Bedrock install using Wp Steroids : https://github.com/metabolism/wp-steroids-demo
+Bedrock install using WP Steroids: https://github.com/metabolism/wp-steroids-demo
 
 ## YML Sample
 
