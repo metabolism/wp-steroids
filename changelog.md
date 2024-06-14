@@ -1,3 +1,6 @@
+### 1.3.3
+- Added condition to output error on login while debugging
+
 ### 1.3.2
 - Fixed error when using page template in Gutenberg
 

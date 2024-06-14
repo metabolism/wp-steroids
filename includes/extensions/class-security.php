@@ -219,9 +219,12 @@ class WPS_Security {
         add_filter( 'flush_rewrite_rules_hard', '__return_false');
 
         //hide login error
-        add_filter( 'login_errors', function(){
-            return __('Something is wrong!', 'wp-steroids');
-        } );
+        if( !WP_DEBUG ){
+
+            add_filter( 'login_errors', function(){
+                return __('Something is wrong!', 'wp-steroids');
+            } );
+        }
 
         if( $this->config->get('security.disable_update', true) )
             $this->disableUpdate();
