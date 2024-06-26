@@ -38,22 +38,37 @@ class WPS_Advanced_Custom_Fields{
 
     public function addGroupFields()
     {
-        foreach ( $this->config->get('post_type', []) as $post_type => $args ) {
+        $post_types = $this->config->get('post_type', []);
 
-            $this->addFields($post_type, $args, 'group', 'post_type');
+        if( is_array($post_types) ){
+
+            foreach ( $post_types as $post_type => $args ) {
+
+                $this->addFields($post_type, $args, 'group', 'post_type');
+            }
         }
 
-        foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ) {
+        $taxonomies = $this->config->get('taxonomy', []);
 
-            $this->addFields($taxonomy, $args, 'group', 'taxonomy');
+        if( is_array($taxonomies) ){
+
+            foreach ( $taxonomies as $taxonomy => $args ) {
+
+                $this->addFields($taxonomy, $args, 'group', 'taxonomy');
+            }
         }
 
         $register = $this->config->get('menu.register', false);
         $register = $register ? 'menu.register' : 'menu';
 
-        foreach ($this->config->get($register, []) as $location => $args)
-        {
-            $this->addFields($location, $args, 'group', 'nav_menu');
+        $locations = $this->config->get($register, []);
+
+        if( is_array($locations) ){
+
+            foreach ($locations as $location => $args)
+            {
+                $this->addFields($location, $args, 'group', 'nav_menu');
+            }
         }
     }
 
@@ -543,6 +558,9 @@ class WPS_Advanced_Custom_Fields{
     public function addPostTypesArchivePage()
     {
         $registered_post_types = $this->config->get('post_type', []);
+
+        if( !is_array($registered_post_types) )
+            return;
 
         foreach ( $registered_post_types as $post_type => &$args )
         {

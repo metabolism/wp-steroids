@@ -69,6 +69,9 @@ class WPS_Config {
 
         $registered_post_types = $this->config->get('post_type', []);
 
+        if( !is_array($registered_post_types) )
+            return;
+
         foreach ( $registered_post_types as $post_type => &$args )
         {
             if( !in_array($post_type, ['post', 'page', 'edition']) )
@@ -360,6 +363,9 @@ class WPS_Config {
 
         $registered_taxonomies = $this->config->get('taxonomy', []);
 
+        if( !is_array($registered_taxonomies) )
+            return;
+
         foreach ( $registered_taxonomies as $taxonomy => &$args ) {
 
             if( !in_array($taxonomy, ['category', 'tag', 'edition', 'theme', 'type']) ) {
@@ -463,70 +469,80 @@ class WPS_Config {
         if( HEADLESS )
             return;
 
-        foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args )
-        {
-            $slug = $this->getSlug( $taxonomy );
+        $taxonomies = $this->config->get('taxonomy', []);
 
-            if( $slug === '{empty}'){
+        if( is_array($taxonomies) ){
 
-                $slugs = $this->getSlugs($taxonomy);
+            foreach ( $taxonomies as $taxonomy => $args )
+            {
+                $slug = $this->getSlug( $taxonomy );
 
-                add_rewrite_rule('^('.implode('|', $slugs).')$', 'index.php?'.$taxonomy.'=$matches[1]', 'top');
-            }
-            else{
+                if( $slug === '{empty}'){
 
-                preg_match_all('/\/{.+?}/', $slug, $toks);
+                    $slugs = $this->getSlugs($taxonomy);
 
-                if( count($toks) && count($toks[0]) ){
+                    add_rewrite_rule('^('.implode('|', $slugs).')$', 'index.php?'.$taxonomy.'=$matches[1]', 'top');
+                }
+                else{
 
-                    $rule = '^'.$slug.'/([^/]+)/?$';
-                    $has_parent = false;
+                    preg_match_all('/\/{.+?}/', $slug, $toks);
 
-                    foreach ($toks[0] as $tok){
+                    if( count($toks) && count($toks[0]) ){
 
-                        $has_parent = $has_parent || $tok == '/{parent}';
+                        $rule = '^'.$slug.'/([^/]+)/?$';
+                        $has_parent = false;
 
-                        if( $tok != '/{parent}' )
-                            $rule = str_replace($tok, '/[^/]+', $rule);
-                    }
+                        foreach ($toks[0] as $tok){
 
-                    if( $has_parent ){
+                            $has_parent = $has_parent || $tok == '/{parent}';
 
-                        add_rewrite_rule(str_replace('/{parent}', '/[^/]+', $rule), 'index.php?'.$taxonomy.'=$matches[1]', 'top');
-                        add_rewrite_rule(str_replace('/{parent}', '', $rule), 'index.php?'.$taxonomy.'=$matches[1]', 'top');
-                    }
-                    else{
+                            if( $tok != '/{parent}' )
+                                $rule = str_replace($tok, '/[^/]+', $rule);
+                        }
 
-                        add_rewrite_rule($rule, 'index.php?'.$taxonomy.'=$matches[1]', 'top');
+                        if( $has_parent ){
+
+                            add_rewrite_rule(str_replace('/{parent}', '/[^/]+', $rule), 'index.php?'.$taxonomy.'=$matches[1]', 'top');
+                            add_rewrite_rule(str_replace('/{parent}', '', $rule), 'index.php?'.$taxonomy.'=$matches[1]', 'top');
+                        }
+                        else{
+
+                            add_rewrite_rule($rule, 'index.php?'.$taxonomy.'=$matches[1]', 'top');
+                        }
                     }
                 }
             }
         }
 
-        foreach ( $this->config->get('post_type', []) as $post_type => $args )
-        {
-            $slug = $this->getSlug( $post_type );
+        $post_types = $this->config->get('post_type', []);
 
-            preg_match_all('/{.+?}/', $slug, $toks);
+        if( is_array($post_types) ){
 
-            if( count($toks) && count($toks[0]) ){
+            foreach ( $this->config->get('post_type', []) as $post_type => $args )
+            {
+                $slug = $this->getSlug( $post_type );
 
-                $rule = '^'.$slug.'/([^/]+)/?$';
+                preg_match_all('/{.+?}/', $slug, $toks);
 
-                foreach ($toks[0] as $i=>$tok){
+                if( count($toks) && count($toks[0]) ){
 
-                    if( substr($slug, 0, 1) == '{' && $i==0 ){
+                    $rule = '^'.$slug.'/([^/]+)/?$';
 
-                        if( $slugs = $this->getSlugs($tok) )
-                            $rule = str_replace($tok, '('.implode('|', $slugs).')', $rule);
+                    foreach ($toks[0] as $i=>$tok){
+
+                        if( substr($slug, 0, 1) == '{' && $i==0 ){
+
+                            if( $slugs = $this->getSlugs($tok) )
+                                $rule = str_replace($tok, '('.implode('|', $slugs).')', $rule);
+                        }
+                        else{
+
+                            $rule = str_replace($tok, '[^/]+', $rule);
+                        }
                     }
-                    else{
 
-                        $rule = str_replace($tok, '[^/]+', $rule);
-                    }
+                    add_rewrite_rule($rule, 'index.php?'.$post_type.'=$matches[1]', 'top');
                 }
-
-                add_rewrite_rule($rule, 'index.php?'.$post_type.'=$matches[1]', 'top');
             }
         }
     }

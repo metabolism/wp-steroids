@@ -1,3 +1,6 @@
+### 1.3.4
+- Remove warning when custom post types or taxonomies is empty in config file
+
 ### 1.3.3
 - Added condition to output error on login while debugging
 
