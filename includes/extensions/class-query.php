@@ -174,12 +174,14 @@ class WPS_Query {
      */
     public function add_sticky_posts($orderby)
     {
+        global $wpdb;
+
         $sticky_posts = get_option( 'sticky_posts' );
 
         if( empty($sticky_posts) || empty($orderby) )
             return $orderby;
 
-        return 'CASE WHEN wp_posts.ID IN ('.implode(',', $sticky_posts).') THEN -1 ELSE 0 END, '.$orderby;
+        return 'CASE WHEN '.$wpdb->posts.'.ID IN ('.implode(',', $sticky_posts).') THEN -1 ELSE 0 END, '.$orderby;
     }
 
 
