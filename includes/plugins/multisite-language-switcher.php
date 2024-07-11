@@ -86,12 +86,12 @@ class WPS_Multisite_Language_Switcher {
 
                             $field = get_field_object($value);
 
-                            if( in_array($field['type']??'', ['image', 'file', 'post_object', 'taxonomy', 'relationship', 'gallery']) ) {
+                            if( in_array($field['type']??'', ['image', 'file', 'post_object', 'taxonomy', 'relationship', 'gallery', 'link']) ) {
 
                                 $meta_key = substr($key, 1);
                                 $meta_value = maybe_unserialize($meta[$meta_key][0]??'');
 
-                                if( is_array($meta_value) ){
+                                if( is_array($meta_value) and $field['type'] != 'link' ){
 
                                     $new_meta_values = [];
 
@@ -212,12 +212,12 @@ class WPS_Multisite_Language_Switcher {
 
                                 $field = get_field_object($value);
 
-                                if (in_array($field['type'] ?? '', ['image', 'file', 'post_object', 'taxonomy', 'relationship', 'gallery'])) {
+                                if (in_array($field['type'] ?? '', ['image', 'file', 'post_object', 'taxonomy', 'relationship', 'gallery', 'link'])) {
 
                                     $_key = substr($key, 1);
                                     $_value = $block['attrs']['data'][$_key] ?? '';
 
-                                    if (is_array($_value)) {
+                                    if (is_array($_value) and $field['type'] != 'link') {
 
                                         $new_values = [];
 
@@ -271,12 +271,12 @@ class WPS_Multisite_Language_Switcher {
 
                             $field = get_field_object($value);
 
-                            if( in_array($field['type']??'', ['image', 'file', 'post_object', 'taxonomy', 'relationship', 'gallery']) ) {
+                            if( in_array($field['type']??'', ['image', 'file', 'post_object', 'taxonomy', 'relationship', 'gallery', 'link']) ) {
 
                                 $meta_key = substr($key, 1);
                                 $meta_value = maybe_unserialize($meta[$meta_key][0]??'');
 
-                                if( is_array($meta_value) ){
+                                if( is_array($meta_value) and $field['type'] != 'link' ){
 
                                     $new_meta_values = [];
 
@@ -348,7 +348,7 @@ class WPS_Multisite_Language_Switcher {
      * @param $main_site_id
      * @param $_value
      * @param $type
-     * @return int|null
+     * @return int|array|null
      */
     private function getOriginalId($current_site_id, $main_site_id, $_value, $type){
 
@@ -383,7 +383,6 @@ class WPS_Multisite_Language_Switcher {
 
             $lang = self::getLocale();
 
-            $value = null;
             $option_name = $type == 'taxonomy' ? 'msls_term_%d' : 'msls_%d';
 
             // switch to origin blog
@@ -392,12 +391,45 @@ class WPS_Multisite_Language_Switcher {
             $options = $wpdb->get_var( $wpdb->prepare("SELECT `option_value` FROM $wpdb->options WHERE `option_name` LIKE '$option_name'", $_value) );
             $options = maybe_unserialize($options);
 
-            if( isset($options[$lang]) )
-                $value = $options[$lang];
-
             restore_current_blog();
 
+            $value = $options[$lang]??null;
+
             return intval($value);
+        }
+        elseif( $type == 'link' ){
+
+            if( $post_id = $_value['post_id']??false ){
+
+                unset($_value['post_id']);
+
+                $lang = self::getLocale();
+
+                // switch to origin blog
+                switch_to_blog($_GET['blog_id']);
+
+                $options = $wpdb->get_var( $wpdb->prepare("SELECT `option_value` FROM $wpdb->options WHERE `option_name` LIKE 'msls_%d'", $post_id) );
+                $options = maybe_unserialize($options);
+
+                restore_current_blog();
+
+                if( $post_id = $options[$lang]??false ){
+
+                    if( $post = get_post($post_id) ){
+
+                        $_value = [
+                                'title' => $post->post_title,
+                                'url' => get_permalink($post->ID),
+                                'target' => $_value['target']??null,
+                                'aria_label' => $_value['aria_label']??null,
+                                'post_id' => $post->ID,
+                                'is_title' => $_value['is_title']??null
+                        ];
+                    }
+                }
+            }
+
+            return $_value;
         }
 
         return null;

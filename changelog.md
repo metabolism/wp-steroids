@@ -1,3 +1,6 @@
+### 1.3.7
+- Better ACF link management when cloning post using Multisite language switcher
+
 ### 1.3.6
 - Prevent cf7-antispam from loading on all pages
 
