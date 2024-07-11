@@ -1,6 +1,9 @@
-### 1.3.5
+### 1.3.6
+- Prevent cf7-antispam from loading on all pages
+
+- ### 1.3.5
 - Fix sql query not using the right prefix for sticky post
-- 
+
 ### 1.3.4
 - Remove warning when custom post types or taxonomies is empty in config file
 
