@@ -415,6 +415,8 @@ class WPS_Advanced_Custom_Fields{
         foreach ( $this->config->get('block', []) as $name => $args )
         {
             $block = [
+                '$schema'           => 'https://schemas.wp.org/trunk/block.json',
+                'apiVersion'        => 3,
                 'name'              => $name,
                 'title'             => __t($args['title']??$name),
                 'description'       => __t($args['description']??''),
@@ -443,7 +445,6 @@ class WPS_Advanced_Custom_Fields{
                     $_preview_image = str_replace('{name}', $name, $preview_image);
                 else
                     $_preview_image = $upload_dir['relative'].'/blocks/'.$name.'.jpg';
-
 
                 $block['example'] = [
                     'attributes' => [
@@ -543,7 +544,7 @@ class WPS_Advanced_Custom_Fields{
 
         $subfields = [];
 
-        foreach ($field_args['sub_fields'] as $subfield_name=>$subfield_args)
+        foreach ($field_args['sub_fields']??[] as $subfield_name=>$subfield_args)
             $subfields[] = $this->createField($key, $subfield_name, $subfield_args);
 
         $field['sub_fields'] = $subfields;

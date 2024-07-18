@@ -80,21 +80,38 @@ class WPS_Config {
                     continue;
 
                 $args = array_merge($default_args, $args);
-                $name = str_replace('_', ' ', $post_type);
+                $name = str_replace('-', ' ', str_replace('_', ' ', $args['labels']['singular_name']??$post_type));
+                $names = $args['labels']['name']??$this->plural($name);
 
                 $labels = [
-                    'name' => ucfirst($this->plural($name)),
+                    'name' => ucfirst($names),
                     'singular_name' => ucfirst($name),
-                    'all_items' =>'All '.$this->plural($name),
+                    'add_new' => 'Add '.$name,
+                    'add_new_item' => 'Add '.$name,
                     'edit_item' => 'Edit '.$name,
+                    'new_item' => 'New '.$name,
                     'view_item' => 'View '.$name,
-                    'update_item' => 'Update '.$name,
-                    'add_new_item' => 'Add a new '.$name,
-                    'new_item_name' => 'New '.$name,
-                    'search_items' => 'Search in '.$this->plural($name),
-                    'popular_items' => 'Popular '.$this->plural($name),
-                    'view_items' => 'View '.$this->plural($name),
-                    'not_found' => ucfirst($name).' not found'
+                    'view_items' => 'View '.$names,
+                    'search_items' => 'Search '.$names,
+                    'not_found' => ucfirst($name).' not found',
+                    'not_found_in_trash' => 'No '.$name.' found in Trash',
+                    'parent_item_colon' => 'Parent '.$name,
+                    'all_items' =>'All '.$names,
+                    'archives' =>ucfirst($names).' Archives',
+                    'attributes' =>ucfirst($name).' Attributes',
+                    'insert_into_item' =>'Insert into '.$name,
+                    'uploaded_to_this_item' =>'Uploaded to this '.$name,
+                    'filter_items_list' =>'Filter '.$names.' list',
+                    'items_list_navigation' =>ucfirst($names).' list navigation',
+                    'items_list' =>ucfirst($names).' list',
+                    'item_published' =>ucfirst($name).' published',
+                    'item_published_privately' =>ucfirst($name).' published privately',
+                    'item_reverted_to_draft' =>ucfirst($name).' reverted to draft',
+                    'item_trashed' =>ucfirst($name).' trashed',
+                    'item_scheduled' =>ucfirst($name).' scheduled',
+                    'item_updated' =>ucfirst($name).' updated',
+                    'item_link' =>ucfirst($name).' Link',
+                    'item_link_description' =>'A link to a '.$name,
                 ];
 
                 if( isset($args['labels']) )
@@ -371,16 +388,20 @@ class WPS_Config {
             if( !in_array($taxonomy, ['category', 'tag', 'edition', 'theme', 'type']) ) {
 
                 $args = array_merge($default_args, $args);
-                $name = str_replace('_', ' ', $args['name'] ?? $taxonomy);
+
+                $name = str_replace('-', ' ', str_replace('_', ' ', $args['labels']['singular_name']??$taxonomy));
+                $names = $args['labels']['name']??$this->plural($name);
 
                 $labels = [
-                    'name' => ucfirst($this->plural($name)),
-                    'all_items' => 'All ' . $this->plural($name),
+                    'name' => ucfirst($names),
                     'singular_name' => ucfirst($name),
+                    'search_items' => 'Search in ' . $names,
+                    'popular_items' => 'Popular ' . $names,
+                    'all_items' => 'All ' . $names,
+                    'parent_item' => 'Parent ' . $name,
                     'add_new_item' => 'Add a ' . $name,
                     'edit_item' => 'Edit ' . $name,
                     'not_found' => ucfirst($name) . ' not found',
-                    'search_items' => 'Search in ' . $this->plural($name)
                 ];
 
                 if( !isset($args['capabilities']) && isset($args['capability_type']) ){
