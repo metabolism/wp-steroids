@@ -304,6 +304,12 @@ class WPS_Editor {
 
         $caps = array_unique($caps);
 
+        global $post;
+        $current_screen = get_current_screen();
+
+        if($current_screen->base === 'post' && $post)
+            $classes .= ' single-'.$post->post_type;
+
         return implode(' ', $caps).$classes.(HEADLESS?' headless':'').(URL_MAPPING?' url-mapping':'');
     }
 
