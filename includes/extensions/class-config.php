@@ -183,12 +183,18 @@ class WPS_Config {
                     }
                 }
 
+                if( isset($args['query_var']) && !$args['query_var'] ){
+
+                    $args['show_in_nav_menus'] = false;
+                    $args['exclude_from_search'] = false;
+                }
+
                 if( isset($args['publicly_queryable']) && !$args['publicly_queryable'] ){
 
-                    $args['show_in_nav_menus'] = $args['show_in_nav_menus']??false;
-                    $args['query_var'] = $args['query_var']??false;
-                    $args['exclude_from_search'] = $args['exclude_from_search']??false;
-                    $args['rewrite'] = $args['rewrite']??false;
+                    $args['show_in_nav_menus'] = false;
+                    $args['query_var'] = false;
+                    $args['exclude_from_search'] = false;
+                    $args['rewrite'] = false;
                 }
 
                 register_post_type($post_type, $args);
@@ -456,6 +462,7 @@ class WPS_Config {
 
                 if( isset($args['publicly_queryable']) && !$args['publicly_queryable'] ){
 
+                    $args['show_in_nav_menus'] = false;
                     $args['query_var'] = false;
                     $args['rewrite'] = false;
                 }
