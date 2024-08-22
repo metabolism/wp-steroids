@@ -161,9 +161,6 @@ class WPS_Config {
                         $args['rewrite']['feeds'] = false;
                 }
 
-                if( !($args['query_var']??true) && !isset($args['show_in_nav_menus']) )
-                    $args['show_in_nav_menus'] = false;
-
                 if( HEADLESS && !URL_MAPPING ){
 
                     $args['publicly_queryable'] = false;

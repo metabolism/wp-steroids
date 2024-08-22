@@ -185,21 +185,21 @@
 				$(this).remove()
 		})
 
-		$('#submit-colmundiv').click(function(){
+		$('#submit-columndiv').click(function(){
 
-			$( '.colmundiv .spinner' ).addClass( 'is-active' );
+			$( '.columndiv .spinner' ).addClass( 'is-active' );
 
 			let menu = {
 				'-1': {
 					'menu-item-type': 'custom',
-					'menu-item-url': $('.url-colmundiv').val(),
-					'menu-item-title': $('.title-colmundiv').val()
+					'menu-item-url': $('.url-columndiv').val(),
+					'menu-item-title': $('.title-columndiv').val()
 				}
 			};
 
 			window.wpNavMenu.addItemToMenu( menu, window.wpNavMenu.addMenuItemToBottom, function() {
 				// Remove the Ajax spinner.
-				$( '.colmundiv .spinner' ).removeClass( 'is-active' );
+				$( '.columndiv .spinner' ).removeClass( 'is-active' );
 			});
 		})
 
