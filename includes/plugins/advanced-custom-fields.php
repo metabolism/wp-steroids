@@ -432,6 +432,7 @@ class WPS_Advanced_Custom_Fields{
 
             $block['render_callback'] = [$this, 'block_render_callback'];
 
+            $block['supports']['mode'] = false;
             $block['supports']['align'] = boolval($args['supports']['align']??false);
             $block['supports']['align_text'] = boolval($args['supports']['align_text']??false);
             $block['supports']['align_content'] = boolval($args['supports']['align_content']??false);
