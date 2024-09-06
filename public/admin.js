@@ -40,6 +40,7 @@
 			});
 
 			$('body').on('click', '.interface-pinned-items button', determineIfSidebarOpen);
+			$('body').on('click', '.interface-complementary-area-header .components-button', determineIfSidebarOpen);
 
 			determineIfSidebarOpen();
 		}
