@@ -170,6 +170,25 @@ class WPS_Query {
 
     /**
      * @param $orderby
+     * @param WP_Query $q
+     * @return string
+     */
+    public function custom_order($orderby, \WP_Query $q)
+    {
+        if( 'last_word' === $q->get( 'orderby' ) && $get_order = $q->get( 'order' ) )
+        {
+            if( in_array( strtoupper( $get_order ), ['ASC', 'DESC'] ) )
+            {
+                global $wpdb;
+                $orderby = " SUBSTRING_INDEX( {$wpdb->posts}.post_title, ' ', -1 ) " . $get_order;
+            }
+        }
+
+        return $orderby;
+    }
+
+    /**
+     * @param $orderby
      * @return string
      */
     public function add_sticky_posts($orderby)
@@ -217,6 +236,7 @@ class WPS_Query {
             add_action( 'pre_get_posts', [$this, 'pre_get_posts'] );
             add_filter( 'terms_clauses', [$this, 'terms_clauses'], 99999, 3);
             add_filter( 'posts_results', [$this, 'preview_access'], 10, 2 );
+            add_filter( 'posts_orderby', [$this, 'custom_order'], 10, 2 );
         }
 
         if( $this->config->get('search.use_metafields', false) )
