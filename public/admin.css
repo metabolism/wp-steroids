@@ -176,16 +176,21 @@ input.large-text, textarea.large-text { width: 35.7rem }
 .acf-field input[type="search"], .acf-field input[type="tel"], .acf-field input[type="time"], .acf-field input[type="url"],
 .acf-field input[type="week"], .acf-field textarea, .acf-field select{ font-size: 13px; }
 .acf-field .acf-label label, .post-attributes-label, .acf-flexible-content .layout .acf-fc-layout-handle span, #edittag .form-table th { font-weight: 500; }
+.acf-field .acf-label.acf-accordion-title label{ color: #1e1e1e }
 .acf-tab-group li a{ font-weight: normal; font-size: 13px }
 .acf-tab-group li.active a{ font-weight: 500 }
 .acf-true-false{ padding: 5px 0 }
 .acf-input-prepend, .acf-input-append{ border-color:#c4cdd5; font-size: 13px }
 .acf-fields>.acf-field{ padding: 10px }
+.acf-fields.acf-block-fields>.acf-field{ padding: 10px 16px }
+.acf-fields.inside>.acf-field{ padding: 10px 16px }
 .acf-field{ min-height: auto!important }
 .inside.acf-fields>.acf-field>.acf-label label{ cursor: default }
 .acf-field .acf-label{ margin-bottom: 6px }
 .acf-field.acf-accordion .acf-label{ margin-bottom: 0 }
-.acf-field.acf-accordion{ border-top-color: #eee }
+.acf-field.acf-accordion .acf-label.acf-accordion-title{ padding: 16px }
+.acf-accordion .acf-accordion-title svg.acf-accordion-icon{ right: 16px }
+.acf-field.acf-accordion{ border-top-color: #e0e0e0 }
 .acf-fields.-border.acf-clone-fields{ border: 0 }
 .acf-fields.-border.acf-clone-fields > .acf-field{ margin: 0 }
 .acf-fields.-border.acf-clone-fields > .acf-field+.acf-field{ margin-top: 16px }
@@ -269,7 +274,7 @@ textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top
 /* Fix WP5.5 Contrast */
 .handle-order-higher, .handle-order-lower{ display: none }
 .acf-postbox.seamless > .postbox-header{ display: none }
-.postbox-header{ border-bottom: 0 }
+.components-panel__body{ border-bottom: 0 }
 .form-table th{ font-weight: normal }
 #side-sortables .acf-gallery-sort{ display: none }
 
@@ -277,7 +282,6 @@ textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top
 .components-panel .edit-post-meta-boxes-area #poststuff h2.hndle{
     padding: 0 16px; font-size: 13px; color: #1e1e1e; font-weight: 500; cursor: pointer;
 }
-.components-panel .edit-post-meta-boxes-area .postbox-header{ border-top: 0 }
 .components-panel #side-sortables .acf-fields>.acf-field{ width: auto!important }
 .components-panel .postbox{ box-shadow: none!important; border-radius: 0 }
 .edit-post-meta-boxes-area .postbox .handlediv{ width: 56px }
