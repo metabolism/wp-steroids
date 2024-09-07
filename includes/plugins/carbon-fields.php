@@ -79,7 +79,7 @@ class WPS_Carbon_Fields{
     {
         foreach ( $this->config->get('options_page', []) as $option_name => $option_args )
         {
-            $carbon_container = \Carbon_Fields\Container::make( 'theme_options', __t( $option_args['title']??$option_name ) );
+            $carbon_container = \Carbon_Fields\Container::make( 'theme_options', __t( $option_args['title']??ucfirst($option_name) ) );
 
             $this->addFields($carbon_container, $option_args);
             $this->callMethods($carbon_container, $option_args);
@@ -116,7 +116,7 @@ class WPS_Carbon_Fields{
 
     /**
      * Adds Gutenberg blocks
-     * @see https://www.advancedcustomfields.com/resources/acf_register_block_type/
+     * @see https://docs.carbonfields.net/learn/containers/gutenberg-blocks.html
      */
     public function addBlocks()
     {
@@ -199,21 +199,41 @@ class WPS_Carbon_Fields{
             $menus = get_terms( 'nav_menu' );
             $field_args['options'] = array_combine( wp_list_pluck( $menus, 'term_id' ), wp_list_pluck( $menus, 'name' ) );
         }
+        elseif( $type == 'wysiwyg' ){
+
+            $type = 'rich_text';
+            $field_args['settings'] = array_merge(['media_buttons'=>false], $field_args['settings']??[]);
+        }
+        elseif( $type == 'link' ){
+
+            if( class_exists('Carbon_Field_UrlPicker\UrlPicker_Field'))
+                $type = 'urlpicker';
+            else
+                $type = 'text';
+        }
+        elseif( $type == 'repeater' ){
+
+            $type = 'complex';
+
+            if( !in_array($field_args['layout']??'', ['grid', 'tabbed-horizontal', 'tabbed-vertical']) )
+                $field_args['layout'] = 'grid';
+        }
 
         $field = \Carbon_Fields\Field::make($type, $field_name, __t($field_args['label']??null));
 
-        if( $type == 'complex' && isset($field_args['fields']) ){
+        if( $type == 'complex' && (isset($field_args['fields']) or isset($field_args['sub_fields'])) ){
 
             $subfields = [];
+            $definition = $field_args['fields']??$field_args['sub_fields'];
 
-            foreach ($field_args['fields'] as $subfield_name=>$subfield_args)
+            foreach ($definition as $subfield_name=>$subfield_args)
                 $subfields[] = $this->createField($subfield_name, $subfield_args);
 
             $field->add_fields($subfields);
 
             if( !isset($field_args['header_template']) ){
 
-                $collapsed = array_keys($field_args['fields'])[0];
+                $collapsed = array_keys($definition)[0];
                 $field->set_header_template( '<% if ('.$collapsed.') { %><%- '.$collapsed.' %><% } %>' );
             }
 
