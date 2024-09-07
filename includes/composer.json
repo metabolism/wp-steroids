@@ -2,7 +2,7 @@
   "require": {
     "ifsnop/mysqldump-php":"^2.11",
     "dflydev/dot-access-data":"^3.0.2",
-    "enshrined/svg-sanitize": "^0.16.0",
+    "enshrined/svg-sanitize": "^0.20.0",
     "mustangostang/spyc": "^0.6.3",
     "ext-zip": "*"
   }

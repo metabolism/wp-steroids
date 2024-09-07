@@ -1,3 +1,6 @@
+### 1.4.1
+- vendors updated to latest version
+
 ### 1.4.0
 - Switch to acf block api v3
 - Fix sidebar bug with WP6.6
