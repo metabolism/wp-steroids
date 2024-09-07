@@ -74,7 +74,7 @@ wordpress:
     load_remote_block_patterns: false
     #block_editor_style: '/build/bundle.css'
     #block_editor_script: '/blocks.js'
-    render_template: 'blocks/{name}.html.twig'
+    render_template: 'block/{name}.twig'
     preview_image: '/app/blocks/{name}.png'
 
 
@@ -83,7 +83,7 @@ wordpress:
   #########################
 
   image:
-    compression: 90 #on the fly compression ratio
+    compression: 95 #on the fly compression ratio
     resize: #resize image on upload to save server space
       max_width: 1920
       max_height: 2160
@@ -154,7 +154,8 @@ wordpress:
   ## Add post type support
   ## https://developer.wordpress.org/reference/functions/post_type_supports/
   post_type_support:
-    page: excerpt #add excerpt to page
+    page:
+      - excerpt #add excerpt to page
 
   ## Add theme support
   ## https://developer.wordpress.org/reference/functions/add_theme_support/
@@ -201,6 +202,8 @@ wordpress:
       autoload: true #autoload options
     user_settings:
       gallery_height: 210
+    block:
+      api_version: 3
     input:
       lock_max_length: false
     toolbars: #customize wysiwyg toolbar
@@ -239,8 +242,10 @@ wordpress:
           - blockquote
           - superscript
           - subscript
+          - forecolor
           - bullist
           - numlist
+          - table
           - link
           - alignjustify
           - pastetext
@@ -326,11 +331,11 @@ wordpress:
       #disable_for_blogs:
       #  - 2#
       #has_options: true #add acf page option to post type menu
-      capability_type: post
+      #capability_type: post
       #publicly_queryable: false
       ## options for archive page
       #posts_per_page: 11
-      #orderby: name #https://developer.wordpress.org/reference/classes/wp_query/#order-orderby-parameters
+      #orderby: name #https://developer.wordpress.org/reference/classes/wp_query/#order-orderby-parameters or last_word
       #order: ASC
       show_in_rest: true
       #template:
@@ -343,12 +348,13 @@ wordpress:
         - excerpt
         - thumbnail
         - editor
+        - revisions
+        #- sticky
         #- author
         #- excerpt
         #- trackbacks
         #- custom-fields
         #- comments
-        #- revisions
         #- page-attributes
         #- post-formats
       #columns: #add new column to post listing, thumbnail|meta
@@ -382,6 +388,7 @@ wordpress:
       #radio: true #display terms selection as radio instead of checkbox
       #publicly_queryable: false
       show_in_rest: true
+      #capability_type: true
       object_type:
         - guide
       #capabilities:

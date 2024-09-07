@@ -409,6 +409,7 @@ class WPS_Advanced_Custom_Fields{
 
         $render_template = $this->config->get('gutenberg.render_template', '');
         $preview_image = $this->config->get('gutenberg.preview_image', false);
+        $api_version = $this->config->get('acf.block.api_version', 3);
 
         $upload_dir = wp_upload_dir();
 
@@ -416,7 +417,7 @@ class WPS_Advanced_Custom_Fields{
         {
             $block = [
                 '$schema'           => 'https://schemas.wp.org/trunk/block.json',
-                'apiVersion'        => 3,
+                'apiVersion'        => $api_version,
                 'name'              => $name,
                 'title'             => __t($args['title']??$name),
                 'description'       => __t($args['description']??''),
@@ -432,7 +433,9 @@ class WPS_Advanced_Custom_Fields{
 
             $block['render_callback'] = [$this, 'block_render_callback'];
 
-            $block['supports']['mode'] = false;
+            if( $api_version == 3 )
+                $block['supports']['mode'] = false;
+
             $block['supports']['align'] = boolval($args['supports']['align']??false);
             $block['supports']['align_text'] = boolval($args['supports']['align_text']??false);
             $block['supports']['align_content'] = boolval($args['supports']['align_content']??false);

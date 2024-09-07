@@ -1,3 +1,10 @@
+### 1.4.0
+- Switch to acf block api v3
+- Fix sidebar bug with WP6.6
+- Better cpt name management
+- Added "archive" entry group in menu for better ux
+- Added "orderby: last_word" option for cpt
+
 ### 1.3.7
 - Better ACF link management when cloning post using Multisite language switcher
 
