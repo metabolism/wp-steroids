@@ -90,6 +90,9 @@ class WPS_Gutenberg
         if ( $_config->get('gutenberg.disable_classic_theme_styles', true) )
             remove_action( 'wp_enqueue_scripts', 'wp_enqueue_classic_theme_styles' );
 
+        if ( !$_config->get('gutenberg.load_remote_block_patterns', false) )
+            add_action( 'should_load_remote_block_patterns', '__return_false' );
+
 		if( is_admin() ){
 
 			if( $_config->get('gutenberg.replace_reset_styles', true) )
@@ -104,15 +107,11 @@ class WPS_Gutenberg
         }
 		else{
 
-
 			if ( $_config->get('gutenberg.remove_block_library', true) ){
 
 				add_action( 'wp_enqueue_scripts', [$this, 'removeBlockLibrary'], 100 );
                 add_action( 'wp_footer', [$this, 'removeBlockLibrary']);
             }
-
-			if ( !$_config->get('gutenberg.load_remote_block_patterns', false) )
-				add_action( 'should_load_remote_block_patterns', '__return_false' );
 		}
     }
 }

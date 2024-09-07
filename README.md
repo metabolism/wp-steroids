@@ -109,7 +109,8 @@ wordpress:
 
   ## Hide page from submenu
   remove_submenu_page:
-    #themes.php: nav-menus.php
+    - themes.php: site-editor.php?path=/patterns
+  #  - themes.php: nav-menus.php
 
   ## Customize WYSIWYG Editor TinyMCE Buttons
   ##https://www.tiny.cloud/docs/advanced/editor-control-identifiers/

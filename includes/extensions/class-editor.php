@@ -110,7 +110,10 @@ class WPS_Editor {
 
         foreach ( (array)$this->config->get('remove_submenu_page', []) as $menu=>$submenu )
         {
-            remove_submenu_page($menu, $submenu);
+            if( is_array($submenu) )
+                remove_submenu_page(key($submenu), reset($submenu));
+            else
+                remove_submenu_page($menu, $submenu);
         }
 
         if( !current_user_can('administrator') )
