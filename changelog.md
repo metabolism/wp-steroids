@@ -1,3 +1,6 @@
+### 1.4.2
+- remove_submenu_page was buggy
+
 ### 1.4.1
 - vendors updated to latest version
 
