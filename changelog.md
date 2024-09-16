@@ -1,4 +1,5 @@
 ### 1.4.2
+- Fixed a bug with Cache control plugin
 - remove_submenu_page was buggy
 
 ### 1.4.1

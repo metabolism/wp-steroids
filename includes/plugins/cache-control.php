@@ -16,7 +16,11 @@ class WPS_Cache_Control {
         $taxonomies = get_taxonomies(['publicly_queryable'=> true,'_builtin' => false]);
         $queried_object = get_queried_object();
 
-        if( is_post_type_archive($post_types) ){
+        if ( cache_control_nocacheables() ){
+
+            $directive = cache_control_build_directive_header( FALSE, FALSE, FALSE, FALSE );
+        }
+        elseif( is_post_type_archive($post_types) ){
 
             $directive = cache_control_build_directive_from_option($queried_object->name.'_archive');
         }
