@@ -89,6 +89,7 @@ class WPS_Config {
                     'add_new' => 'Add '.$name,
                     'add_new_item' => 'Add '.$name,
                     'edit_item' => 'Edit '.$name,
+                    'edit_items' => 'Edit '.$names,
                     'new_item' => 'New '.$name,
                     'view_item' => 'View '.$name,
                     'view_items' => 'View '.$names,
@@ -958,7 +959,6 @@ class WPS_Config {
         // When viewing admin
         if( is_admin() )
         {
-
             if( !HEADLESS || URL_MAPPING )
                 add_action( 'load-options-permalink.php', [$this, 'LoadPermalinks']);
         }
