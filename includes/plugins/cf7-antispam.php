@@ -15,6 +15,9 @@ class WPS_CF7_Antispam {
 
         add_action( 'init', function (){
 
+            if( !function_exists('run_cf7a') )
+                return;
+
             remove_action( 'init', 'run_cf7a', 11 );
             add_action( 'wpcf7_enqueue_scripts', 'run_cf7a' );
 
