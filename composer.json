@@ -1,7 +1,7 @@
 {
   "name": "metabolism/wp-steroids",
   "type": "wordpress-plugin",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "license": "MIT",
   "description": "Supercharge Wordpress with YML configuration, increase performance and security",
   "keywords": ["plugin","wordpress"],

@@ -1,3 +1,6 @@
+### 1.4.3
+- Fixed a bug with Contact form 7 used without cf7 antispam
+
 ### 1.4.2
 - Fixed a bug with Cache control plugin
 - remove_submenu_page was buggy
