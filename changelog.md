@@ -1,3 +1,6 @@
+### 1.4.4
+- Extend timber post to prevent use of post_content for excerpt generation
+
 ### 1.4.3
 - Fixed a bug with Contact form 7 used without cf7 antispam
 
