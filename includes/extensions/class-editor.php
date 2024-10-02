@@ -189,6 +189,34 @@ class WPS_Editor {
         echo '<link rel="stylesheet" href="'.WPS_PLUGIN_URL.'public/login.css"/>';
     }
 
+
+    /**
+     * Bootstraps the Customize experience on the server-side.
+     * see : https://developer.wordpress.org/reference/classes/wp_customize_manager/
+     */
+    function customizeRegister($wp_customize)
+    {
+        foreach ($this->config->get('wp_customize.remove_section',[]) as $section_name ){
+
+            $wp_customize->remove_section($section_name);
+        }
+
+        foreach ($this->config->get('wp_customize.add_section',[]) as $section_name=>$args ){
+
+            $wp_customize->add_section($section_name, $args);
+        }
+
+        foreach ($this->config->get('wp_customize.add_setting',[]) as $setting_name=>$args ){
+
+            $wp_customize->add_setting($setting_name, $args);
+        }
+
+        foreach ($this->config->get('wp_customize.add_control',[]) as $id=>$args ){
+
+            $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $id, $args ) );
+        }
+    }
+
     /**
      * Update editor role
      */
@@ -350,7 +378,6 @@ class WPS_Editor {
 
         if( is_admin() )
         {
-
             add_filter( 'upload_mimes', [$this, 'uploadMimes']);
             add_filter( 'wp_link_query', [$this, 'linkQueryTermLinking'], 99, 2 );
             add_filter( 'mce_buttons', [$this, 'tinyMceButtons']);
@@ -376,6 +403,7 @@ class WPS_Editor {
 
         add_action( 'password_protected_login_head', [$this, 'addCustomLoginHeader']);
         add_action( 'login_head', [$this, 'addCustomLoginHeader']);
+        add_action( 'customize_register', [$this, 'customizeRegister'], 15);
         add_action( 'admin_bar_menu', [$this, 'editBarMenu'], 80);
     }
 }

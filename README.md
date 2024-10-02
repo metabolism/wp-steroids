@@ -69,12 +69,13 @@ wordpress:
   gutenberg:
     replace_reset_styles: true
     remove_core_block: true
+    remove_core_block_patterns: true
     disable_classic_theme_styles: true
     remove_block_library: true
     load_remote_block_patterns: false
-    #block_editor_style: '/build/bundle.css'
-    #block_editor_script: '/blocks.js'
-    render_template: 'block/{name}.twig'
+    block_editor_style: '/build/bundle.css'
+    block_editor_script: '/blocks.js'
+    render_template: 'block/{name}/{name}.twig'
     preview_image: '/app/blocks/{name}.png'
 
 
@@ -112,6 +113,12 @@ wordpress:
     - themes.php: site-editor.php?path=/patterns
   #  - themes.php: nav-menus.php
 
+  ## Handle Customize experience on the server-side.
+  ## https://developer.wordpress.org/reference/classes/wp_customize_manager/
+  wp_customize:
+    remove_section:
+      - custom_css
+
   ## Customize WYSIWYG Editor TinyMCE Buttons
   ##https://www.tiny.cloud/docs/advanced/editor-control-identifiers/
   mce_buttons:
@@ -148,7 +155,7 @@ wordpress:
   ## Add blog support
   support:
     - page #enable page
-    - post #enable post
+    #- post #enable post
     - tag #enable tag taxonomy for post
     - category #enable category taxonomy for post
 
@@ -166,6 +173,22 @@ wordpress:
     #- post-formats:
     #  - video
     #  - gallery
+
+  options_page: #add option pages https://www.advancedcustomfields.com/resources/options-page/
+    global:
+      fields:
+        gtm:
+          type: text
+    translations:
+      fields:
+        translations:
+          type: repeater
+          layout: table
+          sub_fields:
+            key:
+              type: text
+            translation:
+              type: text
 
   ## Use WordPress as a headless cms
   #headless:
@@ -254,21 +277,6 @@ wordpress:
           - fullscreen
 
 
-  ########################
-  ##    Options page    ##
-  ########################
-  options_page:
-    - 'Global'
-    - 'Translations'
-    # or
-    #global:
-    #  title: Global
-    #  fields:
-    #    blog:
-    #      type: separator
-    #    blog_search:
-    #      type: checkbox
-
   ################
   ##    Menu    ##
   ################
@@ -276,7 +284,11 @@ wordpress:
   menu:
     depth: 1
     register:
-      footer: Footer
+      footer:
+        title: Footer
+        fields:
+          sample:
+            type: text
       header: Header
 
 
@@ -284,14 +296,14 @@ wordpress:
   ##    Sidebar    ##
   ###################
 
-  sidebar: # https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
-    footer:
-      name : Footer
-      description : 'Add widgets here to appear in your footer.'
-      before_widget : '<section id="%1$s" class="widget %2$s">'
-      after_widget : '</section>'
-      before_title : '<h2 class="widget-title">'
-      after_title : '</h2>'
+  #sidebar: # https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
+  #  footer:
+  #    name : Footer
+  #    description : 'Add widgets here to appear in your footer.'
+  #    before_widget : '<section id="%1$s" class="widget %2$s">'
+  #    after_widget : '</section>'
+  #    before_title : '<h2 class="widget-title">'
+  #    after_title : '</h2>'
 
 
   ##########################
@@ -299,24 +311,60 @@ wordpress:
   ##########################
 
   block:
-    title-text:
-      title: Title with text
-      description: Title with text
+    hero:
+      title: Hero
+      description: Page Hero
       supports:
-        align_text: 'left'
-        #multiple: false
+        multiple: false
       icon: 'editor-alignleft'
       post_types:
         - page
         - guide
-      #fields:
-      #  title:
-      #    type: text
-      #  background:
-      #    type: select
-      #    options:
-      #      grey: Grey
-      #      white: White
+      fields:
+        suptitle:
+          type: text
+        title:
+          type: text
+        content:
+          type: wysiwyg
+          toolbar: basic
+          media_upload: false
+        image:
+          type: image
+        cta:
+          type: link
+
+    video:
+      title: Video
+      #description: Video
+      icon: 'format-video'
+      post_types:
+        - page
+        - guide
+      fields:
+        video:
+          type: url
+          placeholder: 'https://www.youtube.com/watch?v=FcTLMTyD2DU'
+        cover:
+          type: image
+
+    contact:
+      title: Contact
+      #description: Featured article
+      icon: 'email'
+      post_types:
+        - page
+
+    #hero-home:
+    #  title: Homepage hero
+    #  description: Display a slider
+    #  supports:
+    #    align_text: 'left'
+    #    #multiple: false
+    #  icon: 'editor-alignleft'
+    #  post_types:
+    #    - page
+    #    - guide
 
 
   ##########################
@@ -324,6 +372,14 @@ wordpress:
   ##########################
 
   post_type: # https://developer.wordpress.org/reference/functions/register_post_type/
+
+    page:
+      template:
+        - - acf/hero
+          - lock:
+              move: true
+              remove: true
+
     guide:
       menu_icon: book #https://developer.wordpress.org/resource/dashicons/
       has_archive: true
@@ -339,11 +395,11 @@ wordpress:
       #orderby: name #https://developer.wordpress.org/reference/classes/wp_query/#order-orderby-parameters or last_word
       #order: ASC
       show_in_rest: true
-      #template:
-      #  - - acf/title-text
-      #    - lock:
-      #        move: true
-      #        remove: true
+      template:
+        - - acf/hero
+          - lock:
+              move: true
+              remove: true
       supports:
         - title
         - excerpt
@@ -358,10 +414,10 @@ wordpress:
         #- comments
         #- page-attributes
         #- post-formats
-      #columns: #add new column to post listing, thumbnail|meta
-       # - thumbnail
-      #taxonomies:
-       # - category
+        #columns: #add new column to post listing, thumbnail|meta
+        # - thumbnail
+        #taxonomies:
+        # - category
       #labels:
       #  name:           'Guides'
       #  singular_name:  'Guide'
@@ -374,6 +430,11 @@ wordpress:
       #  search_items:   'Rechercher un guide'
       #  popular_items:  'Guides populaires'
       #  not_found:      'Aucun guide trouvé'
+      field_group:
+        position: side
+      fields:
+        sample:
+          type: text
 
 
   ##########################
@@ -409,28 +470,30 @@ wordpress:
       #  search_items:   'Rechercher une catégorie'
       #  popular_items:  'Catégories populaires'
       #  not_found:      'Aucune catégorie trouvée'
+      fields:
+        sample:
+          type: text
 
+    ####################################
+    ##    Templates/States/Formats    ##
+    ####################################
 
-  ####################################
-  ##    Templates/States/Formats    ##
-  ####################################
+    ## Add post and taxonomy templates
+    #template:
+    #  page:
+    #    coming_soon: 'Coming Soon'
+    #    not_found: '404'
+    #  post:
+    #    video: 'Video'
+    #  taxonomy:
+    #    item:
+    #      edito: 'Edito'
+    #      podcast: 'Podcast'
+    #      reportage: 'Reportage'
+    #      video: 'Video'
 
-  ## Add post and taxonomy templates
-  #template:
-  #  page:
-  #    coming_soon: 'Coming Soon'
-  #    not_found: '404'
-  #  post:
-  #    video: 'Video'
-  #  taxonomy:
-  #    item:
-  #      edito: 'Edito'
-  #      podcast: 'Podcast'
-  #      reportage: 'Reportage'
-  #      video: 'Video'
-
-  ## Add page states like "homepage"
-  #page_states:
+    ## Add page states like "homepage"
+    #page_states:
     #archive_guide: 'Guide archive'
 
   #################################
