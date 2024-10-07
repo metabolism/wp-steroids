@@ -1,41 +1,47 @@
 <?php
 
 use Timber\Post;
-/**
- * Class BlogPost
- */
-class WPS_Post extends Post
-{
+
+if ( class_exists('Timber\Post') ) {
+
     /**
-     * @param array $options
-     * @return string
+     * Class BlogPost
      */
-    public function excerpt(array $options = []): string
+    class WPS_Post extends Post
     {
-        //prevent infinite loop
-        if( $this->post_excerpt || !has_blocks($this->post_content) )
-            return parent::excerpt(array_merge($options,['read_more'=>false]));
-        else
-            return false;
-    }
+        /**
+         * @param array $options
+         * @return string
+         */
+        public function excerpt(array $options = []): string
+        {
+            //prevent infinite loop
+            if ($this->post_excerpt || !has_blocks($this->post_content))
+                return parent::excerpt(array_merge($options, ['read_more' => false]));
+            else
+                return false;
+        }
 
-    /**
-     * Detect excerpt
-     *
-     * @return bool
-     */
-    public function hasExcerpt(){
+        /**
+         * Detect excerpt
+         *
+         * @return bool
+         */
+        public function hasExcerpt()
+        {
 
-        return !empty($this->post_excerpt);
-    }
+            return !empty($this->post_excerpt);
+        }
 
-    /**
-     * Mapper for Metabolism/WordpressBundle compatibility
-     *
-     * @return mixed
-     */
-    public function customField(string $field_name){
+        /**
+         * Mapper for Metabolism/WordpressBundle compatibility
+         *
+         * @return mixed
+         */
+        public function customField(string $field_name)
+        {
 
-        return $this->meta($field_name);
+            return $this->meta($field_name);
+        }
     }
 }
