@@ -285,7 +285,7 @@ class WPS_Carbon_Fields{
 
                 $args = [
                     'id'    => 'archive_options',
-                    'title' => __t('Edit archive options'),
+                    'title' => __t(__t('Edit').' '.__t('archive options')),
                     'href'  => get_admin_url( null, '/edit.php?post_type='.$object->name.'&page=crb_carbon_fields_container_archive_options.php' ),
                     'meta'   => ['class' => 'ab-item']
                 ];
