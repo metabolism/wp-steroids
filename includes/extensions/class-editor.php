@@ -251,8 +251,31 @@ class WPS_Editor {
      */
     function linkQueryTermLinking($results, $query ) {
 
-        if( !($query['s']??false) || ($query['offset']??0) )
+        if( !($query['s']??false) ){
+
+            if( !($query['offset']??0) ){
+
+                $post_types = get_post_types( array( 'public' => true ), 'objects' );
+
+                foreach ($post_types as $post_type=>$args){
+
+                    $pt_archive_link = get_post_type_archive_link($post_type);
+                    $pt_obj = get_post_type_object($post_type);
+
+                    if ( $pt_archive_link !== false && $pt_obj->has_archive !== false ) {
+
+                        array_unshift($results, [
+                            'ID' => $pt_obj->has_archive,
+                            'title' => trim(esc_html(strip_tags($pt_obj->labels->name))),
+                            'permalink' => $pt_archive_link,
+                            'info' => 'Archive'
+                        ]);
+                    }
+                }
+            }
+
             return $results;
+        }
 
         $taxonomies = get_taxonomies(['publicly_queryable' => true]);
 

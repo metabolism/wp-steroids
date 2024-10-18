@@ -214,7 +214,7 @@ class WPS_Query {
 
         foreach ($post_types as $post_type=>$args){
 
-            if( !$args->publicly_queryable && $key = array_search($post_type, $query['post_type']) ){
+            if( (!$args->publicly_queryable || !$args->query_var) && $key = array_search($post_type, $query['post_type']) ){
                 unset($query['post_type'][$key]);
             }
         }
