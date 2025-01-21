@@ -397,6 +397,31 @@ class WPS_Advanced_Custom_Fields{
     }
 
     /**
+     * Filters the default array of categories for block types.
+    */
+    public function addBlockCategories($blockCategories, $editorContext)
+    {
+        if( empty($editorContext->post) )
+            return $blockCategories;
+
+        foreach ( $this->config->get('block_categories', []) as $slug => $args )
+        {
+            $blockCategory = ['slug'=>$slug];
+
+            if( is_string($args) )
+                $blockCategory['title'] = $args;
+            else
+                $blockCategory = array_merge($blockCategory, $args);
+
+            $blockCategory['title'] = __t($blockCategory['title']??'');
+
+            $blockCategories[] = $blockCategory;
+        }
+
+        return $blockCategories;
+    }
+
+    /**
      * Adds Gutenberg blocks
      * @see https://www.advancedcustomfields.com/resources/acf_register_block_type/
      */
@@ -670,6 +695,7 @@ class WPS_Advanced_Custom_Fields{
 
         $this->config = $_config;
 
+        add_filter('block_categories_all', [$this, 'addBlockCategories'], 10, 2);
         add_action('init', [$this, 'addBlocks']);
         add_action('init', [$this, 'addGroupFields']);
 

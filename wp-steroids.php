@@ -108,7 +108,7 @@ class WPS{
 
         define('WPS_PATH', __DIR__);
         define('WPS_PLUGIN_URL', plugin_dir_url(__FILE__));
-        define('WPS_VERSION', '1.4.7.1');
+        define('WPS_VERSION', '1.4.7.2');
 
         require __DIR__ . '/includes/vendor/autoload.php';
 

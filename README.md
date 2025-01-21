@@ -122,30 +122,32 @@ wordpress:
 
   ## Customize WYSIWYG Editor TinyMCE Buttons
   ##https://www.tiny.cloud/docs/advanced/editor-control-identifiers/
-  mce_buttons:
-    - formatselect
-    - bold
-    - italic
-    - underline
-    - sup
-    - strikethrough
-    - superscript
-    - subscript
-    - bullist
-    - numlist
-    - blockquote
-    - hr
-    - table
-    - alignleft
-    - aligncenter
-    - alignright
-    - alignjustify
-    - link
-    - unlink
-    - wp_more
-    - spellchecker
-    - wp_adv
-    - dfw
+  mce:
+    #css: '/static/editor_style.css'
+    buttons:
+      - formatselect
+      - bold
+      - italic
+      - underline
+      - sup
+      - strikethrough
+      - superscript
+      - subscript
+      - bullist
+      - numlist
+      - blockquote
+      - hr
+      - table
+      - alignleft
+      - aligncenter
+      - alignright
+      - alignjustify
+      - link
+      - unlink
+      - wp_more
+      - spellchecker
+      - wp_adv
+      - dfw
 
   #editor_style: backoffice.css
 
@@ -311,6 +313,10 @@ wordpress:
   ##       New block      ##
   ##########################
 
+  #block_categories:
+  #  media : Media
+    
+    
   block:
     hero:
       title: Hero
