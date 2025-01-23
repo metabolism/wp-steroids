@@ -81,24 +81,23 @@ class WPS_Config {
 
                 $args = array_merge($default_args, $args);
                 $name = str_replace('-', ' ', str_replace('_', ' ', $args['labels']['singular_name']??$post_type));
-                $names = $args['labels']['name']??$this->plural($name);
+                $names = $this->plural($name);
 
                 $labels = [
-                    'name' => ucfirst($names),
+                    'name' => ucfirst($args['labels']['name']??$names),
                     'singular_name' => ucfirst($name),
-                    'add_new' => 'Add '.$name,
-                    'add_new_item' => 'Add '.$name,
-                    'edit_item' => 'Edit '.$name,
-                    'edit_items' => 'Edit '.$names,
-                    'new_item' => 'New '.$name,
-                    'view_item' => 'View '.$name,
-                    'view_items' => 'View '.$names,
-                    'search_items' => 'Search '.$names,
-                    'not_found' => ucfirst($name).' not found',
+                    'add_new' => 'Add New '.ucfirst($name),
+                    'add_new_item' => 'Add New '.ucfirst($name),
+                    'edit_item' => 'Edit '.ucfirst($name),
+                    'new_item' => 'New '.ucfirst($name),
+                    'view_item' => 'View '.ucfirst($name),
+                    'view_items' => 'View '.ucfirst($names),
+                    'search_items' => 'Search '.ucfirst($names),
+                    'not_found' => 'No '.$name.' found',
                     'not_found_in_trash' => 'No '.$name.' found in Trash',
-                    'parent_item_colon' => 'Parent '.$name,
-                    'all_items' =>'All '.$names,
-                    'archives' =>ucfirst($names).' Archives',
+                    'parent_item_colon' => 'Parent '.ucfirst($name),
+                    'all_items' =>'All '.ucfirst($names),
+                    'archives' =>ucfirst($name).' Archives',
                     'attributes' =>ucfirst($name).' Attributes',
                     'insert_into_item' =>'Insert into '.$name,
                     'uploaded_to_this_item' =>'Uploaded to this '.$name,
@@ -115,13 +114,19 @@ class WPS_Config {
                     'item_link_description' =>'A link to a '.$name,
                 ];
 
-                if( isset($args['labels']) )
+                if( isset($args['labels']) ){
+
                     $args['labels'] = array_merge($labels, $args['labels']);
-                else
+                    $args['labels']['singular_name'] = ucfirst($args['labels']['singular_name']);
+                }
+                else{
+
                     $args['labels'] = $labels;
+                }
 
                 foreach ( $args['labels'] as $key=>$value )
                     $args['labels'][$key] = __t($value);
+
 
                 if( isset($args['menu_icon']) )
                     $args['menu_icon'] = 'dashicons-'.$args['menu_icon'];
@@ -398,18 +403,23 @@ class WPS_Config {
                 $args = array_merge($default_args, $args);
 
                 $name = str_replace('-', ' ', str_replace('_', ' ', $args['labels']['singular_name']??$taxonomy));
-                $names = $args['labels']['name']??$this->plural($name);
+                $names = $this->plural($name);
 
                 $labels = [
-                    'name' => ucfirst($names),
+                    'name' => ucfirst($args['labels']['name']??$names),
                     'singular_name' => ucfirst($name),
-                    'search_items' => 'Search in ' . $names,
-                    'popular_items' => 'Popular ' . $names,
-                    'all_items' => 'All ' . $names,
-                    'parent_item' => 'Parent ' . $name,
-                    'add_new_item' => 'Add a ' . $name,
-                    'edit_item' => 'Edit ' . $name,
-                    'not_found' => ucfirst($name) . ' not found',
+                    'search_items' => 'Search ' . ucfirst($names),
+                    'popular_items' => 'Popular ' . ucfirst($names),
+                    'all_items' => 'All ' . ucfirst($names),
+                    'parent_item' => 'Parent ' . ucfirst($name),
+                    'add_new_item' => 'Add new ' . ucfirst($name),
+                    'view_item' => 'View ' . ucfirst($name),
+                    'update_item' => 'Update ' . ucfirst($name),
+                    'new_item_name' => 'New ' . ucfirst($name).' Name',
+                    'template_name' => ucfirst($name).' Archives',
+                    'edit_item' => 'Edit ' . ucfirst($name),
+                    'not_found' => 'No '. $name . ' found',
+                    'no_terms' => 'No '. $name,
                 ];
 
                 if( !isset($args['capabilities']) && isset($args['capability_type']) ){
