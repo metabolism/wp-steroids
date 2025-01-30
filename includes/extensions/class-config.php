@@ -412,7 +412,7 @@ class WPS_Config {
                     'popular_items' => 'Popular ' . ucfirst($names),
                     'all_items' => 'All ' . ucfirst($names),
                     'parent_item' => 'Parent ' . ucfirst($name),
-                    'add_new_item' => 'Add new ' . ucfirst($name),
+                    'add_new_item' => 'Add New ' . ucfirst($name),
                     'view_item' => 'View ' . ucfirst($name),
                     'update_item' => 'Update ' . ucfirst($name),
                     'new_item_name' => 'New ' . ucfirst($name).' Name',
