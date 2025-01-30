@@ -92,6 +92,7 @@ class WPS_Config {
                     'new_item' => 'New '.ucfirst($name),
                     'view_item' => 'View '.ucfirst($name),
                     'view_items' => 'View '.ucfirst($names),
+                    'edit_items' => 'Edit '.ucfirst($names),
                     'search_items' => 'Search '.ucfirst($names),
                     'not_found' => 'No '.$name.' found',
                     'not_found_in_trash' => 'No '.$name.' found in Trash',
@@ -806,7 +807,7 @@ class WPS_Config {
      */
     public  function updatePostTypePermalink($post_link, $post){
 
-        if ( is_object( $post ) ){
+        if ( is_object( $post ) && $post_link ){
 
             if( !is_post_type_viewable($post->post_type) )
                 return null;
