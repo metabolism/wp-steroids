@@ -882,9 +882,24 @@ class WPS_Media {
 
 
     /**
-     * @param $post_id
      * @return void
      */
+    public function addUploadInformation(){
+
+        $max_h = $this->config->get('image.resize.max_height', 2160);
+        $max_w = $this->config->get('image.resize.max_width', 1920);
+        $compression = $this->config->get('image.compression', 95);
+
+        ?>
+        <p></p>
+        <p class="wps-upload-info">
+            <b>Pro tips:</b> Images are resized on upload (max <?=$max_w?>×<?=$max_h?>, 98% compression) and on front (<?=$compression?>%).<br/>
+            Avoid pre-compressed images; prefer high-quality 72dpi. Use PNG only for transparency.<br/>
+            Use xxx-hd.jpg, xxx-cmyk.jpg, or xxx-cmjn.jpg to skip resizing.
+        </p>
+        <?php
+    }
+
     public function postActionRegenerateMetadata($post_id){
 
         if( !$sendback = wp_get_referer() )
@@ -1002,7 +1017,7 @@ class WPS_Media {
             require_once( ABSPATH . 'wp-admin/includes/image.php' );
             $attach_data = wp_generate_attachment_metadata( $post_id, $new_path );
             update_post_meta( $post_id, '_wp_attachment_metadata', $attach_data );
-            
+
             foreach( $replaces as $old => $new ){
 
                 $wpdb->query("UPDATE {$wpdb->posts} SET post_content = REPLACE( post_content, '/{$old}', '/{$new}') WHERE post_content LIKE '%/{$old}%'");
@@ -1085,6 +1100,7 @@ class WPS_Media {
             add_filter('media_row_actions', [$this,'mediaRowActions'], 10, 3);
             add_action('post_action_convert', [$this,'postActionConvert']);
             add_action('post_action_regenerate_metadata', [$this,'postActionRegenerateMetadata']);
+            add_action('post-plupload-upload-ui', [$this,'addUploadInformation']);
 
             if( !class_exists('WP_Smart_Crop') ){
 
