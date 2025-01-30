@@ -955,8 +955,6 @@ class WPS_Media {
         $path = get_attached_file( $post_id );
         $url = wp_get_attachment_url( $post_id );
 
-        $stats_before = filesize( $path );
-
         if( $new_path = self::convertToJpg($path) ){
 
             $old_name = basename( $path );
@@ -964,63 +962,56 @@ class WPS_Media {
 
             $new_url = str_replace( $old_name, $new_name, $url );
 
-            if( $stats_before - filesize( $new_path ) > 0 ){
+            $old_name_clean = substr( $old_name, 0, -4 );
+            $new_name_clean = substr( $new_name, 0, -4 );
 
-                $old_name_clean = substr( $old_name, 0, -4 );
-                $new_name_clean = substr( $new_name, 0, -4 );
+            $replaces = [$old_name => $new_name];
 
-                $replaces = [$old_name => $new_name];
+            unlink( $path );
 
-                unlink( $path );
+            $thumbs = wp_get_attachment_metadata( $post_id );
 
-                $thumbs = wp_get_attachment_metadata( $post_id );
+            foreach( $thumbs['sizes'] as $img ){
 
-                foreach( $thumbs['sizes'] as $img ){
+                $thumb = dirname( $path ) . '/' . $img['file'];
 
-                    $thumb = dirname( $path ) . '/' . $img['file'];
+                if( file_exists( $thumb ) ){
 
-                    if( file_exists( $thumb ) ){
+                    $new_thumb = substr( $img['file'], 0, -4 ) . '.jpg';
 
-                        $new_thumb = substr( $img['file'], 0, -4 ) . '.jpg';
+                    if( $old_name_clean !== $new_name_clean )
+                        $new_thumb = str_replace( $old_name_clean, $new_name_clean, $new_thumb );
 
-                        if( $old_name_clean !== $new_name_clean )
-                            $new_thumb = str_replace( $old_name_clean, $new_name_clean, $new_thumb );
+                    $replaces[ $img['file'] ] = $new_thumb;
 
-                        $replaces[ $img['file'] ] = $new_thumb;
-
-                        unlink( $thumb );
-                    }
+                    unlink( $thumb );
                 }
-
-                wp_update_post(['ID' => $post_id, 'post_mime_type' => 'image/jpeg']);
-
-                global $wpdb;
-
-                $wpdb->update( $wpdb->posts, ['guid' => $new_url ], ['ID' => $post_id ], ['%s'], ['%d']);
-
-                $meta = get_post_meta( $post_id, '_wp_attached_file', 1 );
-
-                $meta = str_replace( $old_name, $new_name, $meta );
-                update_post_meta( $post_id, '_wp_attached_file', $meta );
-
-                require_once( ABSPATH . 'wp-admin/includes/image.php' );
-                $attach_data = wp_generate_attachment_metadata( $post_id, $new_path );
-                update_post_meta( $post_id, '_wp_attachment_metadata', $attach_data );
-
-                foreach( $replaces as $old => $new ){
-
-                    $wpdb->query("UPDATE {$wpdb->posts} SET post_content = REPLACE( post_content, '/{$old}', '/{$new}') WHERE post_content LIKE '%/{$old}%'");
-                    $wpdb->query("UPDATE {$wpdb->postmeta} SET meta_value = REPLACE( meta_value, '/{$old}', '/{$new}') WHERE meta_value LIKE '%/{$old}%'");
-                    $wpdb->query("UPDATE {$wpdb->options} SET option_value = REPLACE( option_value, '/{$old}', '/{$new}') WHERE option_value LIKE '%/{$old}%'");
-                }
-
-                do_action('media_replace_value', $post_id, $replaces);
-                do_action('media_convert', $post_id, $path, $new_path);
             }
-            else{
 
-                unlink($new_path);
+            wp_update_post(['ID' => $post_id, 'post_mime_type' => 'image/jpeg']);
+
+            global $wpdb;
+
+            $wpdb->update( $wpdb->posts, ['guid' => $new_url ], ['ID' => $post_id ], ['%s'], ['%d']);
+
+            $meta = get_post_meta( $post_id, '_wp_attached_file', 1 );
+
+            $meta = str_replace( $old_name, $new_name, $meta );
+            update_post_meta( $post_id, '_wp_attached_file', $meta );
+
+            require_once( ABSPATH . 'wp-admin/includes/image.php' );
+            $attach_data = wp_generate_attachment_metadata( $post_id, $new_path );
+            update_post_meta( $post_id, '_wp_attachment_metadata', $attach_data );
+            
+            foreach( $replaces as $old => $new ){
+
+                $wpdb->query("UPDATE {$wpdb->posts} SET post_content = REPLACE( post_content, '/{$old}', '/{$new}') WHERE post_content LIKE '%/{$old}%'");
+                $wpdb->query("UPDATE {$wpdb->postmeta} SET meta_value = REPLACE( meta_value, '/{$old}', '/{$new}') WHERE meta_value LIKE '%/{$old}%'");
+                $wpdb->query("UPDATE {$wpdb->options} SET option_value = REPLACE( option_value, '/{$old}', '/{$new}') WHERE option_value LIKE '%/{$old}%'");
             }
+
+            do_action('media_replace_value', $post_id, $replaces);
+            do_action('media_convert', $post_id, $path, $new_path);
         }
 
         wp_redirect( $sendback );
