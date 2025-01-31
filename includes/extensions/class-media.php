@@ -43,7 +43,9 @@ class WPS_Media {
         $name = preg_replace("/[^A-Z0-9._-]/i", "_", basename( $file['name']) );
 
         $target_file = '/'.uniqid().'_'.$name;
-        $upload_dir = WP_UPLOADS_DIR.$path;
+
+        $uploads = wp_upload_dir();
+        $upload_dir = $uploads['path'];
 
         if( !is_dir($upload_dir) )
             mkdir($upload_dir, 0755, true);
@@ -587,7 +589,7 @@ class WPS_Media {
             if( ($sizes['width']??0) > $max_w || ($sizes['height']??0) > $max_h )
                 $image_editor->resize($max_w, $max_h);
 
-            $image_editor->set_quality(98);
+            $image_editor->set_quality(99);
             $save_status = @$image_editor->save($thumbnails[0]);
 
             if( is_wp_error($save_status) )
@@ -788,6 +790,27 @@ class WPS_Media {
         return $sizes;
     }
 
+    /**
+     * Limit image size on upload
+     * @return mixed
+     */
+    public function uploadPrefilter($file)
+    {
+        if( !$limit = $this->config->get('image.max_size', false) )
+            return $file;
+
+        $size = $file['size'];
+        $size = $size / 1024;
+        $type = $file['type'];
+
+        $is_image = strpos( $type, 'image' ) !== false;
+
+        if ( $is_image && $size > $limit*1024 )
+            $file['error'] = 'Image files must be smaller than ' . $limit.'Mb';
+
+        return $file;
+    }
+
 
     /**
      * @param $actions
@@ -889,15 +912,20 @@ class WPS_Media {
         $max_h = $this->config->get('image.resize.max_height', 2160);
         $max_w = $this->config->get('image.resize.max_width', 1920);
         $compression = $this->config->get('image.compression', 95);
+        $max_size = $this->config->get('image.max_size', false);
 
         ?>
-        <p></p>
         <p class="wps-upload-info">
             <b>Pro tips:</b> Images are resized on upload (max <?=$max_w?>×<?=$max_h?>, 98% compression) and on front (<?=$compression?>%).<br/>
             Avoid pre-compressed images; prefer high-quality 72dpi. Use PNG only for transparency.<br/>
             Use xxx-hd.jpg, xxx-cmyk.jpg, or xxx-cmjn.jpg to skip resizing.
         </p>
+        <?php if ($max_size): ?>
+        <p>
+            Maximum upload image file size: <?=$max_size?>Mb.
+        </p>
         <?php
+        endif;
     }
 
     public function postActionRegenerateMetadata($post_id){
@@ -1090,6 +1118,8 @@ class WPS_Media {
         add_filter('intermediate_image_sizes', [$this, 'intermediateImageSizesAdvanced'] );
         add_filter('intermediate_image_sizes_advanced', [$this, 'intermediateImageSizesAdvanced'] );
         add_action('init', [$this, 'removeImageSizes']);
+
+        add_filter( 'wp_handle_upload_prefilter', [$this, 'uploadPrefilter'] );
 
         if( is_admin() )
         {

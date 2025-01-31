@@ -104,12 +104,17 @@ class WPS_Security {
      */
     private function permissions($type='all')
     {
+        $uploads = wp_upload_dir();
+        $upload_dir = $uploads['path'];
+
         if ( current_user_can('administrator') ) {
+
             $webuser = posix_getpwuid(posix_geteuid())['name'];
-            $this->rchown(WP_UPLOADS_DIR, $webuser);
+            $this->rchown($upload_dir, $webuser);
         }
 
         wp_redirect( get_admin_url(null, 'options-media.php' ));
+
         exit;
     }
 

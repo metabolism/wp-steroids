@@ -86,6 +86,7 @@ wordpress:
 
   image:
     compression: 95 #on the fly compression ratio
+    max_size: 2 #Max image file size on upload
     resize: #resize image on upload to save server space
       max_width: 1920
       max_height: 2160

@@ -183,7 +183,9 @@ class WPS_SVG {
 	 */
 	public function __construct()
 	{
-		if( !is_admin() )
+        global $_config;
+
+		if( !is_admin() || !$_config->get('image.svg', true) )
 			return;
 
 		add_filter( 'wp_get_attachment_image_src', array( $this, 'onePixelFix' ), 10, 4 );
