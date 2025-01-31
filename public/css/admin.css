@@ -338,7 +338,7 @@ textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top
 .ui-resizable-ne{cursor:ne-resize; width:9px; height:9px; right:-5px; top:-5px}
 
 /* Yoast SEO */
-.wpseo-meta-section, .wpseo-meta-section-react, .wpseo-metabox-content{ max-width: none }
+.wpseo-meta-section, .wpseo-meta-section-react, .wpseo-metabox-content, .wpseo-metabox-menu{ max-width: none }
 .wpseo-metabox-menu ul{ padding-left: 1px }
 .wpseo-metabox-menu ul li{ box-shadow: none }
 
