@@ -1116,7 +1116,6 @@ class WPS_Media {
 
         // Remove intermediary sizes
         add_filter('intermediate_image_sizes', [$this, 'intermediateImageSizesAdvanced'] );
-        add_filter('intermediate_image_sizes_advanced', [$this, 'intermediateImageSizesAdvanced'] );
         add_action('init', [$this, 'removeImageSizes']);
 
         add_filter( 'wp_handle_upload_prefilter', [$this, 'uploadPrefilter'] );
