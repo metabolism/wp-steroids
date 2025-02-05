@@ -221,14 +221,12 @@ class WPS_Config {
 
                         add_filter ( 'manage_'.$post_type.'_posts_columns', function ( $columns ) use ( $args )
                         {
-                            $columns = array_merge ( $columns, $args['custom_columns']);
+                            $position = array_search('date', array_keys($columns));
 
-                            if( isset($columns['date']) ){
-
-                                $date = $columns['date'];
-                                unset($columns['date']);
-                                $columns['date'] = $date;
-                            }
+                            if ($position !== false)
+                                $columns = array_slice($columns, 0, $position, true) + $args['custom_columns'] + array_slice($columns, $position, null, true);
+                            else
+                                $columns = array_merge ( $columns, $args['custom_columns']);
 
                             return $columns;
                         });

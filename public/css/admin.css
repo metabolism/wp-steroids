@@ -281,6 +281,8 @@ textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top
 #menu-to-edit label input, #menu-to-edit label textarea{ margin-top: 5px }
 #menu-to-edit p+p{ margin-top: 10px }
 
+th.manage-column.column-thumbnail, td.thumbnail.column-thumbnail{ width: 1%; text-align: center }
+
 /* Fix WP5.5 Contrast */
 .handle-order-higher, .handle-order-lower{ display: none }
 .acf-postbox.seamless > .postbox-header{ display: none }
