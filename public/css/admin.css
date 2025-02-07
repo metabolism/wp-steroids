@@ -46,7 +46,7 @@
 .options-media-php .wrap .form-table tr:nth-child(3){ display: none }
 
 #the-list .attachment-thumbnail-container{ position: relative; display: inline-block }
-#the-list .attachment-thumbnail-container:hover .attachment-thumbnail{ display: block; z-index: 999 }
+#the-list .attachment-thumbnail-container:hover .attachment-thumbnail{ display: block!important; z-index: 999 }
 #the-list .attachment-thumbnail{ width: 50px; height: auto; border-radius: 3px; display: block }
 #the-list .attachment-thumbnail+.attachment-thumbnail{ width: auto; max-width: 150px; border-radius: 4px; position: absolute; left: 50%; top: 50%; display: none; transform: translate(-50%, -50%); box-shadow: 0 0 4px rgba(0,0,0,0.2) }
 #the-list .attachment-thumbnail-container+a{ display: none!important }

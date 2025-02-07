@@ -240,7 +240,8 @@ class WPS_Config {
                                     if( in_array('thumbnail', $args['supports']) ){
 
                                         $thumbnail = get_the_post_thumbnail($post_id, 'thumbnail');
-                                        echo '<a class="attachment-thumbnail-container">'.$thumbnail.$thumbnail.'</a>';
+                                        $thumbnail_hover = get_the_post_thumbnail($post_id, 'thumbnail', ['style'=>'display:none']);
+                                        echo '<a class="attachment-thumbnail-container">'.$thumbnail.$thumbnail_hover.'</a>';
                                     }
                                     else{
 
