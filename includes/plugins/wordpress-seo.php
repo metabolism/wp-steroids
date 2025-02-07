@@ -145,6 +145,26 @@ class WPS_Wordpress_Seo
 	}
 
 
+    /**
+     * Replace presenter to hide yoast class
+     * @param $presenters
+     * @return string
+     */
+	public static function replaceSchemaPresenter( $presenters ) {
+
+        foreach ($presenters as $key => $presenter) {
+
+            if ($presenter instanceof Yoast\WP\SEO\Presenters\Schema_Presenter) {
+
+                unset($presenters[$key]);
+                $presenters[] = new WPS_Schema_Presenter();
+            }
+        }
+
+        return $presenters;
+	}
+
+
 
 	/**
 	 * Construct
@@ -153,6 +173,7 @@ class WPS_Wordpress_Seo
 	{
 		add_action('admin_init', [$this, 'init'] );
 		add_filter('terms_clauses', [$this, 'changeTermsOrder'], 99, 3);
+        add_filter('wpseo_frontend_presenters', [$this, 'replaceSchemaPresenter']);
 
         add_filter( 'wpseo_sitemap_exclude_taxonomy', function( $value, $taxonomy ) {
 
