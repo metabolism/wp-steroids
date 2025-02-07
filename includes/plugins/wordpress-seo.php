@@ -152,9 +152,12 @@ class WPS_Wordpress_Seo
      */
 	public static function replaceSchemaPresenter( $presenters ) {
 
+        if( !class_exists('WPS_Schema_Presenter') )
+            include_once WPS_PATH.'/includes/class/Schema_Presenter.php';
+
         foreach ($presenters as $key => $presenter) {
 
-            if ($presenter instanceof Yoast\WP\SEO\Presenters\Schema_Presenter && class_exists('WPS_Schema_Presenter')) {
+            if ($presenter instanceof Yoast\WP\SEO\Presenters\Schema_Presenter ) {
 
                 unset($presenters[$key]);
                 $presenters[] = new WPS_Schema_Presenter();

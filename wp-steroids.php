@@ -113,7 +113,6 @@ class WPS{
         require __DIR__ . '/includes/vendor/autoload.php';
 
         $this->loadAll('lib');
-        $this->loadAll('class');
 
         $this->importConfig(WPS_YAML_FILE);
 
