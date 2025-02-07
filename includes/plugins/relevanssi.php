@@ -7,7 +7,7 @@
  */
 class WPS_Relevanssi
 {
-	public function fixFoundPosts(){
+	public function setFoundPosts(){
 
 		if( !function_exists('relevanssi_do_query') )
 			return;
@@ -36,6 +36,17 @@ class WPS_Relevanssi
 	 */
 	public function __construct()
 	{
-		add_action('init', [$this, 'fixFoundPosts']);
+        global $_config;
+
+        $capability = $_config->get('plugins.relevanssi.options_capability', false);
+
+        if( $capability ){
+
+            add_filter('relevanssi_options_capability', function() use($capability) {
+                return $capability;
+            });
+        }
+
+		add_action('init', [$this, 'setFoundPosts']);
 	}
 }

@@ -19,7 +19,7 @@ class WPS_Redirection
 
 		if( $role ){
 
-			add_filter('redirection_role', function($cap) use($role) {
+			add_filter('redirection_role', function() use($role) {
 				return $role;
 			});
 		}

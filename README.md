@@ -586,6 +586,8 @@ wordpress:
   #plugins:
   #  redirection:
   #    redirection_role: edit_others_posts
+  #  relevanssi:
+  #    options_capability: edit_others_posts
 
   #########################
   ##    Optimisations    ##
