@@ -202,77 +202,77 @@ class WPS_Config {
                 }
 
                 register_post_type($post_type, $args);
+            }
 
-                if( $is_admin && !$this->loaded )
+            if( $is_admin && !$this->loaded )
+            {
+                if( isset($args['columns']) )
                 {
-                    if( isset($args['columns']) )
+                    $columns_arr = [];
+
+                    foreach ( $args['columns'] as $id=>$column ){
+
+                        if( is_int($id) )
+                            $columns_arr[$column] = ucfirst(str_replace('_', ' ', $column));
+                        else
+                            $columns_arr[$id] = ucfirst(str_replace('_', ' ', $id));
+                    }
+
+                    $args['custom_columns'] = $columns_arr;
+
+                    add_filter ( 'manage_'.$post_type.'_posts_columns', function ( $columns ) use ( $args )
                     {
-                        $columns_arr = [];
+                        $position = array_search('date', array_keys($columns));
 
-                        foreach ( $args['columns'] as $id=>$column ){
+                        if ($position !== false)
+                            $columns = array_slice($columns, 0, $position, true) + $args['custom_columns'] + array_slice($columns, $position, null, true);
+                        else
+                            $columns = array_merge ( $columns, $args['custom_columns']);
 
-                            if( is_int($id) )
-                                $columns_arr[$column] = ucfirst(str_replace('_', ' ', $column));
-                            else
-                                $columns_arr[$id] = ucfirst(str_replace('_', ' ', $id));
-                        }
+                        return $columns;
+                    });
 
-                        $args['custom_columns'] = $columns_arr;
-
-                        add_filter ( 'manage_'.$post_type.'_posts_columns', function ( $columns ) use ( $args )
+                    add_action ( 'manage_'.$post_type.'_posts_custom_column', function ( $column, $post_id ) use ( $args, $post_type )
+                    {
+                        if( isset($args['custom_columns'][$column]) )
                         {
-                            $position = array_search('date', array_keys($columns));
+                            if( $column == 'thumbnail'){
 
-                            if ($position !== false)
-                                $columns = array_slice($columns, 0, $position, true) + $args['custom_columns'] + array_slice($columns, $position, null, true);
-                            else
-                                $columns = array_merge ( $columns, $args['custom_columns']);
+                                if( in_array('thumbnail', $args['supports']??[]) || $post_type == 'page' ){
 
-                            return $columns;
-                        });
-
-                        add_action ( 'manage_'.$post_type.'_posts_custom_column', function ( $column, $post_id ) use ( $args, $post_type )
-                        {
-                            if( isset($args['custom_columns'][$column]) )
-                            {
-                                if( $column == 'thumbnail'){
-
-                                    if( in_array('thumbnail', $args['supports']) ){
-
-                                        $thumbnail = get_the_post_thumbnail($post_id, 'thumbnail');
-                                        $thumbnail_hover = get_the_post_thumbnail($post_id, 'thumbnail', ['style'=>'display:none']);
-                                        echo '<a class="attachment-thumbnail-container">'.$thumbnail.$thumbnail_hover.'</a>';
-                                    }
-                                    else{
-
-                                        $thumbnail_id = get_post_meta( $post_id, 'thumbnail', true );
-
-                                        if( is_string($thumbnail_id) ){
-
-                                            echo '<a class="attachment-thumbnail-container"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$thumbnail_id.'"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$thumbnail_id.'"></a>';
-                                        }
-                                        elseif($thumbnail_id){
-
-                                            $image = wp_get_attachment_image_src($thumbnail_id);
-
-                                            if( $image && count($image) )
-                                                echo '<a class="attachment-thumbnail-container"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$image[0].'"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$image[0].'"></a>';
-                                        }
-                                    }
+                                    $thumbnail = get_the_post_thumbnail($post_id, 'thumbnail');
+                                    $thumbnail_hover = get_the_post_thumbnail($post_id, 'thumbnail', ['style'=>'display:none']);
+                                    echo '<a class="attachment-thumbnail-container">'.$thumbnail.$thumbnail_hover.'</a>';
                                 }
                                 else{
 
-                                    $params = $args['columns'][$column]??'';
-                                    $value = get_post_meta( $post_id, $column, true );
+                                    $thumbnail_id = get_post_meta( $post_id, 'thumbnail', true );
 
-                                    $value = apply_filters('manage_'.$post_type.'_posts_custom_column_value', $value, $column);
+                                    if( is_string($thumbnail_id) ){
 
-                                    if( $value )
-                                        echo __t($value).(!empty($params)?' '.$params:'');
+                                        echo '<a class="attachment-thumbnail-container"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$thumbnail_id.'"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$thumbnail_id.'"></a>';
+                                    }
+                                    elseif($thumbnail_id){
+
+                                        $image = wp_get_attachment_image_src($thumbnail_id);
+
+                                        if( $image && count($image) )
+                                            echo '<a class="attachment-thumbnail-container"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$image[0].'"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="'.$image[0].'"></a>';
+                                    }
                                 }
                             }
-                        }, 10, 2 );
-                    }
+                            else{
+
+                                $params = $args['columns'][$column]??'';
+                                $value = get_post_meta( $post_id, $column, true );
+
+                                $value = apply_filters('manage_'.$post_type.'_posts_custom_column_value', $value, $column);
+
+                                if( $value )
+                                    echo __t($value).(!empty($params)?' '.$params:'');
+                            }
+                        }
+                    }, 10, 2 );
                 }
             }
         }
