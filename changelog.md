@@ -1,3 +1,23 @@
+### 1.5.0
+- Add post.template and post.term method for Timber/Post
+- Removed Yoast class from structured script
+- Update custom post type/taxonomy label default configuration
+- You can now allow column property in yml to page in cpt configuration
+- Removed WordPress default font size, gradient, layout styles
+- Added template slug in body_class
+- Include table plugin in mce
+- Better css management when using Gutenberg with iFrame
+- Added "Optimize" media button to resize all image based on image > resize > max height/max width config
+- Added image > max size option, to allow large pdf but restrict image size
+- Added upload information
+- Added rest api ip whitelist
+- Added svg option
+- Added Gutenberg block categories configuration
+- Removed block customClassName by default
+- Better Rest API formating with ACF
+- ACF BLock now use API V3
+- Added Relevanssi plugin rol configuration
+
 ### 1.4.7
 - Fix Yoast primary term resolution priority
 

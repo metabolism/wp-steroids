@@ -87,6 +87,7 @@ wordpress:
   image:
     compression: 95 #on the fly compression ratio
     max_size: 2 #Max image file size on upload
+    svg: true
     resize: #resize image on upload to save server space
       max_width: 1920
       max_height: 2160
@@ -608,6 +609,9 @@ wordpress:
 
   security:
     rest_api: false
+    #rest_api:
+    #  remove_core: true
+    #  ip_whitelist: true #add coma separated ip in $_ENV['REST_API_IP_WHITELIST']
     xmlrpc: false
     pings: false
     disable_update: true
