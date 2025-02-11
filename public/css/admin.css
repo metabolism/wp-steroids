@@ -83,6 +83,7 @@ body.mce-fullscreen .interface-complementary-area .components-panel__header{ dis
 }
 svg.components-checkbox-control__checked, svg.components-checkbox-control__indeterminate{ width: 20px; height: 20px }
 .wp-list-table.table-view-list{ table-layout: auto }
+.wp-list-table.table-view-list .column-description p{ overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical }
 .media-types-required-info{ display: none }
 
 /* Quick redesign */

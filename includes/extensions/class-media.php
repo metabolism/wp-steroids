@@ -745,11 +745,12 @@ class WPS_Media {
             $sizes = $image_editor->get_size();
             $max_h = $this->config->get('image.resize.max_height', 2160);
             $max_w = $this->config->get('image.resize.max_width', 1920);
+            $compression = $this->config->get('image.resize.compression', 99);
 
             if( ($sizes['width']??0) > $max_w || ($sizes['height']??0) > $max_h )
                 $image_editor->resize($max_w, $max_h);
 
-            $image_editor->set_quality(98);
+            $image_editor->set_quality($compression);
             $image_editor->save($src);
 
         }
@@ -875,7 +876,7 @@ class WPS_Media {
      * @param $path
      * @return false|string
      */
-    public static function convertToJpg($path){
+    public function convertToJpg($path){
 
         if( !file_exists($path) || mime_content_type($path) !== 'image/png')
             return false;
@@ -897,7 +898,9 @@ class WPS_Media {
             ++$i;
         }
 
-        if( imagejpeg( $bg, $newPath, 98 ) )
+        $upload_compression = $this->config->get('image.resize.compression', 99);
+
+        if( imagejpeg( $bg, $newPath, $upload_compression ) )
             return $newPath;
 
         return false;
@@ -911,12 +914,13 @@ class WPS_Media {
 
         $max_h = $this->config->get('image.resize.max_height', 2160);
         $max_w = $this->config->get('image.resize.max_width', 1920);
-        $compression = $this->config->get('image.compression', 95);
+        $upload_compression = $this->config->get('image.resize.compression', 99);
+        $fly_compression = $this->config->get('image.compression', 95);
         $max_size = $this->config->get('image.max_size', false);
 
         ?>
         <p class="wps-upload-info">
-            <b>Pro tips:</b> Images are resized on upload (max <?=$max_w?>×<?=$max_h?>, 98% compression) and on front (<?=$compression?>%).<br/>
+            <b>Pro tips:</b> Images are resized on upload (max <?=$max_w?>×<?=$max_h?>, compression: <?=$upload_compression?>%) and on front (compression: <?=$fly_compression?>%).<br/>
             Avoid pre-compressed images; prefer high-quality 72dpi. Use PNG only for transparency.<br/>
             Use xxx-hd.jpg, xxx-cmyk.jpg, or xxx-cmjn.jpg to skip resizing.
         </p>
@@ -998,7 +1002,7 @@ class WPS_Media {
         $path = get_attached_file( $post_id );
         $url = wp_get_attachment_url( $post_id );
 
-        if( $new_path = self::convertToJpg($path) ){
+        if( $new_path = $this->convertToJpg($path) ){
 
             $old_name = basename( $path );
             $new_name = basename( $new_path );
