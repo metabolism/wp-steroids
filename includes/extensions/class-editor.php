@@ -182,11 +182,18 @@ class WPS_Editor {
     /**
      * add Custom css
      */
+    function customAdminStyle()
+    {
+        wp_enqueue_style('wps-admin', WPS_PLUGIN_URL.'public/css/admin.css', [], WPS_VERSION);
+        wp_enqueue_style('wps-admin-bar', WPS_PLUGIN_URL.'public/css/admin_bar.css', [], WPS_VERSION);
+    }
+
+    /**
+     * add Custom js
+     */
     function customAdminScripts()
     {
         wp_enqueue_script('wps-admin', WPS_PLUGIN_URL.'public/js/admin.js', ['jquery', 'jquery-ui-resizable'], WPS_VERSION, true);
-        wp_enqueue_style('wps-admin-bar', WPS_PLUGIN_URL.'public/css/admin_bar.css', [], WPS_VERSION, false);
-        wp_enqueue_style('wps-admin', WPS_PLUGIN_URL.'public/css/admin.css', [], WPS_VERSION, false);
 
         $object = [
             'ajax_url' => admin_url( 'admin-ajax.php' ),
@@ -470,6 +477,7 @@ class WPS_Editor {
             add_action( 'post_submitbox_misc_actions', [$this, 'post_submitbox_misc_actions'] );
             add_action( 'admin_menu', [$this, 'adminMenu'], 99);
             add_action( 'wp_dashboard_setup', [$this, 'disableDashboardWidgets']);
+            add_action( 'admin_enqueue_scripts', [$this, 'customAdminStyle'], 99);
             add_action( 'admin_print_footer_scripts', [$this, 'customAdminScripts']);
             add_action( 'admin_init', [$this, 'adminInit'] );
             add_action( 'dashboard_glance_items', [$this, 'cptAtAGlance'] );
@@ -477,8 +485,8 @@ class WPS_Editor {
 
         add_action('init', function (){
 
-            if( is_admin_bar_showing() )
-                wp_enqueue_style('wp_steroid_adminbar', WPS_PLUGIN_URL.'public/css/admin_bar.css', [], WPS_VERSION);
+            if( is_admin_bar_showing() && !is_admin() )
+                wp_enqueue_style('wps-admin-bar', WPS_PLUGIN_URL.'public/css/admin_bar.css', [], WPS_VERSION);
 
         }, 99);
 
