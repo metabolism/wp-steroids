@@ -482,13 +482,15 @@ class WPS_Editor {
             add_action( 'admin_init', [$this, 'adminInit'] );
             add_action( 'dashboard_glance_items', [$this, 'cptAtAGlance'] );
         }
+        else{
 
-        add_action('init', function (){
+            add_action('init', function (){
 
-            if( is_admin_bar_showing() && !is_admin() )
-                wp_enqueue_style('wps-admin-bar', WPS_PLUGIN_URL.'public/css/admin_bar.css', [], WPS_VERSION);
+                if( is_admin_bar_showing() )
+                    wp_enqueue_style('wps-admin-bar', WPS_PLUGIN_URL.'public/css/admin_bar.css', [], WPS_VERSION);
 
-        }, 99);
+            }, 99);
+        }
 
         add_action( 'password_protected_login_head', [$this, 'addCustomLoginHeader']);
         add_action( 'login_head', [$this, 'addCustomLoginHeader']);
