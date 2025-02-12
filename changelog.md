@@ -1,6 +1,7 @@
 ### 1.5.1
 - Add upload image compression ratio settings
 - limit term description to 2 lines
+- plugin css moved to head
 
 ### 1.5.0
 - Add post.template and post.term method for Timber/Post
