@@ -682,6 +682,11 @@ class WPS_Advanced_Custom_Fields{
         return $value_formatted;
     }
 
+    function customAdminStyle()
+    {
+        wp_enqueue_style('wps-acf', WPS_PLUGIN_URL.'public/css/acf.css', [], WPS_VERSION);
+    }
+
 
     /**
      * ACFPlugin constructor.
@@ -725,6 +730,7 @@ class WPS_Advanced_Custom_Fields{
         {
             // Setup ACFHelper Settings
             add_action( 'acf/init', [$this, 'addSettings'] );
+            add_action( 'admin_enqueue_scripts', [$this, 'customAdminStyle'], 99);
             add_action( 'acf/init', [$this, 'addPostTypesArchivePage'] );
             add_filter( 'acf/fields/wysiwyg/toolbars' , [$this, 'editToolbars']  );
             add_action( 'init', [$this, 'addOptionPages'] );

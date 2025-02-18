@@ -122,7 +122,7 @@ class WPS_Carbon_Fields{
     {
         $render_template = $this->config->get('gutenberg.render_template', '');
         $preview_image = $this->config->get('gutenberg.preview_image', false);
-        $api_version = $this->config->get('acf.block.api_version', 3);
+        $api_version = $this->config->get('carbon_fields.block.api_version', 3);
 
         $upload_dir = wp_upload_dir();
 
@@ -306,6 +306,11 @@ class WPS_Carbon_Fields{
         }
     }
 
+    function customAdminStyle()
+    {
+        wp_enqueue_style('wps-carbon_fields', WPS_PLUGIN_URL.'public/css/carbon_fields.css', [], WPS_VERSION);
+    }
+
     /**
      * ACFPlugin constructor.
      */
@@ -324,5 +329,6 @@ class WPS_Carbon_Fields{
         add_action( 'admin_bar_menu', [$this, 'editBarMenu'], 80);
         add_action( 'after_setup_theme', ['\Carbon_Fields\Carbon_Fields', 'boot']);
         add_action( 'carbon_fields_register_fields', [$this, 'addContent']);
+        add_action( 'admin_print_footer_scripts', [$this, 'customAdminStyle']);
     }
 }

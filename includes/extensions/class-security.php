@@ -157,6 +157,27 @@ class WPS_Security {
 
 
     /**
+     * change admin footer text
+     */
+    public function adminFooterText($text)
+    {
+        if( defined('WP_PROXY_HOST') && WP_PROXY_HOST ){
+
+            $text .= '<span id="footer-proxy">';
+
+            $text .= 'Using proxy '.WP_PROXY_HOST;
+
+            if( defined('WP_PROXY_PORT') && WP_PROXY_PORT )
+                $text .= ':'.WP_PROXY_PORT;
+
+            $text .= '</span>';
+        }
+
+        return $text;
+    }
+
+
+    /**
      * add admin parameters
      */
     public function adminInit()
@@ -319,6 +340,7 @@ class WPS_Security {
 
         if( is_admin() )
         {
+            add_filter( 'admin_footer_text', [$this, 'adminFooterText'] );
             add_action( 'admin_init', [$this, 'adminInit'] );
             add_action( 'wp_handle_upload_prefilter', [$this, 'cleanFilename']);
             add_filter( 'update_right_now_text', '__return_empty_string' );

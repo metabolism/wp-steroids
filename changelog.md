@@ -1,3 +1,8 @@
+### 1.5.2
+- split css for ACF and Carbon fields
+- add fix for zip archive in Simply Static plugin
+- added a message in admin footer if a proxy is set up
+
 ### 1.5.1
 - Add upload image compression ratio settings
 - limit term description to 2 lines
