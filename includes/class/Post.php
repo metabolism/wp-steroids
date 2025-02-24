@@ -4,9 +4,6 @@ use Timber\Post;
 
 if ( class_exists('Timber\Post') ) {
 
-    /**
-     * Class BlogPost
-     */
     class WPS_Post extends Post
     {
         /**

@@ -19,17 +19,20 @@ class WPS_Timber
 
         add_action('init', function (){
 
-            $post_types = get_post_types(['public' => true]);
-            unset($post_types['attachment']);
-
             if( !class_exists('WPS_Post') )
                 include_once WPS_PATH.'/includes/class/Post.php';
 
-            $custom_classmap = array_fill_keys($post_types, WPS_Post::class);
+            add_filter('timber/post/class', function () {
 
-            add_filter('timber/post/classmap', function ($classmap) use($custom_classmap) {
+                return WPS_Post::class;
+            });
 
-                return array_merge($classmap, $custom_classmap);
+            if( !class_exists('WPS_Menu_Item') )
+                include_once WPS_PATH.'/includes/class/MenuItem.php';
+
+            add_filter('timber/menuitem/class', function () {
+
+                return WPS_Menu_Item::class;
             });
         });
     }

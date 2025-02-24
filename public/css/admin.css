@@ -16,28 +16,6 @@
 .no-edit_blocks .block-editor-list-view-block__menu-cell
 { display: none!important }
 
-.no-acf_edit_image .acf-field-image .acf-actions.-hover,
-.no-acf_edit_file .acf-field-file .acf-actions.-hover{ display: none!important }
-
-.no-acf_edit_repeater .acf-repeater .acf-actions,
-.no-acf_edit_repeater [data-event="add-row"],
-.no-acf_edit_repeater [data-event="remove-row"]
-{ display: none!important }
-
-.no-acf_edit_repeater .acf-row-handle{ pointer-events: none }
-
-.no-acf_edit_layout .acf-flexible-content .layout .acf-fc-layout-handle{ cursor: pointer!important }
-
-.no-acf_edit_relationship .acf-field-relationship .acf-relationship,
-.no-acf_edit_image .acf-field-image .acf-basic-uploader,
-.no-acf_edit_true-false .acf-field-true-false .acf-input label,
-.no-acf_edit_link .acf-field-link .acf-input .button, .no-acf_edit_link .acf-field-link .acf-input .-cancel,
-.no-acf_edit_link #wp-link #link-options > div:not(.wp-link-text-field), .no-acf_edit_link #wp-link #search-panel,
-.no-acf_edit_radio .acf-field-radio .acf-input label, .no-acf_edit_select .acf-field-select .acf-input select,
-.no-acf_edit_post-object .acf-field-post-object .select2,
-.no-acf_edit_taxonomy .acf-field-taxonomy .acf-taxonomy-field
-{ pointer-events: none!important; opacity: 0.5; }
-
 /* Bundle specific */
 .uploader-inline .wps-upload-info{ margin: 2em 0 }
 .wp-ajax.loading{ pointer-events: none }
@@ -74,9 +52,6 @@
 .form-field textarea, .form-field input{ width: 100%!important; }
 .form-field select{ max-width: none }
 #addtag{ padding-right: 5% }
-#addtag #acf-term-fields{ padding-right: 0 }
-.menu-item-settings .field-link-target.description { margin-right: 10px; float: left; width: 100% }
-.menu-item-settings .field-link-target.description input{ margin-top: 0!important }
 body.mce-fullscreen .interface-complementary-area .components-panel__header{ display: none }
 @media screen and (max-width: 782px){
     #addtag{ padding-right: 0 }
@@ -200,8 +175,6 @@ textarea.term-meta-text-field+.wps-translate{ bottom: 16px; transform: none; top
 #edittag .term-name-wrap td:hover .wps-translate, #edittag .term-slug-wrap td:hover .wps-translate, #edittag .term-description-wrap td:hover .wps-translate{ display: inline-block }
 #poststuff #titlewrap,  #menu-to-edit label, .wp-link-text-field label, .editor-post-excerpt__textarea, .edit-post-visual-editor__post-title-wrapper{ position: relative; display: block }
 
-#menu-to-edit label input, #menu-to-edit label textarea{ margin-top: 5px }
-#menu-to-edit p+p{ margin-top: 10px }
 
 th.manage-column.column-thumbnail, td.thumbnail.column-thumbnail{ width: 1%; text-align: center }
 

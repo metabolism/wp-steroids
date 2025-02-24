@@ -43,6 +43,7 @@
 .editor-sidebar__panel .acf-gallery .acf-gallery-main{ width: 100%; left: auto }
 .editor-sidebar__panel .acf-relationship .selection .values, .editor-sidebar__panel .acf-relationship .selection .choices{ width: 100%; float: none }
 .editor-sidebar__panel .acf-relationship .selection .choices{ border-bottom: 1px solid #ccd0d4 }
+#addtag #acf-term-fields{ padding-right: 0 }
 
 @media screen and (max-width: 782px){
     .form-table>tbody>.acf-tab-wrap td{ padding-left: 0 }
@@ -54,3 +55,25 @@
 .acf-fields.acf-menu-item-fields > .acf-field .acf-label label{ margin-bottom: 5px; color: #646970; font-style: normal }
 
 .metabox-location-normal .acf-fields>.acf-field{ padding: 10px 24px }
+
+.no-acf_edit_image .acf-field-image .acf-actions.-hover,
+.no-acf_edit_file .acf-field-file .acf-actions.-hover{ display: none!important }
+
+.no-acf_edit_repeater .acf-repeater .acf-actions,
+.no-acf_edit_repeater [data-event="add-row"],
+.no-acf_edit_repeater [data-event="remove-row"]
+{ display: none!important }
+
+.no-acf_edit_repeater .acf-row-handle{ pointer-events: none }
+
+.no-acf_edit_layout .acf-flexible-content .layout .acf-fc-layout-handle{ cursor: pointer!important }
+
+.no-acf_edit_relationship .acf-field-relationship .acf-relationship,
+.no-acf_edit_image .acf-field-image .acf-basic-uploader,
+.no-acf_edit_true-false .acf-field-true-false .acf-input label,
+.no-acf_edit_link .acf-field-link .acf-input .button, .no-acf_edit_link .acf-field-link .acf-input .-cancel,
+.no-acf_edit_link #wp-link #link-options > div:not(.wp-link-text-field), .no-acf_edit_link #wp-link #search-panel,
+.no-acf_edit_radio .acf-field-radio .acf-input label, .no-acf_edit_select .acf-field-select .acf-input select,
+.no-acf_edit_post-object .acf-field-post-object .select2,
+.no-acf_edit_taxonomy .acf-field-taxonomy .acf-taxonomy-field
+{ pointer-events: none!important; opacity: 0.5; }

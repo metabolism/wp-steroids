@@ -1,3 +1,7 @@
+### 1.5.3
+- add aria label input for menu
+- menu admin css bugfix
+
 ### 1.5.2
 - split css for ACF and Carbon fields
 - add fix for zip archive in Simply Static plugin
