@@ -556,7 +556,7 @@ class WPS_Media {
 
                     $image_size = getimagesize($file[0]);
 
-                    if( $image_size[0] > $max_w || $image_size[1] > $max_h )
+                    if( $image_size && ($image_size[0] > $max_w || $image_size[1] > $max_h) )
                         $file_list[] = $file[0];
                 }
             }
