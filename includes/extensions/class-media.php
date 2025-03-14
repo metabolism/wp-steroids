@@ -110,6 +110,28 @@ class WPS_Media {
         return $data;
     }
 
+    /**
+     * @param $file
+     * @return void
+     */
+    public function cleanGeneratedFiles($post_id)
+    {
+        $file = get_attached_file($post_id);
+
+        $folder = dirname($file);
+        $filename = basename($file);
+        $pathinfo = pathinfo($filename);
+
+        $dir = new \RecursiveDirectoryIterator($folder);
+        $ite = new \RecursiveIteratorIterator($dir);
+        $files = new \RegexIterator($ite, '/'.$pathinfo['filename'].'-[0-9]+x[0-9]+(-c-default|-c-center)?(-[a-z0-9]*)?\.[a-z]{3,4}$/', \RegexIterator::GET_MATCH);
+
+        foreach($files as $file) {
+
+            if( file_exists($folder.'/'.$file[0]) )
+                wp_delete_file($folder.'/'.$file[0]);
+        }
+    }
 
     /**
      * delete attachment reference on other blog
@@ -556,7 +578,7 @@ class WPS_Media {
 
             foreach($thumbnails as $file){
                 if( file_exists($file) )
-                    unlink($file);
+                    wp_delete_file($file);
             }
         }
 
@@ -900,8 +922,15 @@ class WPS_Media {
 
         $upload_compression = $this->config->get('image.resize.compression', 99);
 
-        if( imagejpeg( $bg, $newPath, $upload_compression ) )
+        $tmpPath = tempnam(sys_get_temp_dir(), 'jpg');
+
+        if( imagejpeg( $bg, $tmpPath, $upload_compression ) ){
+
+            $editor = wp_get_image_editor($tmpPath);
+            $editor->save($newPath, 'image/jpg');
+
             return $newPath;
+        }
 
         return false;
     }
@@ -1014,7 +1043,7 @@ class WPS_Media {
 
             $replaces = [$old_name => $new_name];
 
-            unlink( $path );
+            wp_delete_file( $path );
 
             $thumbs = wp_get_attachment_metadata( $post_id );
 
@@ -1031,7 +1060,7 @@ class WPS_Media {
 
                     $replaces[ $img['file'] ] = $new_thumb;
 
-                    unlink( $thumb );
+                    wp_delete_file( $thumb );
                 }
             }
 
@@ -1130,6 +1159,7 @@ class WPS_Media {
             add_action('wpmu_options', [$this, 'wpmuOptions'] );
             add_action('wp_handle_upload', [$this, 'uploadResize']);
             add_filter('media_meta', [$this,'mediaMeta'], 10, 2);
+            add_action('delete_attachment', [$this, 'cleanGeneratedFiles']);
             add_filter('media_row_actions', [$this,'mediaRowActions'], 10, 3);
             add_action('post_action_convert', [$this,'postActionConvert']);
             add_action('post_action_regenerate_metadata', [$this,'postActionRegenerateMetadata']);
