@@ -324,6 +324,9 @@ class WPS_Security {
         //prevent .htaccess writing
         add_filter( 'flush_rewrite_rules_hard', '__return_false');
 
+        //prevent admin redirect from unknown url
+        remove_action( 'template_redirect', 'wp_redirect_admin_locations', 1000 );
+
         //hide login error
         if( !WP_DEBUG ){
 

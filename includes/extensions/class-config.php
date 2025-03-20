@@ -149,10 +149,13 @@ class WPS_Config {
                 if( is_array($args['rewrite']) )
                     $args['rewrite']['paged'] = false;
 
-                $slug = $this->getSlug( $post_type );
+                if( $args['publicly_queryable']??true ){
 
-                if( !empty($slug) && is_array($args['rewrite']) )
-                    $args['rewrite']['slug'] = $slug;
+                    $slug = $this->getSlug( $post_type );
+
+                    if( !empty($slug) && is_array($args['rewrite']) )
+                        $args['rewrite']['slug'] = $slug;
+                }
 
                 if( $args['has_archive'] ){
 
@@ -446,10 +449,13 @@ class WPS_Config {
                 if( !isset($args['rewrite']['feed']) )
                     $args['rewrite']['feed'] = false;
 
-                $slug = $this->getSlug( $taxonomy );
+                if( $args['publicly_queryable']??true ){
 
-                if( !empty($slug) && is_array($args['rewrite']) )
-                    $args['rewrite']['slug'] = $slug;
+                    $slug = $this->getSlug( $taxonomy );
+
+                    if( !empty($slug) && is_array($args['rewrite']) )
+                        $args['rewrite']['slug'] = $slug;
+                }
 
                 if (isset($args['labels']))
                     $args['labels'] = array_merge($labels, $args['labels']);
@@ -515,6 +521,9 @@ class WPS_Config {
 
             foreach ( $taxonomies as $taxonomy => $args )
             {
+                if( !($args['publicly_queryable']??true) )
+                    continue;
+
                 $slug = $this->getSlug( $taxonomy );
 
                 if( $slug === '{empty}'){
@@ -560,6 +569,9 @@ class WPS_Config {
 
             foreach ( $this->config->get('post_type', []) as $post_type => $args )
             {
+                if( !($args['publicly_queryable']??true) )
+                    continue;
+
                 $slug = $this->getSlug( $post_type );
 
                 preg_match_all('/{.+?}/', $slug, $toks);
