@@ -80,6 +80,10 @@ class WPS_Config {
                     continue;
 
                 $args = array_merge($default_args, $args);
+
+                if( HEADLESS && !URL_MAPPING )
+                    $args['publicly_queryable'] = false;
+
                 $name = str_replace('-', ' ', str_replace('_', ' ', $args['labels']['singular_name']??$post_type));
                 $names = $this->plural($name);
 
@@ -171,11 +175,7 @@ class WPS_Config {
                         $args['rewrite']['feeds'] = false;
                 }
 
-                if( HEADLESS && !URL_MAPPING ){
-
-                    $args['publicly_queryable'] = false;
-                }
-                else{
+                if( $args['publicly_queryable']??true ){
 
                     preg_match_all('/{.+?}/', $slug, $toks);
 
@@ -405,6 +405,9 @@ class WPS_Config {
 
                 $args = array_merge($default_args, $args);
 
+                if( HEADLESS && !URL_MAPPING )
+                    $args['publicly_queryable'] = false;
+
                 $name = str_replace('-', ' ', str_replace('_', ' ', $args['labels']['singular_name']??$taxonomy));
                 $names = $this->plural($name);
 
@@ -474,9 +477,6 @@ class WPS_Config {
 
                     $object_type = 'post';
                 }
-
-                if( HEADLESS && !URL_MAPPING )
-                    $args['publicly_queryable'] = false;
 
                 if( isset($args['publicly_queryable']) && !$args['publicly_queryable'] ){
 
