@@ -1,6 +1,7 @@
 ### 1.5.3
 - add aria label input for menu
 - menu admin css bugfix
+- prevent admin redirect from unknown url
 
 ### 1.5.2
 - split css for ACF and Carbon fields
