@@ -1,3 +1,6 @@
+### 1.5.4
+- fixed remove_plugin_block option in yml
+
 ### 1.5.3
 - add aria label input for menu
 - menu admin css bugfix
