@@ -1,3 +1,6 @@
+### 1.5.5
+- disable wptexturize globally, caused issues with block rendering 
+
 ### 1.5.4
 - fixed remove_plugin_block option in yml
 

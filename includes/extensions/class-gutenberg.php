@@ -99,6 +99,8 @@ class WPS_Gutenberg
     {
 	    global $_config;
 
+        add_filter( 'run_wptexturize', '__return_false' );
+
         if ( $_config->get('gutenberg.disable_classic_theme_styles', true) )
             remove_action( 'wp_enqueue_scripts', 'wp_enqueue_classic_theme_styles' );
 

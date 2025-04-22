@@ -423,17 +423,6 @@ class WPS_Media {
 			</tr>';
         }
 
-        // Remove generated thumbnails option
-        $images = $this->getLargeImages(true);
-
-        if( count($images) )
-        {
-            echo '<tr>
-				<th scope="row">'.__('Disk space', 'wp-steroids').'</th>
-				<td><a class="button button-primary wp-ajax" data-continue="[image_left] image(s) left" href="'.get_admin_url().'?optimize_all_images">Optimize '.count($images).' image(s)</a></td>
-			</tr>';
-        }
-
         if( $this->config->get('multisite.shared_media', false) ){
 
             echo '<tr>
@@ -457,12 +446,6 @@ class WPS_Media {
         if( isset($_GET['clear_thumbnails']) )
             $this->clearThumbnails();
 
-        if( isset($_GET['optimize_images']) )
-            $this->optimizeImages();
-
-        if( isset($_GET['optimize_all_images']) )
-            $this->optimizeImages(true);
-
         if( isset($_GET['clear_all_thumbnails']) )
             $this->clearThumbnails(true);
 
@@ -478,18 +461,6 @@ class WPS_Media {
                 echo '<a class="button button-primary" href="'.get_admin_url().'?clear_thumbnails">'.__('Remove', 'wp-steroids').' '.count($thumbnails).' image(s)</a>';
             else
                 echo __('Nothing to remove', 'wp-steroids');
-
-        }, 'media');
-
-        // Resize large images option
-        add_settings_field('disk_space', __('Disk space', 'wp-steroids'), function(){
-
-            $thumbnails = $this->getLargeImages();
-
-            if( count($thumbnails) )
-                echo '<a class="button button-primary wp-ajax" data-continue="[image_left] image(s) left" href="'.get_admin_url().'?optimize_images">'.__('Optimize', 'wp-steroids').' '.count($thumbnails).' image(s)</a>';
-            else
-                echo __('Nothing to optimize', 'wp-steroids');
 
         }, 'media');
     }
@@ -527,46 +498,6 @@ class WPS_Media {
 
 
     /**
-     * Get all thumbnails
-     * @param bool $all
-     * @return array
-     */
-    private function getLargeImages($all=false)
-    {
-        $folder = wp_upload_dir();
-        $folder = $folder['basedir'];
-
-        if( is_multisite() && get_current_blog_id() != 1 && !$this->config->get('multisite.shared_media', false) && !$all )
-            $folder .= '/sites/' . get_current_blog_id() . '/';
-
-        $file_list = [];
-
-        if( is_dir($folder) )
-        {
-            $dir = new \RecursiveDirectoryIterator($folder);
-            $ite = new \RecursiveIteratorIterator($dir);
-            $files = new \RegexIterator($ite, '/.*\.(jpe?g|png)$/', \RegexIterator::GET_MATCH);
-
-            $max_h = $this->config->get('image.resize.max_height', 2160);
-            $max_w = $this->config->get('image.resize.max_width', 1920);
-
-            foreach($files as $file) {
-
-                if( wp_filesize($file[0]) > 500*1000 ){
-
-                    $image_size = getimagesize($file[0]);
-
-                    if( $image_size && ($image_size[0] > $max_w || $image_size[1] > $max_h) )
-                        $file_list[] = $file[0];
-                }
-            }
-        }
-
-        return $file_list;
-    }
-
-
-    /**
      * Remove all thumbnails
      * @param bool $all
      */
@@ -585,44 +516,6 @@ class WPS_Media {
         clearstatcache();
 
         wp_redirect( get_admin_url(null, $all?'network/settings.php':'options-media.php') );
-        exit;
-    }
-
-
-    /**
-     * optimize large images
-     * @param bool $all
-     */
-    private function optimizeImages($all=false)
-    {
-        if ( current_user_can('administrator') && (!$all || is_super_admin()) )
-        {
-            $thumbnails = $this->getLargeImages($all);
-
-            $image_editor = wp_get_image_editor($thumbnails[0]);
-
-            if( is_wp_error($image_editor) )
-                wp_send_json_error(['error'=>$image_editor->get_error_message(), 'continue'=>false]);
-
-            $sizes = $image_editor->get_size();
-            $max_h = $this->config->get('image.resize.max_height', 2160);
-            $max_w = $this->config->get('image.resize.max_width', 1920);
-
-            if( ($sizes['width']??0) > $max_w || ($sizes['height']??0) > $max_h )
-                $image_editor->resize($max_w, $max_h);
-
-            $image_editor->set_quality(99);
-            $save_status = @$image_editor->save($thumbnails[0]);
-
-            if( is_wp_error($save_status) )
-                wp_send_json_error(['error'=>$save_status->get_error_message(), 'continue'=>false]);
-
-            $image_left = count($thumbnails)-1;
-
-            wp_send_json(['current'=>$thumbnails[0], 'image_left'=>$image_left, 'continue'=>$image_left>0]);
-        }
-
-        wp_send_json(['image_left'=>0, 'continue'=>false]);
         exit;
     }
 
