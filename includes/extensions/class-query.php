@@ -222,6 +222,18 @@ class WPS_Query {
         return $query;
     }
 
+    /**
+     * @return void
+     */
+    public function fix_page_query() {
+
+        if ( post_type_exists( 'page' ) ) {
+
+            global $wp_post_types;
+            $wp_post_types['page']->publicly_queryable = true;
+        }
+    }
+
 
     /**
      * constructor.
@@ -241,6 +253,8 @@ class WPS_Query {
 
         if( $this->config->get('search.use_metafields', false) )
             $this->search_in_meta();
+
+        add_action( 'init', [$this, 'fix_page_query']);
 
         add_filter( 'wp_link_query_args', [$this, 'wp_link_query_args'] );
         add_filter( 'posts_orderby', [$this, 'add_sticky_posts'], 10, 2 );

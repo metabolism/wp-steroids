@@ -1,3 +1,6 @@
+### 1.5.6
+- set page publicly_queryable=true
+
 ### 1.5.5
 - disable wptexturize globally, caused issues with block rendering 
 

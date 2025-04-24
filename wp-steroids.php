@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WordPress on Steroids
  * Description: Configure WordPress using yml and add amazing features
- * Version: 1.5.5
+ * Version: 1.5.6
  * Author: Metabolism
  */
 
