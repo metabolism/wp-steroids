@@ -1,3 +1,6 @@
+### 1.5.7
+- removed version from block_editor_settings_theme_css
+
 ### 1.5.6
 - set page publicly_queryable=true
 

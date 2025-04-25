@@ -62,13 +62,13 @@ class WPS_Gutenberg
         if( $block_editor_script = $_config->get('gutenberg.block_editor_script', false) ){
 
             $jsUrl = apply_filters('block_editor_settings_theme_script', $base_url.$block_editor_script);
-            wp_enqueue_script('block_editor_script', $jsUrl, [], WPS_VERSION);
+            wp_enqueue_script('block_editor_script', $jsUrl, [], null);
         }
 
         if ( $block_editor_style = $_config->get('gutenberg.block_editor_style', false) ){
 
             $cssUrl = apply_filters('block_editor_settings_theme_css', $base_url.$block_editor_style);
-            wp_enqueue_style('block_editor_style', $cssUrl, [], WPS_VERSION);
+            wp_enqueue_style('block_editor_style', $cssUrl, [], null);
         }
 
         wp_enqueue_script('block_editor_iframe', WPS_PLUGIN_URL.'public/js/iframe.js', [], WPS_VERSION);
