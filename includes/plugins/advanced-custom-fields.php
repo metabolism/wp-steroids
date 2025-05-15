@@ -125,6 +125,25 @@ class WPS_Advanced_Custom_Fields{
 
 
     /**
+     * Filter invalid posts
+     * @param $values
+     * @return array
+     */
+    public function filterRelationship($values){
+
+        foreach ($values as $index=>$post_id){
+
+            $status = get_post_status($post_id);
+
+            if( in_array($status, ['trash', 'inherit', 'auto-draft','', false]) )
+                unset($values[$index]);
+        }
+
+        return $values;
+    }
+
+
+    /**
      * Add theme to field selection
      * @param $field
      * @return array
@@ -705,6 +724,7 @@ class WPS_Advanced_Custom_Fields{
         add_action('init', [$this, 'addGroupFields']);
 
         add_filter('acf/pre_load_value', [$this, 'preLoadValue'], 10, 3);
+        add_filter('acf/load_value/type=relationship', [$this, 'filterRelationship'], 10, 3);
         add_filter('acf/prepare_field', [$this, 'prepareField']);
         add_filter('acf/fields/relationship/query/name=items', [$this, 'filterPostsByTermTemplateMeta'], 10, 3);
         add_filter('acf/get_image_sizes', [$this, 'getImageSizes'] );

@@ -1,3 +1,6 @@
+### 1.5.8
+- posts from ACF relashionship field are now filtered to remove invalid post
+
 ### 1.5.7
 - removed version from block_editor_settings_theme_css
 
