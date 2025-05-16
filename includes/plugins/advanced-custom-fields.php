@@ -131,6 +131,9 @@ class WPS_Advanced_Custom_Fields{
      */
     public function filterRelationship($values){
 
+        if( !is_array($values) )
+            return $values;
+
         foreach ($values as $index=>$post_id){
 
             $status = get_post_status($post_id);
