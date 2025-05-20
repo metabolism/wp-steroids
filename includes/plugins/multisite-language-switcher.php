@@ -578,11 +578,37 @@ class WPS_Multisite_Language_Switcher {
     public function syncIds(){
 
         $msls_options = get_blog_option( get_current_blog_id(), 'msls' );
-        $copy_blog_id = $msls_options['blog_id'];
-        $current_blog_id = get_current_blog_id();
+
+        $blog_id = $msls_options['blog_id'];
+        $lang = self::getLocale($blog_id);
 
         //erase blog id to prevent multiple sync
         unset($msls_options['blog_id']);
+        update_blog_option(get_current_blog_id(), 'msls', $msls_options);
+
+        $post_types = get_post_types(['publicly_queryable'=>true]);
+        unset($post_types['attachment']);
+
+        $taxonomies = get_taxonomies(['publicly_queryable'=> true]);
+
+        $posts = get_posts(['numberposts'=>-1, 'post_type'=>array_keys($post_types), 'fields'=>'ids']);
+        $terms = get_terms(['taxonomy'=>array_keys($taxonomies), 'hide_empty'=>false, 'fields'=>'ids']);;
+
+        foreach($posts as $post_id)
+            update_option('msls_'.$post_id, [$lang=>$post_id]);
+
+        foreach($terms as $term_id)
+            update_option('msls_term_'.$term_id, [$lang=>$term_id]);
+    }
+
+    public function syncConfig(){
+
+        $msls_options = get_blog_option( get_current_blog_id(), 'msls' );
+        $copy_blog_id = $msls_options['blog_config'];
+        $current_blog_id = get_current_blog_id();
+
+        //erase blog id to prevent multiple sync
+        unset($msls_options['blog_config']);
         update_blog_option(get_current_blog_id(), 'msls', $msls_options);
 
         // update current blog
@@ -653,10 +679,23 @@ class WPS_Multisite_Language_Switcher {
         <table class="form-table" role="presentation">
             <tbody>
             <tr>
-                <th scope="row"><label for="rewrite_page">Copy ids from</label></th>
+                <th scope="row"><label for="rewrite_page">Copy Msls configuration</label></th>
+                <td>
+                    <select name="msls[blog_config]">
+                        <option value="" disabled selected>Select Blog ID</option>
+                        <?php foreach (get_sites() as $site): ?>
+                            <?php if($site->blog_id != $current_blog_id):?>
+                                <option value="<?=$site->blog_id?>"><?=self::getLocale($site->blog_id)?></option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="rewrite_page">Copy Ids</label></th>
                 <td>
                     <select name="msls[blog_id]">
-                        <option value=""></option>
+                        <option value="" disabled selected>Select Blog ID</option>
                         <?php foreach (get_sites() as $site): ?>
                             <?php if($site->blog_id != $current_blog_id):?>
                                 <option value="<?=$site->blog_id?>"><?=self::getLocale($site->blog_id)?></option>
@@ -712,7 +751,10 @@ class WPS_Multisite_Language_Switcher {
                 $msls_options = get_blog_option( get_current_blog_id(), 'msls' );
 
                 if( !empty($msls_options['blog_id']??'') )
-                    $this->syncIds();
+                    add_action( 'init', [$this, 'syncIds']);
+
+                if( !empty($msls_options['blog_config']??'') )
+                    add_action( 'init', [$this, 'syncConfig']);
             }
             else{
 

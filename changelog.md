@@ -1,3 +1,6 @@
+### 1.5.9
+- After cloning a site, you can now copy ids for msls
+
 ### 1.5.8
 - posts from ACF relashionship field are now filtered to remove invalid post
 
