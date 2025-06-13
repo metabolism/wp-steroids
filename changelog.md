@@ -1,3 +1,8 @@
+### 1.5.10
+- Better wp-json api cleaning
+- Minor css tweaks
+- Fixed a bug for cpt options page when has_archive was not set
+
 ### 1.5.9
 - After cloning a site, you can now copy ids for msls
 

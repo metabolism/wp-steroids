@@ -250,20 +250,27 @@ class WPS_Security {
 
                 foreach ( array_keys( $routes ) as $endpoint ) {
 
-                    foreach ( $core_endpoints as $core_endpoint ) {
+                    if( !str_starts_with($endpoint, '/wp/v2') and $endpoint != '/' ){
 
-                        if (0 === strpos($endpoint, $core_endpoint) ) {
-                            unset($routes[$endpoint]);
-                            break;
-                        }
+                        unset($routes[$endpoint]);
+                    }
+                    else{
 
-                        $patterns = ['/autosaves', '/revisions', '/post-process', '/edit',];
+                        foreach ( $core_endpoints as $core_endpoint ) {
 
-                        foreach ($patterns as $pattern) {
-
-                            if ( strpos($endpoint, $pattern) ) {
+                            if (0 === strpos($endpoint, $core_endpoint) ) {
                                 unset($routes[$endpoint]);
                                 break;
+                            }
+
+                            $patterns = ['/autosaves', '/revisions', '/post-process', '/edit',];
+
+                            foreach ($patterns as $pattern) {
+
+                                if ( strpos($endpoint, $pattern) ) {
+                                    unset($routes[$endpoint]);
+                                    break;
+                                }
                             }
                         }
                     }

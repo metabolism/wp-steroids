@@ -617,7 +617,7 @@ class WPS_Advanced_Custom_Fields{
         {
             if( !in_array($post_type, ['post', 'page', 'edition']) )
             {
-                if( function_exists('acf_add_options_sub_page') && ($args['has_options']??false) && ($args['has_archive']??false) ) {
+                if( function_exists('acf_add_options_sub_page') && ($args['has_options']??false) && ($args['has_archive']??true) ) {
 
                     $name = str_replace('_', ' ', $post_type);
 

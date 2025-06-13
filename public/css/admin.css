@@ -39,6 +39,7 @@
 /* Bugfix */
 #wp-admin-bar-view .ab-empty-item{ display: none!important }
 .js .tmce-active .wp-editor-area { color: inherit!important }
+.mce-tinymce+.wp-editor-area { display: none!important }
 .media-sidebar .attachment-details .setting{ position: relative }
 .media-sidebar .compat-item .label, .attachment-details .compat-item .label { min-width: 30%; margin-right: 4% }
 .media-modal .media-sidebar .compat-item .label{ min-width: 20%; margin-right: 3% }
@@ -66,6 +67,8 @@ h1, h2, h3, h4, h5, h6, #adminmenu .wp-submenu li.current, #adminmenu .wp-submen
 #comment-status-display, #dashboard_right_now .versions .b, #ed_reply_toolbar #ed_reply_strong,
 #pass-strength-result.short, #pass-strength-result.strong, #post-status-display, #post-visibility-display,
 .feature-filter .feature-name, .item-controls .item-order a, .media-item .percent, .plugins .name, .row-title{ font-weight: 500 }
+
+#adminmenu li.wp-menu-separator{ border-top: 1px solid; margin-top: 10px }
 
 table.widefat, .widefat thead td, .widefat thead th, .widefat tfoot td, .widefat tfoot th{ border-color: #e0e0e0 }
 table.widefat{ box-shadow: 0 0 0 1px rgba(63,63,68,0.05), 0 1px 3px 0 rgba(63,63,68,0.15); outline: 1px solid transparent; border-radius: 3px; border: 0 }
