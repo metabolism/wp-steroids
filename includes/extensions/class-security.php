@@ -124,8 +124,6 @@ class WPS_Security {
      */
     public function cleanHeader()
     {
-        global $_config;
-
         remove_action('wp_head', 'feed_links', 2);
         remove_action('wp_head', 'feed_links_extra', 3 );
         remove_action('wp_head', 'rsd_link');
@@ -290,7 +288,7 @@ class WPS_Security {
                     $whitelist = array_merge($whitelist, [ '127.0.0.1', "::1" ]);
 
                     if( ! in_array($_SERVER['REMOTE_ADDR'], $whitelist ) )
-                        wp_send_json_error('Rest API access have been restricted for security reasons');
+                        wp_send_json_error('REST API access has been restricted for security reasons. Ensure that your IP is whitelisted ('.$_SERVER['REMOTE_ADDR'].')');
                 }
             });
         }
@@ -311,7 +309,7 @@ class WPS_Security {
                 return $result;
 
             if ( ! is_user_logged_in() )
-                return new wp_error('restricted_rest_api_access','Rest API access have been restricted for security reasons');
+                return new wp_error('restricted_rest_api_access','REST API access has been restricted for security reasons.');
 
             return $result;
         });
@@ -374,7 +372,9 @@ class WPS_Security {
 
             add_action( 'after_setup_theme', [$this, 'cleanHeader']);
             add_action( 'wp_footer', [$this, 'cleanFooter']);
+
             add_filter( 'robots_txt', '__return_empty_string' );
+            add_filter( 'wp_speculation_rules_configuration', '__return_null' );
 
             remove_all_actions('do_favicon');
 
