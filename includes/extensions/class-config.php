@@ -283,7 +283,7 @@ class WPS_Config {
 
 
     /**
-     * Add post type support
+     * Add post-type support
      */
     public function addPostTypeSupport()
     {
@@ -420,10 +420,12 @@ class WPS_Config {
                     'parent_item' => 'Parent ' . ucfirst($name),
                     'add_new_item' => 'Add New ' . ucfirst($name),
                     'view_item' => 'View ' . ucfirst($name),
+                    'view_items' => 'View ' . ucfirst($names),
                     'update_item' => 'Update ' . ucfirst($name),
                     'new_item_name' => 'New ' . ucfirst($name).' Name',
                     'template_name' => ucfirst($name).' Archives',
                     'edit_item' => 'Edit ' . ucfirst($name),
+                    'edit_items' => 'Edit ' . ucfirst($names),
                     'not_found' => 'No '. $name . ' found',
                     'no_terms' => 'No '. $name,
                 ];
@@ -519,8 +521,18 @@ class WPS_Config {
 
         if( is_array($taxonomies) ){
 
-            foreach ( $taxonomies as $taxonomy => $args )
-            {
+            foreach ( $taxonomies as $taxonomy => $args ) {
+
+                if( $args['has_archive']??false ){
+
+                    $archive = get_option( $taxonomy. '_rewrite_archive' );
+
+                    if( !empty($archive) )
+                        $args['has_archive'] = $archive;
+
+                    add_rewrite_rule('^'.$args['has_archive'].'/?$','index.php?taxonomy_listing='.$taxonomy,'top');
+                }
+
                 if( !($args['publicly_queryable']??true) )
                     continue;
 
@@ -636,20 +648,20 @@ class WPS_Config {
         });
     }
 
-    public function LoadPermalinks()
-    {
+    public function LoadPermalinks(){
+
         $updated = false;
 
         add_settings_section('page_rewrite', '', '__return_empty_string','permalink');
 
-        if( isset( $_POST['page_rewrite_slug'] ) && !empty($_POST['page_rewrite_slug']) )
-        {
+        if( isset( $_POST['page_rewrite_slug'] ) && !empty($_POST['page_rewrite_slug']) ) {
+
             update_option( 'page_rewrite_slug', $_POST['page_rewrite_slug'], true );
             $updated = true;
         }
 
-        add_settings_field( 'page_rewrite_slug', 'Page base',function ()
-        {
+        add_settings_field( 'page_rewrite_slug', 'Page base',function () {
+
             $value = get_option( 'page_rewrite_slug' );
             echo '<input type="text" value="' . esc_attr( $value ) . '" name="page_rewrite_slug" placeholder="page" id="page_rewrite_slug" class="regular-text" />';
 
@@ -657,14 +669,14 @@ class WPS_Config {
 
         add_settings_section('search_rewrite', '', '__return_empty_string','permalink');
 
-        if( isset( $_POST['search_rewrite_slug'] ) && !empty($_POST['search_rewrite_slug']) )
-        {
+        if( isset( $_POST['search_rewrite_slug'] ) && !empty($_POST['search_rewrite_slug']) ) {
+
             update_option( 'search_rewrite_slug', $_POST['search_rewrite_slug'], true );
             $updated = true;
         }
 
-        add_settings_field( 'search_rewrite_slug', 'Search base',function ()
-        {
+        add_settings_field( 'search_rewrite_slug', 'Search base',function () {
+
             $value = get_option( 'search_rewrite_slug' );
             echo '<input type="text" value="' . esc_attr( $value ) . '" name="search_rewrite_slug" placeholder="search" id="search_rewrite_slug" class="regular-text" />';
 
@@ -672,61 +684,83 @@ class WPS_Config {
 
         add_settings_section('custom_post_type_rewrite', 'Custom post type', '__return_empty_string','permalink');
 
-        foreach ( get_post_types(['public'=> true, '_builtin' => false], 'objects') as $post_type=>$args )
-        {
-            foreach( ['slug', 'archive'] as $type)
-            {
-                if( ($type == 'slug' && is_post_type_viewable($post_type)) || ($type == 'archive' && $args->has_archive ))
-                {
-                    if( isset( $_POST[$post_type. '_rewrite_'.$type] ) && !empty($_POST[$post_type. '_rewrite_'.$type]) )
-                    {
-                        update_option( $post_type. '_rewrite_'.$type, $_POST[$post_type. '_rewrite_'.$type], true );
-                        $updated = true;
-                    }
+        $registered_post_types = $this->config->get('post_type', []);
 
-                    add_settings_field( $post_type. '_rewrite_'.$type, __t( ucfirst(str_replace('_', ' ', $post_type)).' '.$type ),function () use($post_type, $type)
-                    {
-                        $value = get_option( $post_type. '_rewrite_'.$type );
-                        if(empty($value))
-                            $value = $this->config->get('post_type.'.$post_type.($type=='slug'?'.rewrite.slug':'has_archive'), $post_type);
+        if( is_array($registered_post_types) ){
 
-                        echo '<input type="text" value="' . esc_attr( $value ) . '" name="'.$post_type.'_rewrite_'.$type.'" placeholder="'.$post_type.'" id="'.$post_type.'_rewrite_'.$type.'" class="regular-text" />';
+            foreach ( $registered_post_types as $post_type=>$args ) {
 
-                        if( $type == 'slug' ){
+                foreach( ['slug', 'archive'] as $type) {
 
-                            $taxonomy_objects = get_object_taxonomies( $post_type );
-                            if( !empty($taxonomy_objects) )
-                                echo '<p class="description">You can add %'.implode('%, %', $taxonomy_objects).'%</p>';
+                    if( ($type == 'slug' && is_post_type_viewable($post_type)) || ($type == 'archive' && ($args['has_archive']??false) )) {
+
+                        $key = $post_type. '_rewrite_'.$type;
+
+                        if( !empty($_POST[$key]??'') ) {
+
+                            update_option( $key, $_POST[$key], true );
+                            $updated = true;
                         }
 
-                    }, 'permalink', 'custom_post_type_rewrite' );
+                        add_settings_field( $key, __t( ucfirst(str_replace('_', ' ', $post_type)).' '.$type ),function () use($post_type, $type, $key) {
+
+                            $value = get_option( $key );
+
+                            if(empty($value))
+                                $value = $this->config->get('post_type.'.$post_type.($type=='slug'?'.rewrite.slug':'has_archive'), $post_type);
+
+                            echo '<input type="text" value="' . esc_attr( $value ) . '" name="'.$key.'" placeholder="'.$post_type.'" id="'.$key.'" class="regular-text" />';
+
+                            if( $type == 'slug' ){
+
+                                $taxonomy_objects = get_object_taxonomies( $post_type );
+
+                                if( !empty($taxonomy_objects) )
+                                    echo '<p class="description">You can add %'.implode('%, %', $taxonomy_objects).'%</p>';
+                            }
+
+                        }, 'permalink', 'custom_post_type_rewrite' );
+                    }
                 }
             }
         }
 
         add_settings_section('custom_taxonomy_rewrite', 'Custom taxonomy', '__return_empty_string','permalink');
 
-        foreach ( get_taxonomies(['public'=> true, '_builtin' => false], 'objects') as $taxonomy=>$args )
-        {
-            if( !is_taxonomy_viewable($taxonomy) )
-                continue;
+        $registered_taxonomies = $this->config->get('taxonomy', []);
 
-            if( isset( $_POST[$taxonomy. '_rewrite_slug'] ) && !empty($_POST[$taxonomy. '_rewrite_slug']) )
-            {
-                update_option( $taxonomy. '_rewrite_slug', $_POST[$taxonomy. '_rewrite_slug'], true );
-                $updated = true;
+        if( is_array($registered_taxonomies) ){
+
+            foreach ( $registered_taxonomies as $taxonomy=>$args ) {
+
+                foreach( ['slug', 'archive'] as $type) {
+
+                    if( ($type == 'slug' && is_taxonomy_viewable($taxonomy)) || ($type == 'archive' && ($args['has_archive']??false) )){
+
+                        $key = $taxonomy. '_rewrite_'.$type;
+
+                        if( !empty($_POST[$key]??'') ) {
+
+                            update_option( $key, $_POST[$key], true );
+                            $updated = true;
+                        }
+
+                        add_settings_field( $key, __t( ucfirst(str_replace('_', ' ', $taxonomy)).' '.$type ),function () use($taxonomy, $type, $key) {
+
+                            $value = get_option( $key );
+
+                            if(empty($value))
+                                $value = $this->config->get('taxonomy.'.$taxonomy.'.rewrite.'.$type, $taxonomy);
+
+                            echo '<input type="text" value="' . esc_attr( $value ) . '" name="'.$key.'" placeholder="'.$taxonomy.'" id="'.$key.'" class="regular-text" />';
+
+                            if( $type == 'slug' )
+                                echo '<p class="description">You can add %parent% or use %empty%</p>';
+
+                        }, 'permalink', 'custom_taxonomy_rewrite' );
+                    }
+                }
             }
-
-            add_settings_field( $taxonomy. '_rewrite_slug', __t( ucfirst(str_replace('_', ' ', $taxonomy)).' base' ),function () use($taxonomy)
-            {
-                $value = get_option( $taxonomy. '_rewrite_slug' );
-                if(empty($value))
-                    $value = $this->config->get('taxonomy.'.$taxonomy.'.rewrite.slug', $taxonomy);
-
-                echo '<input type="text" value="' . esc_attr( $value ) . '" name="'.$taxonomy.'_rewrite_slug" placeholder="'.$taxonomy.'" id="'.$taxonomy.'_rewrite_slug" class="regular-text" />';
-                echo '<p class="description">You can add %parent% or use %empty%</p>';
-
-            }, 'permalink', 'custom_taxonomy_rewrite' );
         }
 
         if( $updated ){
@@ -880,6 +914,9 @@ class WPS_Config {
         return $term_link;
     }
 
+    /**
+     * @return void
+     */
     public function updatePageStructure(){
 
         $value = get_option( 'page_rewrite_slug' );
@@ -899,6 +936,9 @@ class WPS_Config {
         }
     }
 
+    /**
+     * @return void
+     */
     public function updateSearchStructure(){
 
         global $wp_rewrite, $wp_search_base;
@@ -931,12 +971,21 @@ class WPS_Config {
         return $is_viewable && ($post_type->query_var || $post_type->_builtin);
     }
 
+    /**
+     * @param $vars
+     * @return mixed
+     */
+    public function updateQueryVars($vars){
+
+        $vars[] = 'taxonomy_listing';
+        return $vars;
+    }
 
     /**
      * ConfigPlugin constructor.
      */
-    public function __construct()
-    {
+    public function __construct(){
+
         global $_config;
 
         $this->config = $_config;
@@ -959,6 +1008,7 @@ class WPS_Config {
             $this->addRoles();
 
             add_filter('is_post_type_viewable', [$this, 'isPostTypeViewable'], 10 ,2);
+            add_filter('query_vars', [$this, 'updateQueryVars']);
 
             if( !HEADLESS || URL_MAPPING ){
 
@@ -983,8 +1033,8 @@ class WPS_Config {
         }, 10, 2);
 
         // When viewing admin
-        if( is_admin() )
-        {
+        if( is_admin() ) {
+
             if( !HEADLESS || URL_MAPPING )
                 add_action( 'load-options-permalink.php', [$this, 'LoadPermalinks']);
         }

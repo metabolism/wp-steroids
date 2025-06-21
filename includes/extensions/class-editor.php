@@ -98,6 +98,23 @@ class WPS_Editor {
             $wp_admin_bar->add_node( $args );
         }
 
+        if( !is_admin() && $taxonomy = get_query_var('taxonomy_listing') )
+        {
+            $object = get_taxonomy($taxonomy);
+
+            if( current_user_can( $object->cap->edit_terms ) ){
+
+                $args = [
+                    'id'    => 'edit',
+                    'title' => __t($object->labels->edit_items),
+                    'href'  => get_admin_url( null, '/edit-tags.php?taxonomy='.$object->name ),
+                    'meta'   => ['class' => 'ab-item']
+                ];
+
+                $wp_admin_bar->add_node( $args );
+            }
+        }
+
         global $pagenow;
 
         if( is_admin() && 'edit.php' === $pagenow && isset($_GET['post_type'], $_GET['page']) && $_GET['page'] == "options_".$_GET['post_type'] ){
@@ -112,6 +129,26 @@ class WPS_Editor {
             ];
 
             $wp_admin_bar->add_node( $args );
+        }
+
+        if( is_admin() && 'edit-tags.php' === $pagenow && isset($_GET['taxonomy']) ){
+
+            $taxonomy = $_GET['taxonomy'];
+
+           if( $this->config->get('taxonomy.'.$taxonomy.'.has_archive', false) ){
+
+               $object = get_taxonomy($taxonomy);
+               $archive = get_option( $taxonomy. '_rewrite_archive' );
+
+               $args = [
+                   'id'    => 'archive',
+                   'title' => __t($object->labels->view_items),
+                   'href'  => home_url($archive),
+                   'meta'   => ['class' => 'ab-item']
+               ];
+
+               $wp_admin_bar->add_node( $args );
+           }
         }
 
         $wp_admin_bar->remove_node('themes');
