@@ -382,9 +382,12 @@ class WPS_Advanced_Custom_Fields{
      * @param $block
      * @param $content
      * @param $is_preview
+     * @param $post_id
+     * @param $wp_block
+     * @param $context
      * @return mixed|null
      */
-    public function block_render_callback($block, $content = '', $is_preview = false){
+    public function block_render_callback($block, $content, $is_preview, $post_id, $wp_block, $context){
 
         if( isset($block['post']) && $id = get_the_ID() ){
 
@@ -410,7 +413,7 @@ class WPS_Advanced_Custom_Fields{
             }
         }
 
-        return apply_filters('block_render_callback', $block, $content, $is_preview);
+        return apply_filters('block_render_callback', $block, $content, $is_preview, $post_id, $wp_block, $context);
     }
 
     public function generateHash($prefix, $key)
