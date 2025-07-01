@@ -250,7 +250,7 @@ class WPS_Advanced_Custom_Fields{
      * @param $fields
      * @return mixed
      */
-    public function load_fields($fields){
+    public function loadFields($fields){
 
         global $post;
 
@@ -387,7 +387,7 @@ class WPS_Advanced_Custom_Fields{
      * @param $context
      * @return mixed|null
      */
-    public function block_render_callback($block, $content, $is_preview, $post_id, $wp_block, $context){
+    public function blockRenderCallback($block, $content, $is_preview, $post_id, $wp_block, $context){
 
         if( isset($block['post']) && $id = get_the_ID() ){
 
@@ -476,10 +476,11 @@ class WPS_Advanced_Custom_Fields{
                 'keywords'          => $args['keywords']??[],
                 'post_types'        => $args['post_types']??[],
                 'supports'          => $args['supports']??[],
+                'parent'            => $args['parent']??null,
                 'front'             => $args['front']??true
             ];
 
-            $block['render_callback'] = [$this, 'block_render_callback'];
+            $block['render_callback'] = [$this, 'blockRenderCallback'];
 
             if( $api_version == 3 )
                 $block['supports']['mode'] = false;
@@ -741,7 +742,7 @@ class WPS_Advanced_Custom_Fields{
         add_filter('acf/rest/format_value_for_rest', [$this, 'formatRestValue'], 10, 5);
 
         add_filter('acf/get_field_label', [WPS_Translation::class, 'translate'], 9);
-        add_filter('acf/load_fields', [$this, 'load_fields'], 9);
+        add_filter('acf/load_fields', [$this, 'loadFields'], 9);
 
         if( $path = $this->config->get('acf.json_path', '/config/packages/acf') ){
 
