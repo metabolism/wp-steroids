@@ -119,31 +119,33 @@ class WPS_Editor {
 
         if( is_admin() && 'edit.php' === $pagenow && isset($_GET['post_type'], $_GET['page']) && $_GET['page'] == "options_".$_GET['post_type'] ){
 
-            $object = get_post_type_object($_GET['post_type']);
+            $post_type = $_GET['post_type'];
+            $object = get_post_type_object($post_type);
 
-            $args = [
-                'id'    => 'archive',
-                'title' => __t($object->labels->view_items),
-                'href'  => get_post_type_archive_link( $_GET['post_type']),
-                'meta'   => ['class' => 'ab-item']
-            ];
+            if( $object->has_archive??false ){
 
-            $wp_admin_bar->add_node( $args );
+                $args = [
+                    'id'    => 'archive',
+                    'title' => __t($object->labels->view_items),
+                    'href'  => get_post_type_archive_link($post_type),
+                    'meta'   => ['class' => 'ab-item']
+                ];
+
+                $wp_admin_bar->add_node( $args );
+            }
         }
 
         if( is_admin() && 'edit-tags.php' === $pagenow && isset($_GET['taxonomy']) ){
 
             $taxonomy = $_GET['taxonomy'];
+            $object = get_taxonomy($taxonomy);
 
-           if( $this->config->get('taxonomy.'.$taxonomy.'.has_archive', false) ){
-
-               $object = get_taxonomy($taxonomy);
-               $archive = get_option( $taxonomy. '_rewrite_archive' );
+           if( $object->has_archive??false ){
 
                $args = [
                    'id'    => 'archive',
                    'title' => __t($object->labels->view_items),
-                   'href'  => home_url($archive),
+                   'href'  => get_taxonomy_archive_link($taxonomy),
                    'meta'   => ['class' => 'ab-item']
                ];
 

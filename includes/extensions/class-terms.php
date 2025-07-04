@@ -61,3 +61,19 @@ class WPS_Terms{
     }
 }
 
+/**
+ * @param $taxonomy
+ * @return false|string|null
+ */
+function get_taxonomy_archive_link($taxonomy)
+{
+    $object = get_taxonomy($taxonomy);
+
+    if( $object && $object->has_archive??false ){
+
+        $archive = get_option( $taxonomy. '_rewrite_archive' );
+        return home_url($archive);
+    }
+
+    return false;
+}

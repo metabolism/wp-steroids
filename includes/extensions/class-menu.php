@@ -52,7 +52,7 @@ class WPS_Menu {
         <?php
     }
 
-    public function addArchiveForm(){
+    public function addPostArchiveForm(){
 
         global $_nav_menu_placeholder;
         $post_types = get_post_types( array( 'has_archive' => true ), 'object' );
@@ -93,6 +93,55 @@ class WPS_Menu {
                 <span class="add-to-menu">
                     <input type="submit" class="button submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu' ); ?>"
                            name="add-post-type-menu-item" id="<?php echo esc_attr( "submit-posttype-archives" ); ?>"
+                    />
+                    <span class="spinner"></span>
+                </span>
+            </p>
+        </div>
+        <?php
+    }
+
+    public function addTermArchiveForm(){
+
+        global $_nav_menu_placeholder;
+        $taxonomies = get_taxonomies( array( 'has_archive' => true ), 'object' );
+
+        $items = [];
+        $walker = new Walker_Nav_Menu_Checklist( false );
+        $args = ['walker'=>$walker];
+
+        foreach ( $taxonomies as $taxonomy ) {
+
+            $_nav_menu_placeholder = ( 0 > $_nav_menu_placeholder ) ? (int) $_nav_menu_placeholder - 1 : -1;
+
+            $items[] = (object)[
+                'ID'           => 0,
+                'object_id'    => $_nav_menu_placeholder,
+                'object'       => $taxonomy->name,
+                'post_content' => '',
+                'post_excerpt' => '',
+                'post_title'   => $taxonomy->labels->name,
+                'classes'      => [],
+                'post_type'    => 'nav_menu_item',
+                'type'         => 'custom',
+                'url'          => get_taxonomy_archive_link($taxonomy->name),
+            ];
+        }
+
+        $items = apply_filters("nav_menu_items_term_archives", $items, $args, 'term_archive');
+        $checkbox_items = walk_nav_menu_tree( array_map('wp_setup_nav_menu_item', $items), 0, (object)$args);
+
+        ?>
+        <div id="term-archives" class="termdiv">
+            <div id="tabs-panel-archives" class="tabs-panel tabs-panel-view-all tabs-panel-active" role="region" aria-label="All Archives" tabindex="0">
+                <ul id="archives-typechecklist" data-wp-lists="list:term-archives" class="categorychecklist form-no-clear">
+                    <?= $checkbox_items ?>
+                </ul>
+            </div>
+            <p class="button-controls wp-clearfix" data-items-type="term-archive">
+                <span class="add-to-menu">
+                    <input type="submit" class="button submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu' ); ?>"
+                           name="add-post-type-menu-item" id="<?php echo esc_attr( "submit-term-archives" ); ?>"
                     />
                     <span class="spinner"></span>
                 </span>
@@ -145,10 +194,17 @@ class WPS_Menu {
     {
         global $wp_meta_boxes;
 
-        $wp_meta_boxes['nav-menus']['side']['default']['add-archives'] = [
-            'id' => 'add-archive',
+        $wp_meta_boxes['nav-menus']['side']['default']['add-term-archives'] = [
+            'id' => 'add-term-archive',
+            'title' => __('Term Archives'),
+            'callback' => [$this, 'addTermArchiveForm'],
+            'args' => ''
+        ];
+
+        $wp_meta_boxes['nav-menus']['side']['default']['add-post-archives'] = [
+            'id' => 'add-post-archive',
             'title' => __('Post Type Archives'),
-            'callback' => [$this, 'addArchiveForm'],
+            'callback' => [$this, 'addPostArchiveForm'],
             'args' => ''
         ];
 

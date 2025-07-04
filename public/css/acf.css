@@ -20,6 +20,7 @@
 .acf-field.acf-accordion{ border-top-color: #e0e0e0 }
 .acf-field.acf-accordion .acf-field-group{ padding: 0 }
 .acf-field.acf-accordion .acf-field-group .acf-fields.-border{ border: 0 }
+.acf-field.acf-accordion .acf-field-group > .acf-label{ padding: 10px 16px; border-bottom: 1px solid #eaecf0 }
 .components-panel .inside.acf-fields .acf-field-group{ padding: 0 }
 .components-panel .inside.acf-fields .acf-field-group > .acf-input > .acf-fields.-border{ border: 0 }
 .acf-fields.-border.acf-clone-fields{ border: 0 }
