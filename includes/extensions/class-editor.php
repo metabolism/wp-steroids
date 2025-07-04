@@ -325,22 +325,32 @@ class WPS_Editor {
 
             if( !($query['offset']??0) ){
 
-                $post_types = get_post_types( array( 'public' => true ), 'objects' );
+                $post_types = get_post_types( array( 'has_archive' => true ), 'objects' );
 
                 foreach ($post_types as $post_type=>$args){
 
-                    $pt_archive_link = get_post_type_archive_link($post_type);
                     $pt_obj = get_post_type_object($post_type);
 
-                    if ( $pt_archive_link !== false && $pt_obj->has_archive !== false ) {
+                    array_unshift($results, [
+                        'ID' => $post_type,
+                        'title' => trim(esc_html(strip_tags($pt_obj->labels->name))),
+                        'permalink' => get_post_type_archive_link($post_type),
+                        'info' => __('Post archive')
+                    ]);
+                }
 
-                        array_unshift($results, [
-                            'ID' => $pt_obj->has_archive,
-                            'title' => trim(esc_html(strip_tags($pt_obj->labels->name))),
-                            'permalink' => $pt_archive_link,
-                            'info' => 'Archive'
-                        ]);
-                    }
+                $taxonomies = get_taxonomies( array( 'has_archive' => true ), 'objects' );
+
+                foreach ($taxonomies as $taxonomy=>$args){
+
+                    $pt_obj = get_taxonomy($taxonomy);
+
+                    array_unshift($results, [
+                        'ID' => $taxonomy,
+                        'title' => trim(esc_html(strip_tags($pt_obj->labels->name))),
+                        'permalink' => get_taxonomy_archive_link($taxonomy),
+                        'info' => __('Term archive')
+                    ]);
                 }
             }
 
@@ -358,35 +368,35 @@ class WPS_Editor {
         $charset = get_bloginfo('charset');
 
         //* Terms
-        if ( ! empty( $terms ) && ! is_wp_error( $terms ) ):
-            foreach( $terms as $term ):
+        if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+            foreach ($terms as $term) {
                 $results[] = [
-                    'ID'        => 'term-' . $term->term_id,
-                    'title'     => html_entity_decode($term->name, ENT_QUOTES, $charset) ,
-                    'permalink' => get_term_link($term->term_id , $term->taxonomy) ,
-                    'info'      => get_taxonomy($term->taxonomy)->labels->singular_name,
+                    'ID' => 'term-' . $term->term_id,
+                    'title' => html_entity_decode($term->name, ENT_QUOTES, $charset),
+                    'permalink' => get_term_link($term->term_id, $term->taxonomy),
+                    'info' => get_taxonomy($term->taxonomy)->labels->singular_name,
                 ];
-            endforeach;
-        endif;
+            }
+        }
 
         $match = '/' . remove_accents( $query['s'] ) . '/i';
 
-        foreach( $query['post_type'] as $post_type ) :
+        foreach( $query['post_type'] as $post_type ) {
 
-            $pt_archive_link = get_post_type_archive_link($post_type);
             $pt_obj = get_post_type_object($post_type);
 
-            if ( $pt_archive_link !== false && $pt_obj->has_archive !== false ) : // Add only post type with 'has_archive'
-                if ( preg_match( $match, remove_accents( $pt_obj->labels->name ) ) > 0 ) :
+            if ($pt_obj->has_archive !== false) {
+
+                if (preg_match($match, remove_accents($pt_obj->labels->name)) > 0) {
                     $results[] = [
-                        'ID' => $pt_obj->has_archive,
-                        'title' => trim( esc_html( strip_tags($pt_obj->labels->name) ) ) ,
-                        'permalink' => $pt_archive_link,
-                        'info' => 'Archive'
+                        'ID' => $post_type,
+                        'title' => trim(esc_html(strip_tags($pt_obj->labels->name))),
+                        'permalink' => get_post_type_archive_link($post_type),
+                        'info' => __('Post archive')
                     ];
-                endif;
-            endif; //end post type archive links in link_query
-        endforeach;
+                }
+            }
+        }
 
         return $results;
     }
