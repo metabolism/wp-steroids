@@ -19,6 +19,7 @@
 .acf-accordion .acf-accordion-title svg.acf-accordion-icon{ right: 16px }
 .acf-field.acf-accordion{ border-top-color: #e0e0e0 }
 .acf-field.acf-accordion .acf-field-group{ padding: 0 }
+.acf-menu-item-fields .acf-field.acf-accordion .acf-field-group{ margin: 0 }
 .acf-field.acf-accordion .acf-field-group .acf-fields.-border{ border: 0 }
 .acf-field.acf-accordion .acf-field-group > .acf-label{ padding: 10px 16px; border-bottom: 1px solid #eaecf0 }
 .components-panel .inside.acf-fields .acf-field-group{ padding: 0 }
@@ -45,6 +46,12 @@
 .editor-sidebar__panel .acf-relationship .selection .values, .editor-sidebar__panel .acf-relationship .selection .choices{ width: 100%; float: none }
 .editor-sidebar__panel .acf-relationship .selection .choices{ border-bottom: 1px solid #ccd0d4 }
 #addtag #acf-term-fields{ padding-right: 0 }
+
+.acf-fields.acf-menu-item-fields>.acf-field{ padding-right: 0 }
+.acf-menu-item-fields .acf-field.acf-accordion .acf-label.acf-accordion-title { padding: 6px 8px }
+.acf-fields.-clear>.acf-field.acf-accordion{ border-radius: 3px }
+.acf-fields.acf-menu-item-fields>.acf-field+.acf-field{ margin-top: 10px }
+.acf-menu-item-fields .acf-field.acf-accordion .acf-input.acf-accordion-content>.acf-fields.-clear{ padding: 0 }
 
 @media screen and (max-width: 782px){
     .form-table>tbody>.acf-tab-wrap td{ padding-left: 0 }

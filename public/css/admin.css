@@ -28,6 +28,7 @@
 #the-list .attachment-thumbnail{ width: 50px; height: auto; border-radius: 3px; display: block }
 #the-list .attachment-thumbnail+.attachment-thumbnail{ width: auto; max-width: 150px; border-radius: 4px; position: absolute; left: 50%; top: 50%; display: none; transform: translate(-50%, -50%); box-shadow: 0 0 4px rgba(0,0,0,0.2) }
 #the-list .attachment-thumbnail-container+a{ display: none!important }
+#the-list .taxonomy-more{ cursor: help; }
 .manage-column.num{ text-align: left }
 
 .headless #post-preview, .headless #wp-admin-bar-view{ display: none }

@@ -493,6 +493,27 @@ class WPS_Editor {
     }
 
     /**
+     * @param $term_links
+     * @param $taxonomy
+     * @param $terms
+     * @return void
+     */
+    public function filterTaxonomyLinks($term_links, $taxonomy, $terms)
+    {
+        $term_links_count = count($term_links);
+
+        if( $term_links_count > 2 ){
+
+            $term_list = strip_tags(implode(', ', $term_links));
+
+            $term_links = array_slice($term_links, -2);
+            $term_links[] = '<span class="taxonomy-more" title="'.esc_attr($term_list).'">'.__('and').' '.($term_links_count-2).' '.__('more').'…</span>';
+        }
+        
+        return $term_links;
+    }
+
+    /**
      * Editor constructor.
      */
     public function __construct()
@@ -508,8 +529,9 @@ class WPS_Editor {
 
         if( is_admin() )
         {
+            add_filter( 'post_column_taxonomy_links', [$this, 'filterTaxonomyLinks'], 10, 3);
             add_filter( 'upload_mimes', [$this, 'uploadMimes']);
-            add_filter( 'wp_link_query', [$this, 'linkQueryTermLinking'], 99, 2 );
+            add_filter( 'wp_link_query', [$this, 'linkQueryTermLinking'], 99, 2);
             add_filter( 'mce_buttons', [$this, 'tinyMceButtons']);
             add_filter( 'post_row_actions', [$this, 'rowActions'], 10, 2);
             add_filter( 'page_row_actions', [$this, 'rowActions'], 10, 2);
