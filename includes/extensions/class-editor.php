@@ -541,6 +541,7 @@ class WPS_Editor {
 
             add_filter( 'mce_external_plugins', function ( $plugins ) {
                 $plugins['table'] = WPS_PLUGIN_URL.'public/js/tinymce/table.plugin.min.js';
+                $plugins['small'] = WPS_PLUGIN_URL.'public/js/tinymce/small.plugin.min.js';
                 return $plugins;
             });
 
