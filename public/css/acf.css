@@ -19,7 +19,7 @@
 .acf-accordion .acf-accordion-title svg.acf-accordion-icon{ right: 16px }
 .acf-field.acf-accordion{ border-top-color: #e0e0e0 }
 .acf-field.acf-accordion .acf-field-group{ padding: 0 }
-.acf-menu-item-fields .acf-field.acf-accordion .acf-field-group{ margin: 0 }
+.acf-menu-item-fields .acf-field.acf-accordion .acf-field-group{ margin: 0 -12px }
 .acf-field.acf-accordion .acf-field-group .acf-fields.-border{ border: 0 }
 .acf-field.acf-accordion .acf-field-group > .acf-label{ padding: 10px 16px; border-bottom: 1px solid #eaecf0 }
 .components-panel .inside.acf-fields .acf-field-group{ padding: 0 }
@@ -47,11 +47,14 @@
 .editor-sidebar__panel .acf-relationship .selection .choices{ border-bottom: 1px solid #ccd0d4 }
 #addtag #acf-term-fields{ padding-right: 0 }
 
-.acf-fields.acf-menu-item-fields>.acf-field{ padding-right: 0 }
-.acf-menu-item-fields .acf-field.acf-accordion .acf-label.acf-accordion-title { padding: 6px 8px }
-.acf-fields.-clear>.acf-field.acf-accordion{ border-radius: 3px }
+.acf-fields.acf-menu-item-fields>.acf-field{ padding-right: 0; margin: 2px 0 5px }
+.acf-menu-item-fields .acf-field.acf-accordion .acf-label.acf-accordion-title { padding: 12px 16px }
+.acf-menu-item-fields .acf-field.acf-accordion.-open .acf-accordion-title{ background: #f3f4f5 }
+.acf-fields.-clear>.acf-field.acf-accordion:first-of-type{ border-top-left-radius: 3px; border-top-right-radius: 3px }
+.acf-fields.-clear>.acf-field.acf-accordion:last-of-type{ border-bottom-left-radius: 3px; border-bottom-right-radius: 3px }
 .acf-fields.acf-menu-item-fields>.acf-field+.acf-field{ margin-top: 10px }
-.acf-menu-item-fields .acf-field.acf-accordion .acf-input.acf-accordion-content>.acf-fields.-clear{ padding: 0 }
+.acf-fields.acf-menu-item-fields>.acf-field.acf-accordion+.acf-field.acf-accordion{ margin-top: -6px!important }
+.acf-field.acf-accordion .acf-input.acf-accordion-content>.acf-fields.-clear{ padding: 0 12px }
 
 @media screen and (max-width: 782px){
     .form-table>tbody>.acf-tab-wrap td{ padding-left: 0 }
@@ -61,6 +64,7 @@
 .acf-postbox{ overflow: visible }
 .acf-menu-settings .acf-field .acf-label label{ font-weight: 400; opacity: 0.8 }
 .acf-fields.acf-menu-item-fields > .acf-field .acf-label label{ margin-bottom: 5px; color: #646970; font-style: normal }
+.acf-fields.acf-menu-item-fields > .acf-field .acf-label.acf-accordion-title label{ margin-bottom: 0 }
 
 .metabox-location-normal .acf-fields>.acf-field{ padding: 10px 24px }
 
