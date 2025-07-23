@@ -388,6 +388,7 @@ class WPS_Config {
 
         $default_args = [
             'map_meta_cap' => true,
+            'show_in_submenu' => true,
             'public' => true,
             'hierarchical' => true,
             'rewrite' => [],
@@ -487,13 +488,55 @@ class WPS_Config {
                     $args['rewrite'] = false;
                 }
 
+                if( !$args['show_in_submenu'] )
+                    $args['show_in_menu'] = false;
+
                 register_taxonomy($taxonomy, $object_type, $args);
+
+                if( !$args['show_in_submenu'] )
+                    $this->showTaxonomyInMenu($taxonomy, $args);
 
             } else{
 
                 wp_die($taxonomy. ' is not allowed, reserved keyword');
             }
         }
+    }
+
+    /**
+     * @param $taxonomy
+     * @param $args
+     * @return void
+     */
+    private function showTaxonomyInMenu($taxonomy, $args){
+
+        add_action('admin_menu', function() use($taxonomy, $args) {
+
+            add_menu_page(
+                $args['labels']['name'], $args['labels']['name'], 'manage_options', 'edit-tags.php?taxonomy='.$taxonomy,'',
+                'dashicons-groups',$args['menu_position']??25
+            );
+        }, 99);
+
+        add_filter('parent_file', function($parent_file) use($taxonomy) {
+
+            global $current_screen;
+
+            if ($current_screen->taxonomy === $taxonomy)
+                return 'edit-tags.php?taxonomy='.$taxonomy;
+
+            return $parent_file;
+        });
+
+        add_filter('submenu_file', function($submenu_file) use($taxonomy) {
+
+            global $current_screen;
+
+            if ($current_screen->taxonomy === $taxonomy)
+                return 'edit-tags.php?taxonomy='.$taxonomy;
+
+            return $submenu_file;
+        });
     }
 
     /**
