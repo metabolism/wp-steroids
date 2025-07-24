@@ -697,7 +697,7 @@ class WPS_Config {
 
         add_settings_section('page_rewrite', '', '__return_empty_string','permalink');
 
-        if( isset( $_POST['page_rewrite_slug'] ) && !empty($_POST['page_rewrite_slug']) ) {
+        if( isset( $_POST['page_rewrite_slug'] ) ) {
 
             update_option( 'page_rewrite_slug', $_POST['page_rewrite_slug'], true );
             $updated = true;
@@ -735,7 +735,7 @@ class WPS_Config {
 
                 foreach( ['slug', 'archive'] as $type) {
 
-                    if( ($type == 'slug' && is_post_type_viewable($post_type)) || ($type == 'archive' && ($args['has_archive']??false) )) {
+                    if( $post_type != 'page' && (($type == 'slug' && is_post_type_viewable($post_type)) || ($type == 'archive' && ($args['has_archive']??false)) )) {
 
                         $key = $post_type. '_rewrite_'.$type;
 
