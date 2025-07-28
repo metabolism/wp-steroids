@@ -247,3 +247,13 @@ th.manage-column.column-thumbnail, td.thumbnail.column-thumbnail{ width: 1%; tex
 th#mslscol .flag-icon{ width: 20px }
 th#mslscol, td.mslscol.column-mslscol{ width: 1%; white-space: nowrap }
 #msls.postbox .inside li+li{ margin-top: 10px }
+
+/* Wicked folder */
+ul.wicked-tree{ font-size: 14px }
+.wicked-folder-pane-toolbar-buttons button svg { width: 14px }
+.wicked-folder-pane-toolbar-buttons>div{ min-height: 38px }
+ul.wicked-tree .wicked-folder .wicked-icon svg { width: 18px!important }
+.wicked-folders-breadcrumbs{
+    border-color: #e0e0e0; border-radius: 3px; border-bottom-width: 1px; margin-bottom: 10px;
+    box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.03);
+}
