@@ -112,6 +112,13 @@ class WPS_Gutenberg
 			if ( $_config->get('gutenberg.remove_core_block', false) )
                 add_filter( 'allowed_block_types_all', [$this, 'removeCoreBlock'], 25, 2 );
 
+			if ( $width = $_config->get('gutenberg.preview_width', false) ){
+
+                add_action( 'admin_head', function () use($width){
+                    echo '<style>.block-editor-inserter__preview-container{ width: '.$width.'px } </style>';
+                } );
+            }
+
             add_action( 'enqueue_block_editor_assets', [$this, 'enqueueBlockEditorAssets'] );
             add_action( 'enqueue_block_assets', [$this, 'addBlockAssets'] );
             add_action( 'init', [$this, 'registerTemplate']);
