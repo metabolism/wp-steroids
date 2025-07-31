@@ -416,9 +416,27 @@ class WPS_Advanced_Custom_Fields{
         return apply_filters('block_render_callback', $block, $content, $is_preview, $post_id, $wp_block, $context);
     }
 
+    /**
+     * @param $prefix
+     * @param $key
+     * @return string
+     */
     public function generateHash($prefix, $key)
     {
         return $prefix.'_'.substr(md5($key), 0, 12);
+    }
+
+    /**
+     * data must be an array to avoid errors
+     * @param $parsed_block
+     * @return array
+     */
+    public function renderBlockData($parsed_block)
+    {
+        if( !is_array($parsed_block['attrs']['data']) )
+            $parsed_block['attrs']['data'] = [];
+
+        return $parsed_block;
     }
 
     /**
@@ -726,6 +744,7 @@ class WPS_Advanced_Custom_Fields{
 
         $this->config = $_config;
 
+        add_filter('render_block_data', [$this, 'renderBlockData'], 10, 2);
         add_filter('block_categories_all', [$this, 'addBlockCategories'], 10, 2);
         add_action('init', [$this, 'addBlocks']);
         add_action('init', [$this, 'addGroupFields']);
