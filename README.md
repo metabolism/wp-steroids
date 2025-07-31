@@ -78,6 +78,7 @@ wordpress:
     block_editor_script: '/blocks.js'
     render_template: 'block/{name}/{name}.twig'
     preview_image: '/app/blocks/{name}.png'
+    preview_width: 375
 
 
   #########################
@@ -236,11 +237,21 @@ wordpress:
     input:
       lock_max_length: false
     toolbars: #customize wysiwyg toolbar
+      Simple:
+        1:
+          - bullist
+          - numlist
+          - link
+          - bold
+          - italic
+          - small
+          - fullscreen
       Full:
         1:
           - formatselect
           - bold
           - italic
+          - small
           - blockquote
           - superscript
           - subscript
@@ -268,6 +279,7 @@ wordpress:
         1:
           - bold
           - italic
+          - small
           - blockquote
           - superscript
           - subscript
@@ -458,6 +470,8 @@ wordpress:
       #order: ASC
       #radio: true #display terms selection as radio instead of checkbox
       #publicly_queryable: false
+      #show_in_submenu: false
+      #show_in_menu: true
       show_in_rest: true
       #capability_type: true
       object_type:

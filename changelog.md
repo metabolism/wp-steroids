@@ -1,3 +1,14 @@
+### 1.5.11
+- Show Taxonomy in the main menu, not a child of a Post Type
+- Add archive management for Taxonomy
+- Add Gutenberg preview size parameter
+- Remove wp_speculation_rules_configuration
+- Added get_taxonomy_archive_link()
+- CSS fix for ACF fields in menus
+- CSS fix for 'Wicked folder' plugin
+- Better innerBlock management
+- Added 'small' button for tinyMCE
+
 ### 1.5.10
 - Better wp-json api cleaning
 - Minor css tweaks
