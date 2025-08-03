@@ -479,7 +479,12 @@ class WPS_Advanced_Custom_Fields{
 
         $upload_dir = wp_upload_dir();
 
-        foreach ( $this->config->get('block', []) as $name => $args )
+        $blocks = $this->config->get('block', []);
+
+        if( $this->config->get('gutenberg.block_sorting', false) )
+            ksort($blocks);
+
+        foreach ( $blocks as $name => $args )
         {
             $block = [
                 '$schema'           => 'https://schemas.wp.org/trunk/block.json',

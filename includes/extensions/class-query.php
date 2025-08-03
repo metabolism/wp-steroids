@@ -246,7 +246,6 @@ class WPS_Query {
         if( !is_admin() ){
             
             add_action( 'pre_get_posts', [$this, 'pre_get_posts'] );
-            add_filter( 'terms_clauses', [$this, 'terms_clauses'], 99999, 3);
             add_filter( 'posts_results', [$this, 'preview_access'], 10, 2 );
             add_filter( 'posts_orderby', [$this, 'custom_order'], 10, 2 );
         }
@@ -256,6 +255,7 @@ class WPS_Query {
 
         add_action( 'init', [$this, 'fix_page_query']);
 
+        add_filter( 'terms_clauses', [$this, 'terms_clauses'], 99999, 3);
         add_filter( 'wp_link_query_args', [$this, 'wp_link_query_args'] );
         add_filter( 'posts_orderby', [$this, 'add_sticky_posts'], 10, 2 );
     }
