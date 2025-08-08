@@ -321,6 +321,12 @@ class WPS_Editor {
      */
     function linkQueryTermLinking($results, $query ) {
 
+        foreach ($results as &$entry) {
+
+            if( $parent = get_post_parent($entry['ID']) )
+                $entry['title'] = '<b>'.$parent->post_title.'</b> — '.$entry['title'];
+        }
+
         if( !($query['s']??false) ){
 
             if( !($query['offset']??0) ){
