@@ -512,8 +512,10 @@ class WPS_Config {
 
         add_action('admin_menu', function() use($taxonomy, $args) {
 
+            $capability = $args['capabilities']['manage_terms']??'manage_categories';
+
             add_menu_page(
-                $args['labels']['name'], $args['labels']['name'], 'manage_options', 'edit-tags.php?taxonomy='.$taxonomy,'',
+                $args['labels']['name'], $args['labels']['name'], $capability, 'edit-tags.php?taxonomy='.$taxonomy,'',
                 'dashicons-groups',$args['menu_position']??25
             );
         }, 99);
