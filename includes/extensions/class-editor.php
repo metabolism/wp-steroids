@@ -520,6 +520,30 @@ class WPS_Editor {
     }
 
     /**
+     * @param $url
+     * @param $term
+     * @param $taxonomy
+     * @return false|mixed|string
+     */
+    function filterTermLink($url, $term, $taxonomy) {
+
+        $taxonomy_object = get_taxonomy($taxonomy);
+
+        if (!$taxonomy_object || count($taxonomy_object->object_type) <= 1 )
+            return $url;
+
+        $post_type = $_GET['post_type'] ?? null;
+
+        if ($post_type && post_type_exists($post_type)) {
+
+            if ( $url = get_post_type_archive_link($post_type) )
+                return add_query_arg($taxonomy, $term->slug, $url);
+        }
+
+        return $url;
+    }
+
+    /**
      * Editor constructor.
      */
     public function __construct()
@@ -535,6 +559,7 @@ class WPS_Editor {
 
         if( is_admin() )
         {
+            add_filter( 'term_link', [$this, 'filterTermLink'], 10, 3);
             add_filter( 'post_column_taxonomy_links', [$this, 'filterTaxonomyLinks'], 10, 3);
             add_filter( 'upload_mimes', [$this, 'uploadMimes']);
             add_filter( 'wp_link_query', [$this, 'linkQueryTermLinking'], 99, 2);

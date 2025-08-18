@@ -452,7 +452,7 @@ class WPS_Config {
                 if( is_string($args['rewrite']) )
                     $args['rewrite'] = ['slug'=> $args['rewrite']];
 
-                if( !isset($args['rewrite']['feed']) )
+                if( !isset($args['rewrite']['feed']) && is_array($args['rewrite']) )
                     $args['rewrite']['feed'] = false;
 
                 if( $args['publicly_queryable']??true ){
