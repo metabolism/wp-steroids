@@ -433,7 +433,7 @@ class WPS_Advanced_Custom_Fields{
      */
     public function renderBlockData($parsed_block)
     {
-        if( !is_array($parsed_block['attrs']['data']) )
+        if( !is_array($parsed_block['attrs']['data']??'') )
             $parsed_block['attrs']['data'] = [];
 
         return $parsed_block;
