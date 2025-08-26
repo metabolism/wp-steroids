@@ -209,6 +209,9 @@ class WPS_Editor {
      */
     function disableDashboardWidgets()
     {
+        if( !current_user_can('administrator') )
+            remove_meta_box('dashboard_site_health', 'dashboard', 'normal');
+
         remove_meta_box( 'dashboard_incoming_links', 'dashboard', 'normal' );   // Incoming Links
         remove_meta_box( 'dashboard_plugins', 'dashboard', 'normal' );          // Plugins
         remove_meta_box( 'dashboard_quick_press', 'dashboard', 'side' );        // Quick Press

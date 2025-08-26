@@ -19,6 +19,22 @@ class WPS_Security {
     }
 
     /**
+     * Filter explicit wp class
+     * @param $classes
+     * @return array
+     */
+    public function filterClass( $classes )
+    {
+        $to_remove = ['wp-singular'];
+        $to_remove[] = 'wp-theme-' . sanitize_html_class( get_template() );
+
+        if ( is_child_theme() )
+            $to_remove[] = 'wp-child-theme-' . sanitize_html_class( get_stylesheet() );
+
+        return array_diff($classes, $to_remove);
+    }
+
+    /**
      * Allow iframe for editor in WYSIWYG
      * @param $caps
      * @param $cap
@@ -325,6 +341,9 @@ class WPS_Security {
         global $_config;
 
         $this->config = $_config;
+
+        //remove explicit wp class
+        add_filter( 'body_class', [$this, 'filterClass'], 10, 2 );
 
         //prevent .htaccess writing
         add_filter( 'flush_rewrite_rules_hard', '__return_false');
