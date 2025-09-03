@@ -481,11 +481,8 @@ class WPS_Advanced_Custom_Fields{
 
         $blocks = $this->config->get('block', []);
 
-        if( $this->config->get('gutenberg.block_sorting', false) )
-            ksort($blocks);
+        foreach ( $blocks as $name => &$args ) {
 
-        foreach ( $blocks as $name => $args )
-        {
             $block = [
                 '$schema'           => 'https://schemas.wp.org/trunk/block.json',
                 'apiVersion'        => $api_version,
@@ -533,7 +530,21 @@ class WPS_Advanced_Custom_Fields{
                 ];
             }
 
-            acf_register_block_type($block);
+            $args['block'] = $block;
+        }
+
+        unset($args);
+
+        if( $this->config->get('gutenberg.block_sorting', false) ){
+
+            usort($blocks, function($a, $b) {
+                return strcmp($a['title'], $b['title']);
+            });
+        }
+
+        foreach ($blocks as $name => $args ) {
+
+            acf_register_block_type($args['block']);
 
             $this->addFields($name, $args, 'group', 'block');
         }
