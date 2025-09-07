@@ -14,20 +14,32 @@ wpsEditor.class = {
         let post = {
             post_title: editor.getEditedPostAttribute('title'),
             post_excerpt: editor.getEditedPostAttribute('excerpt'),
-            thumbnail : editor.getEditedPostAttribute('featured_media')
+            thumbnail : editor.getEditedPostAttribute('featured_media'),
+            status : editor.getEditedPostAttribute('status')
         }
 
         wp.data.subscribe(() => {
 
             let data = {
+                status: editor.getEditedPostAttribute('status'),
                 post_title: editor.getEditedPostAttribute('title'),
                 post_excerpt: editor.getEditedPostAttribute('excerpt'),
                 thumbnail_id : editor.getEditedPostAttribute('featured_media')
             }
 
+            if( post.status !== data.status ) {
+
+                Array.from(document.body.classList)
+                    .filter(c => c.startsWith('post-status-'))
+                    .forEach(c => document.body.classList.remove(c));
+
+                document.body.classList.add('post-status-' + data.status);
+            }
+
             if( JSON.stringify(data) !== JSON.stringify(post) ){
 
                 post = data;
+
                 let blocks = wp.data.select( 'core/block-editor' ).getBlocks();
 
                 if( blocks.length ){

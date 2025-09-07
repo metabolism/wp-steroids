@@ -269,9 +269,9 @@ class WPS_Config {
                                 $params = $args['columns'][$column]??'';
                                 $value = get_post_meta( $post_id, $column, true );
 
-                                $value = apply_filters('manage_'.$post_type.'_posts_custom_column_value', $value, $column);
+                                $value = apply_filters('manage_'.$post_type.'_posts_custom_column_value', $value, $column, $post_id);
 
-                                if( $value )
+                                if( $value !== false && !is_null($value) )
                                     echo __t($value).(!empty($params)?' '.$params:'');
                             }
                         }

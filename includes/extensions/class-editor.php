@@ -453,6 +453,7 @@ class WPS_Editor {
         if($current_screen->base === 'post' && $post){
 
             $classes .= ' single-'.$post->post_type;
+            $classes .= ' post-status-' . $post->post_status;
 
             if ( $template_slug = get_page_template_slug( $post->ID ) ) {
 

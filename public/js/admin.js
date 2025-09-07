@@ -203,8 +203,15 @@
 		})
 	}
 
+	function makeTitleRequired(){
+
+		if( $('#title').length )
+            $('#title').attr('required', 'required');
+	}
+
 	$(document).ready(function(){
 
+		makeTitleRequired()
 		setupACF()
 		columnAddToMenu()
 		buildClick()
