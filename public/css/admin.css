@@ -228,6 +228,8 @@ th.manage-column.column-thumbnail, td.thumbnail.column-thumbnail{ width: 1%; tex
         border-right: 1px solid #cfcfcf;  border-left: 1px solid #cfcfcf; z-index: 1; left: 7px
     }
 }
+.mce-fullscreen .interface-navigable-region > .ui-resizable-handle{ display: none }
+
 .ui-resizable-disabled .ui-resizable-handle,.ui-resizable-autohide .ui-resizable-handle{display:none}
 .ui-resizable-n{cursor:n-resize; height:7px; width:100%; top:-5px; left:0}
 .ui-resizable-s{cursor:s-resize; height:7px; width:100%; bottom:-5px; left:0}
