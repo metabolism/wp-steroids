@@ -54,6 +54,42 @@ class WPS_Url {
         }
 	}
 
+    /**
+     * @param $url
+     * @param $term
+     * @param $taxonomy
+     * @return false|mixed|string
+     */
+    function filterTermLink($url, $term, $taxonomy) {
+
+        $taxonomy_object = get_taxonomy($taxonomy);
+
+        if (!$taxonomy_object || count($taxonomy_object->object_type) <= 1 )
+            return $url;
+
+        if( is_admin() ){
+
+            $post_type = $_GET['post_type'] ?? null;
+
+            if ($post_type && post_type_exists($post_type)) {
+
+                if ( $url = get_post_type_archive_link($post_type) ){
+
+                    if( !$taxonomy_object->rewrite ){
+
+                        return add_query_arg($taxonomy, $term->slug, $url);
+                    }
+                    else{
+
+                        return $url.'/'.$taxonomy_object->rewrite['slug'].'/'.$term->slug;
+                    }
+                }
+            }
+        }
+
+        return $url;
+    }
+
 
 	/**
 	 * UrlPlugin constructor.
@@ -68,6 +104,10 @@ class WPS_Url {
 				add_filter('get_sample_permalink_html', [$this, 'applyUrlMapping'] );
 			}
 		}
+        else{
+
+            add_filter( 'term_link', [$this, 'filterTermLink'], 10, 3);
+        }
 
 		$this->redirectAdmin();
     }

@@ -616,6 +616,21 @@ class WPS_Config {
                             add_rewrite_rule($rule, 'index.php?'.$taxonomy.'=$matches[1]', 'top');
                         }
                     }
+                    else{
+
+                        if( ($args['rewrite']??true) && is_array($args['object_type']??'') && count($args['object_type']) > 1 ) {
+
+                            foreach ($args['object_type'] as $post_type) {
+
+                                $post_type_object = get_post_type_object($post_type);
+
+                                if( is_string($post_type_object->has_archive) ){
+
+                                    add_rewrite_rule('^'.$post_type_object->has_archive.'/'. $slug.'/(.+?)/?$', 'index.php?post_type='.$post_type.'&'.$taxonomy.'=$matches[1]',  'top');
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
