@@ -316,7 +316,6 @@ class WPS_Security {
      */
     protected function disableRest()
     {
-        add_filter( 'rest_enabled', '__return_false');
         add_filter( 'rest_jsonp_enabled', '__return_false');
 
         add_filter( 'rest_authentication_errors', function( $result ) {

@@ -626,7 +626,8 @@ class WPS_Config {
 
                                 if( is_string($post_type_object->has_archive) ){
 
-                                    add_rewrite_rule('^'.$post_type_object->has_archive.'/'. $slug.'/(.+?)/?$', 'index.php?post_type='.$post_type.'&'.$taxonomy.'=$matches[1]',  'top');
+                                    add_rewrite_rule('^'.$post_type_object->has_archive.'/'. $slug.'/([^/]+)/?$', 'index.php?post_type='.$post_type.'&'.$taxonomy.'=$matches[1]',  'top');
+                                    add_rewrite_rule('^'.$post_type_object->has_archive.'/'. $slug.'/([^/]+)/page/([0-9]{1,})?$', 'index.php?post_type='.$post_type.'&'.$taxonomy.'=$matches[1]&paged=$matches[2]',  'top');
                                 }
                             }
                         }
