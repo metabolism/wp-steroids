@@ -695,7 +695,7 @@ class WPS_Advanced_Custom_Fields{
     {
         $object = get_queried_object();
 
-        if( is_post_type_archive() && !is_admin() && current_user_can( $object->cap->edit_posts ) )
+        if( is_post_type_archive() && !is_admin() && current_user_can( $object->cap->edit_posts??'edit_posts' ) )
         {
             if( $this->config->get('post_type.'.$object->name.'.has_options', false) ){
 
