@@ -90,7 +90,7 @@ class WPS_Editor {
         {
             $args = [
                 'id'    => 'edit',
-                'title' => __t($object->labels->edit_items),
+                'title' => __t($object->labels->edit_items??'Edit items'),
                 'href'  => get_admin_url( null, '/edit.php?post_type='.$object->name ),
                 'meta'   => ['class' => 'ab-item']
             ];
@@ -102,11 +102,11 @@ class WPS_Editor {
         {
             $object = get_taxonomy($taxonomy);
 
-            if( current_user_can( $object->cap->edit_terms ) ){
+            if( current_user_can( $object->cap->edit_terms??'edit_terms' ) ){
 
                 $args = [
                     'id'    => 'edit',
-                    'title' => __t($object->labels->edit_items),
+                    'title' => __t($object->labels->edit_items??'Edit items'),
                     'href'  => get_admin_url( null, '/edit-tags.php?taxonomy='.$object->name ),
                     'meta'   => ['class' => 'ab-item']
                 ];
@@ -126,7 +126,7 @@ class WPS_Editor {
 
                 $args = [
                     'id'    => 'archive',
-                    'title' => __t($object->labels->view_items),
+                    'title' => __t($object->labels->view_items??'View items'),
                     'href'  => get_post_type_archive_link($post_type),
                     'meta'   => ['class' => 'ab-item']
                 ];
@@ -144,7 +144,7 @@ class WPS_Editor {
 
                $args = [
                    'id'    => 'archive',
-                   'title' => __t($object->labels->view_items),
+                   'title' => __t($object->labels->view_items??'View items'),
                    'href'  => get_taxonomy_archive_link($taxonomy),
                    'meta'   => ['class' => 'ab-item']
                ];
