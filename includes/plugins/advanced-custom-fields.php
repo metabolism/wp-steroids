@@ -218,7 +218,7 @@ class WPS_Advanced_Custom_Fields{
 
         if( $field['type'] == 'relationship' && isset($field['taxonomy'])){
 
-            foreach ($args['tax_query'] as $id=>&$taxonomy){
+            foreach (($args['tax_query']??[]) as $id=>&$taxonomy){
 
                 if( is_array($taxonomy) && strpos($taxonomy['taxonomy'], 'template_') === 0){
 
