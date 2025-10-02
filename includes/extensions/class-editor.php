@@ -86,7 +86,7 @@ class WPS_Editor {
     {
         $object = get_queried_object();
 
-        if( is_post_type_archive() && !is_admin() && current_user_can( $object->cap->edit_posts??'edit_posts' ) )
+        if( is_post_type_archive() && $object && !is_admin() && current_user_can( $object->cap->edit_posts??'edit_posts' ) )
         {
             $args = [
                 'id'    => 'edit',
@@ -102,7 +102,7 @@ class WPS_Editor {
         {
             $object = get_taxonomy($taxonomy);
 
-            if( current_user_can( $object->cap->edit_terms??'edit_terms' ) ){
+            if( $object && current_user_can( $object->cap->edit_terms??'edit_terms' ) ){
 
                 $args = [
                     'id'    => 'edit',
