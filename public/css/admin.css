@@ -38,6 +38,8 @@
 .post-count.dashicons-before a:before{ display: none!important }
 
 /* Bugfix */
+div.wp-link-input label, div.wp-link-preview a, div.wp-link-input input{ font-size: 12px }
+div.wp-link-input input{ width: 100%; line-height: 1 }
 #wp-admin-bar-view .ab-empty-item{ display: none!important }
 .js .tmce-active .wp-editor-area { color: inherit!important }
 .mce-tinymce+.wp-editor-area { display: none!important }
