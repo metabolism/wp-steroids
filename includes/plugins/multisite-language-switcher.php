@@ -267,7 +267,7 @@ class WPS_Multisite_Language_Switcher {
                     }
                     elseif( class_exists('ACF') ){
 
-                        if( str_starts_with($key, '_') && str_starts_with($value, 'field_') ) {
+                        if( str_starts_with($key, '_') && is_string($value) && str_starts_with($value, 'field_') ) {
 
                             $field = get_field_object($value);
 
