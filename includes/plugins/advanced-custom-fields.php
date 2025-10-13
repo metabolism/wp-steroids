@@ -669,8 +669,8 @@ class WPS_Advanced_Custom_Fields{
                     else{
 
                         $page = [
-                            'page_title' 	=> __t(ucfirst($name).' '.__t('archive options')),
-                            'menu_title' 	=> __t('Archive options'),
+                            'page_title' 	=> __t(ucfirst($name).' '.__t('options')),
+                            'menu_title' 	=> __t('Options'),
                             'autoload'   	=> true
                         ];
                     }
@@ -700,7 +700,7 @@ class WPS_Advanced_Custom_Fields{
 
                 $args = [
                     'id'    => 'archive_options',
-                    'title' => __t(__t('Edit').' '.__t('archive options')),
+                    'title' => __t(__t('Edit').' '.__t('options')),
                     'href'  => get_admin_url( null, '/edit.php?post_type='.$object->name.'&page=options_'.$object->name ),
                     'meta'   => ['class' => 'ab-item']
                 ];

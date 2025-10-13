@@ -65,20 +65,21 @@ class WPS_Query {
             if( in_array($class, ['WP_Post_Type','WP_Term']) ){
 
                 $class = $class == 'WP_Post_Type' ? 'post_type' : 'taxonomy';
+                $name = $class == 'post_type' ? 'name' : 'taxonomy';
 
-                if( $ppp = $this->config->get($class.'.'.$object->name.'.posts_per_page', false) ){
+                if( $ppp = $this->config->get($class.'.'.$object->$name.'.posts_per_page', false) ){
 
                     $query->set( 'posts_per_page', $ppp );
                     $query->query[ 'posts_per_page'] = $ppp;
                 }
 
-                if( $orderby = $this->config->get($class.'.'.$object->name.'.orderby', false) ){
+                if( $orderby = $this->config->get($class.'.'.$object->$name.'.orderby', false) ){
 
                     $query->set( 'orderby', $orderby );
                     $query->query[ 'orderby'] = $orderby;
                 }
 
-                if( $order = $this->config->get($class.'.'.$object->name.'.order', false) ){
+                if( $order = $this->config->get($class.'.'.$object->$name.'.order', false) ){
 
                     $query->set( 'order', $order );
                     $query->query[ 'order'] = $order;
