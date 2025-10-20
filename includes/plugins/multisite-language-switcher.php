@@ -589,7 +589,7 @@ class WPS_Multisite_Language_Switcher {
         $post_types = get_post_types(['_builtin' => false]);
         unset($post_types['acf-field-group'], $post_types['acf-field']);
 
-        $post_types[] = 'page';
+        $post_types['page'] = 'page';
 
         $taxonomies = get_taxonomies(['_builtin' => false]);
 
@@ -694,7 +694,7 @@ class WPS_Multisite_Language_Switcher {
                 </td>
             </tr>
             <tr>
-                <th scope="row"><label for="rewrite_page">Copy Ids</label></th>
+                <th scope="row"><label for="rewrite_page">Copy Ids ( fresh clone )</label></th>
                 <td>
                     <select name="msls[blog_id]">
                         <option value="" disabled selected>Select Blog ID</option>
