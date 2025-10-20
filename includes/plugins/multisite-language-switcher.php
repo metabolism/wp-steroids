@@ -586,10 +586,12 @@ class WPS_Multisite_Language_Switcher {
         unset($msls_options['blog_id']);
         update_blog_option(get_current_blog_id(), 'msls', $msls_options);
 
-        $post_types = get_post_types(['publicly_queryable'=>true]);
-        unset($post_types['attachment']);
+        $post_types = get_post_types(['_builtin' => false]);
+        unset($post_types['acf-field-group'], $post_types['acf-field']);
 
-        $taxonomies = get_taxonomies(['publicly_queryable'=> true]);
+        $post_types[] = 'page';
+
+        $taxonomies = get_taxonomies(['_builtin' => false]);
 
         $posts = get_posts(['numberposts'=>-1, 'post_type'=>array_keys($post_types), 'fields'=>'ids']);
         $terms = get_terms(['taxonomy'=>array_keys($taxonomies), 'hide_empty'=>false, 'fields'=>'ids']);;

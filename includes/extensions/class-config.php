@@ -493,7 +493,7 @@ class WPS_Config {
 
                 register_taxonomy($taxonomy, $object_type, $args);
 
-                if( !$args['show_in_submenu'] )
+                if( !$args['show_in_submenu'] && !$this->loaded)
                     $this->showTaxonomyInMenu($taxonomy, $args);
 
             } else{
