@@ -682,7 +682,7 @@ class WPS_Media {
     {
         foreach ($sizes as $index=>$size){
 
-            if( $size != 'thumbnail' )
+            if( $size != 'thumbnail' && $index != 'thumbnail' )
                 unset($sizes[$index]);
         }
 
@@ -1026,8 +1026,39 @@ class WPS_Media {
         }
     }
 
-
     /**
+     * @param $data
+     * @param $attachment_id
+     * @return mixed
+     */
+    function checkGeneratedFile($data, $attachment_id){
+
+        if( !wp_doing_ajax() || ($_POST['action']??false) != 'query-attachments' )
+            return $data;
+
+        if( $file = $data['sizes']['thumbnail']['file']??false ){
+
+            $uploads = wp_get_upload_dir();
+            $base_path = str_replace( wp_basename( $data['file'] ), '', $data['file'] );
+            $source_path = $uploads['basedir'].'/'.$data['file'];
+            $path = $uploads['basedir'].'/'.$base_path.$file;
+
+            if( !file_exists( $path ) && file_exists($source_path) ){
+
+                $image = wp_get_image_editor($source_path);
+
+                if ( ! is_wp_error( $image ) ) {
+
+                    $image->resize( $data['sizes']['thumbnail']['width']??150, $data['sizes']['thumbnail']['height']??150, true );
+                    $image->save( $path );
+                }
+            }
+        }
+
+        return $data;
+    }
+
+/**
      * Constructor
      */
     public function __construct()
@@ -1042,9 +1073,10 @@ class WPS_Media {
 
         // Remove intermediary sizes
         add_filter('intermediate_image_sizes', [$this, 'intermediateImageSizesAdvanced'] );
+        add_filter('image_size_names_choose', [$this, 'intermediateImageSizesAdvanced']);
         add_action('init', [$this, 'removeImageSizes']);
 
-        add_filter( 'wp_handle_upload_prefilter', [$this, 'uploadPrefilter'] );
+        add_filter('wp_handle_upload_prefilter', [$this, 'uploadPrefilter'] );
 
         if( is_admin() )
         {
@@ -1057,6 +1089,7 @@ class WPS_Media {
             add_action('post_action_convert', [$this,'postActionConvert']);
             add_action('post_action_regenerate_metadata', [$this,'postActionRegenerateMetadata']);
             add_action('post-plupload-upload-ui', [$this,'addUploadInformation']);
+            add_filter('wp_get_attachment_metadata', [$this, 'checkGeneratedFile'], 10, 2 );
 
             if( !class_exists('WP_Smart_Crop') ){
 
