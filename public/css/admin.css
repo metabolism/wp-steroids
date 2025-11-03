@@ -42,7 +42,6 @@ div.wp-link-input label, div.wp-link-preview a, div.wp-link-input input{ font-si
 div.wp-link-input input{ width: 100%; line-height: 1 }
 #wp-admin-bar-view .ab-empty-item{ display: none!important }
 .js .tmce-active .wp-editor-area { color: inherit!important }
-.mce-tinymce+.wp-editor-area { display: none!important }
 .media-sidebar .attachment-details .setting{ position: relative }
 .media-sidebar .compat-item .label, .attachment-details .compat-item .label { min-width: 30%; margin-right: 4% }
 .media-modal .media-sidebar .compat-item .label{ min-width: 20%; margin-right: 3% }
