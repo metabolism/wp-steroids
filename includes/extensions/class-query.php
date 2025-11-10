@@ -235,6 +235,19 @@ class WPS_Query {
         }
     }
 
+    /**
+     * @param $query
+     * @return void
+     */
+    public function parse_query($query ) {
+
+        if( $query->is_main_query() && $query->is_tax() && !$query->is_404 ){
+
+            if( !$query->get_queried_object_id() )
+                $query->set_404();
+        }
+    }
+
 
     /**
      * constructor.
@@ -256,6 +269,7 @@ class WPS_Query {
 
         add_action( 'init', [$this, 'fix_page_query']);
 
+        add_action( 'parse_query', [$this, 'parse_query']);
         add_filter( 'terms_clauses', [$this, 'terms_clauses'], 99999, 3);
         add_filter( 'wp_link_query_args', [$this, 'wp_link_query_args'] );
         add_filter( 'posts_orderby', [$this, 'add_sticky_posts'], 10, 2 );
