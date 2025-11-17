@@ -375,8 +375,12 @@ class WPS_Security {
             add_filter( 'admin_footer_text', [$this, 'adminFooterText'] );
             add_action( 'admin_init', [$this, 'adminInit'] );
             add_action( 'wp_handle_upload_prefilter', [$this, 'cleanFilename']);
-            add_filter( 'update_right_now_text', '__return_empty_string' );
-            add_action( 'admin_head', [$this, 'hideUpdateNotice'], 1 );
+
+            if( $this->config->get('security.disable_update', true) ){
+
+                add_filter( 'update_right_now_text', '__return_empty_string' );
+                add_action( 'admin_head', [$this, 'hideUpdateNotice'], 1 );
+            }
         }
         else
         {
