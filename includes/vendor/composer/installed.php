@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => '1.4.x-dev',
-        'version' => '1.4.9999999.9999999-dev',
-        'reference' => '854f3417bfdbafd6930b9f63074d70a7b1ca58a1',
+        'pretty_version' => '1.5.x-dev',
+        'version' => '1.5.9999999.9999999-dev',
+        'reference' => '283f9ca5ed43a88ade18ec04549555c8d7563bce',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => '1.4.x-dev',
-            'version' => '1.4.9999999.9999999-dev',
-            'reference' => '854f3417bfdbafd6930b9f63074d70a7b1ca58a1',
+            'pretty_version' => '1.5.x-dev',
+            'version' => '1.5.9999999.9999999-dev',
+            'reference' => '283f9ca5ed43a88ade18ec04549555c8d7563bce',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -29,9 +29,9 @@
             'dev_requirement' => false,
         ),
         'enshrined/svg-sanitize' => array(
-            'pretty_version' => '0.20.0',
-            'version' => '0.20.0.0',
-            'reference' => '068d9fcf912c88a0471d101d95a2caa87c50aee7',
+            'pretty_version' => '0.22.0',
+            'version' => '0.22.0.0',
+            'reference' => '0afa95ea74be155a7bcd6c6fb60c276c39984500',
             'type' => 'library',
             'install_path' => __DIR__ . '/../enshrined/svg-sanitize',
             'aliases' => array(),
