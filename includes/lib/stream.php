@@ -5,7 +5,7 @@ class WPS_Stream {
 
     public static function send($file)
     {
-        if( !file_exists($file) )
+        if( !is_file($file) )
             return false;
 
         header('Content-Description: File Transfer');

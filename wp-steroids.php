@@ -40,7 +40,7 @@ class WPS{
      */
     private function load($file, $classname, bool $instantiate=false){
 
-        if( !file_exists($file) )
+        if( !is_file($file) )
             return;
 
         include_once $file;

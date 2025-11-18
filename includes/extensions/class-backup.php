@@ -97,13 +97,13 @@ class WPS_Backup {
             $localname = 'db.sql';
             $file = $path.'/'.$localname;
 
-            if( file_exists($file) )
+            if( is_file($file) )
                 unlink($file);
 
             $dump = new IMysqldump\Mysqldump('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, ['add-drop-table' => true]);
             $dump->start($file);
 
-            if( file_exists($file) ){
+            if( is_file($file) ){
 
                 $this->zip->addFile($file, $localname);
                 $this->zip->setCompressionName($localname, \ZipArchive::CM_DEFAULT);
@@ -160,7 +160,7 @@ class WPS_Backup {
             if( is_wp_error($this->zip) )
                 wp_die( $this->zip->get_error_message() );
 
-            if( file_exists($backup) )
+            if( is_file($backup) )
                 return $backup;
 
             if( $type == 'all' || $type == 'sql'){
@@ -179,7 +179,7 @@ class WPS_Backup {
             if( $type == 'all' || $type == 'sql')
                 unlink($rootPath.'/db.sql');
 
-            if( file_exists($backup) )
+            if( is_file($backup) )
                 return $backup;
             else
                 wp_die('Can\'t generate archive file');

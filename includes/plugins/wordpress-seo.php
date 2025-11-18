@@ -192,6 +192,7 @@ class WPS_Wordpress_Seo
 		}
         else{
 
+            add_filter('wpseo_stylesheet_url', '__return_empty_string' );
             add_filter('wpseo_debug_markers', '__return_false' );
             add_filter('wpseo_canonical', [$this, 'filterCanonical']);
             add_filter('robots_txt', [$this, 'cleanUpRobots'], 999999, 1 );

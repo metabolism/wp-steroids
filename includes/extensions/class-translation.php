@@ -24,7 +24,7 @@ class WPS_Translation {
         $this->locale = count($language) ? $language[0] : 'en';
         $resource = WPS_YAML_TRANSLATION_FILES.'/wordpress.'.$this->locale.'.yaml';
 
-        if( !file_exists($resource) )
+        if( !is_file($resource) )
             return;
 
         self::$translations = WPS_Yaml::load('wp_steroid_'.$this->locale, $resource);

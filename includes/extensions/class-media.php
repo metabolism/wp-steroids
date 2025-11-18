@@ -128,7 +128,7 @@ class WPS_Media {
 
         foreach($files as $file) {
 
-            if( file_exists($folder.'/'.$file[0]) )
+            if( is_file($folder.'/'.$file[0]) )
                 wp_delete_file($folder.'/'.$file[0]);
         }
     }
@@ -488,7 +488,7 @@ class WPS_Media {
             $files = new \RegexIterator($ite, '/(?!.*150x150).*-[0-9]+x[0-9]+(-c-default|-c-center)?(-[a-z0-9]*)?\.[a-z]{3,4}$/', \RegexIterator::GET_MATCH);
 
             foreach($files as $file) {
-                if( file_exists($file[0]) )
+                if( is_file($file[0]) )
                     $file_list[] = $file[0];
             }
         }
@@ -508,7 +508,7 @@ class WPS_Media {
             $thumbnails = $this->getThumbnails($all);
 
             foreach($thumbnails as $file){
-                if( file_exists($file) )
+                if( is_file($file) )
                     wp_delete_file($file);
             }
         }
@@ -793,7 +793,7 @@ class WPS_Media {
      */
     public function convertToJpg($path){
 
-        if( !file_exists($path) || mime_content_type($path) !== 'image/png')
+        if( !is_file($path) || mime_content_type($path) !== 'image/png')
             return false;
 
         $img = imagecreatefrompng( $path );
@@ -807,7 +807,7 @@ class WPS_Media {
 
         $newPath = substr( $path, 0, -4 ) . '.jpg';
 
-        while( file_exists( $newPath ) ){
+        while( is_file( $newPath ) ){
 
             $newPath = substr( $path, 0, -4 ) . '-' . $i . '.jpg';
             ++$i;
@@ -944,7 +944,7 @@ class WPS_Media {
 
                 $thumb = dirname( $path ) . '/' . $img['file'];
 
-                if( file_exists( $thumb ) ){
+                if( is_file( $thumb ) ){
 
                     $new_thumb = substr( $img['file'], 0, -4 ) . '.jpg';
 
@@ -1043,7 +1043,7 @@ class WPS_Media {
             $source_path = $uploads['basedir'].'/'.$data['file'];
             $path = $uploads['basedir'].'/'.$base_path.$file;
 
-            if( !file_exists( $path ) && file_exists($source_path) ){
+            if( !is_file( $path ) && is_file($source_path) ){
 
                 $image = wp_get_image_editor($source_path);
 

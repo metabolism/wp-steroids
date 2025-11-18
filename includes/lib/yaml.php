@@ -5,7 +5,7 @@ class WPS_Yaml {
 
     public static function load($name, $file){
 
-        if( !file_exists($file) || !is_readable($file) )
+        if( !is_file($file) || !is_readable($file) )
             wp_die( 'File '.basename($file).'does not exists');
 
         $filemtime = filemtime($file);
