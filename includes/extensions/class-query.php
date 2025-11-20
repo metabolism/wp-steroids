@@ -27,10 +27,6 @@ class WPS_Query {
 
             $post_types = implode("','", array_map('esc_sql', (array) $args['post_types']));
 
-            // allow for arrays
-            if ( is_array($args['post_types']) )
-                $post_types = implode( "','", $args['post_types'] );
-
             $clauses['join'] .= " INNER JOIN $wpdb->term_relationships AS r ON r.term_taxonomy_id = tt.term_taxonomy_id INNER JOIN $wpdb->posts AS p ON p.ID = r.object_id";
             $clauses['where'] .= " AND p.post_type IN ('". $post_types. "') GROUP BY t.term_id";
         }
