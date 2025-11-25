@@ -1,3 +1,6 @@
+### 1.5.12
+- Replace fil_exists with is_file for better performance on Azure
+
 ### 1.5.11
 - Show Taxonomy in the main menu, not a child of a Post Type
 - Add archive management for Taxonomy
