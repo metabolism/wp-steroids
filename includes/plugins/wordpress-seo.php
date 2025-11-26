@@ -62,12 +62,6 @@ class WPS_Wordpress_Seo
 	 */
 	public function filterCanonical($canonical) {
 
-		if( is_archive() ){
-			$canon_page = get_pagenum_link();
-			$canonical = explode('?', $canon_page);
-			return $canonical[0];
-		}
-
 		$canonical = explode('?', $canonical);
 
 		return (substr($canonical[0], -1) == '/') ? substr($canonical[0], 0, -1) : $canonical[0];

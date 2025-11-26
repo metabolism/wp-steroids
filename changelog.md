@@ -1,3 +1,6 @@
+### 1.5.13
+- Fix canonical on archive page
+
 ### 1.5.12
 - Replace fil_exists with is_file for better performance on Azure
 
