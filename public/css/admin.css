@@ -116,8 +116,6 @@ input.large-text, textarea.large-text { width: 35.7rem }
     to { transform: rotate(360deg) }
 }
 
-#wp-admin-bar-build .ab-icon:before{ content: "\f111"; top: 2px; display: inline-block }
-#wp-admin-bar-build .loading .ab-icon:before{ animation: rotating 4s linear infinite }
 #msls.postbox .button-secondary{ display: none }
 .wp-editor-expand #wp-content-editor-tools{ border-bottom-color:#ccd0d4 }
 #post-status-info{ border-color:#ccd0d4!important }
@@ -199,47 +197,8 @@ th.manage-column.column-thumbnail, td.thumbnail.column-thumbnail{ width: 1%; tex
 .meta-box-sortables .postbox.closed .handlediv .toggle-indicator::before{ content: url("../media/arrow.svg"); transform: none }
 
 /* Interface resize */
-.interface-interface-skeleton__sidebar .interface-complementary-area,
-.interface-interface-skeleton__sidebar .interface-complementary-area__fill{width:100%!important}
-.interface-interface-skeleton__sidebar.ui-resizable{ display: none }
-.has-sidebar .interface-interface-skeleton__sidebar.ui-resizable{ display:block; width:350px; min-width: 280px }
-
-/*UI Styles*/
-.ui-dialog .ui-resizable-n{height:2px; top:0}
-.ui-dialog .ui-resizable-e{width:2px; right:0}
-.ui-dialog .ui-resizable-s{height:2px; bottom:0}
-.ui-dialog .ui-resizable-w{width:2px; left:0}
-.ui-dialog .ui-resizable-se,.ui-dialog .ui-resizable-sw,.ui-dialog .ui-resizable-ne,.ui-dialog .ui-resizable-nw{width:7px; height:7px}
-.ui-dialog .ui-resizable-se{right:0; bottom:0}
-.ui-dialog .ui-resizable-sw{left:0; bottom:0}
-.ui-dialog .ui-resizable-ne{right:0; top:0}
-.ui-dialog .ui-resizable-nw{left:0; top:0}
-.ui-draggable .ui-dialog-titlebar{cursor:move}
-.ui-resizable{position:relative}
-.interface-navigable-region.ui-resizable{ padding-left: 6px }
-
-.interface-navigable-region > .ui-resizable-handle{
-    position:absolute; font-size:.1px; display:block; -ms-touch-action:none; touch-action:none;
-    &:after{
-        position: absolute; top: 0; height: 100%; width: 11px; background: #f1f1f1; content: '';
-        border: 1px solid #ddd; border-top: 0; border-bottom: 0;
-    }
-    &:before{
-        position: absolute; top: 50%; height: 40px; margin-top: -20px; width: 1px; content: '';
-        border-right: 1px solid #cfcfcf;  border-left: 1px solid #cfcfcf; z-index: 1; left: 7px
-    }
-}
-.mce-fullscreen .interface-navigable-region > .ui-resizable-handle{ display: none }
-
-.ui-resizable-disabled .ui-resizable-handle,.ui-resizable-autohide .ui-resizable-handle{display:none}
-.ui-resizable-n{cursor:n-resize; height:7px; width:100%; top:-5px; left:0}
-.ui-resizable-s{cursor:s-resize; height:7px; width:100%; bottom:-5px; left:0}
-.ui-resizable-e{cursor:e-resize; width:7px; right:-5px; top:0; height:100%}
-.ui-resizable-w{cursor:w-resize; width:7px; left:-5px; top:0; height:100%}
-.ui-resizable-se{cursor:se-resize; width:12px; height:12px; right:1px; bottom:1px}
-.ui-resizable-sw{cursor:sw-resize; width:9px; height:9px; left:-5px; bottom:-5px}
-.ui-resizable-nw{cursor:nw-resize; width:9px; height:9px; left:-5px; top:-5px}
-.ui-resizable-ne{cursor:ne-resize; width:9px; height:9px; right:-5px; top:-5px}
+.interface-interface-skeleton__sidebar .interface-complementary-area{width:100%!important}
+.interface-interface-skeleton__sidebar .interface-complementary-area__fill{ display:block; width:25vw!important; min-width: 280px }
 
 /* Yoast SEO */
 .wpseo-meta-section, .wpseo-meta-section-react, .wpseo-metabox-content, .wpseo-metabox-menu{ max-width: none }

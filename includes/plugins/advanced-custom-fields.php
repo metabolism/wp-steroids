@@ -746,6 +746,14 @@ class WPS_Advanced_Custom_Fields{
         wp_enqueue_style('wps-acf', WPS_PLUGIN_URL.'public/css/acf.css', [], WPS_VERSION);
     }
 
+    public function addBodyClass($classes)
+    {
+        $acf_version = $this->config->get('acf.block.version', 2);
+
+        $classes .= ' acf-block-version-'.$acf_version;
+        return $classes;
+    }
+
 
     /**
      * ACFPlugin constructor.
@@ -795,6 +803,7 @@ class WPS_Advanced_Custom_Fields{
             add_action( 'acf/init', [$this, 'addPostTypesArchivePage'] );
             add_filter( 'acf/fields/wysiwyg/toolbars' , [$this, 'editToolbars']  );
             add_action( 'init', [$this, 'addOptionPages'] );
+            add_filter( 'admin_body_class', [$this, 'addBodyClass']);
             add_filter( 'acf/settings/show_admin', function() {
                 return current_user_can('administrator');
             });
