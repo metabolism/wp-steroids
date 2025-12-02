@@ -14,26 +14,17 @@ class WPS_Build {
         if( !current_user_can('editor') && !current_user_can('administrator') )
             return;
 
-		if( defined('BUILD_HOOK') && BUILD_HOOK ){
+		if( defined('WP_BUILD_HOOK') && WP_BUILD_HOOK ){
 
 			add_action( 'admin_bar_menu', function( $wp_admin_bar )
 			{
 				$args = [
 					'id'    => 'build',
 					'title' => '<span class="ab-icon"></span>'.__('Build', 'wp-steroids'),
-					'href'  => BUILD_HOOK
+					'href'  => WP_BUILD_HOOK
 				];
 
 				$wp_admin_bar->add_node( $args );
-
-			}, 999 );
-		}
-
-		if( defined('BUILD_BADGE') && BUILD_BADGE ){
-
-			add_action( 'rightnow_end', function( $wp_admin_bar )
-			{
-				echo '<div class="wps-build-badge"><b>Build</b> <img src="'.BUILD_BADGE.'&v='.uniqid().'" data-url="'.BUILD_BADGE.'" id="wps-build-badge"/></div>';
 
 			}, 999 );
 		}

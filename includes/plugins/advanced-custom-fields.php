@@ -24,8 +24,8 @@ class WPS_Advanced_Custom_Fields{
                 acf_update_setting($name, $value);
         }
 
-        if( defined('GOOGLE_MAP_API_KEY') &&  acf_get_setting('google_api_key') !== GOOGLE_MAP_API_KEY )
-            acf_update_setting('google_api_key', GOOGLE_MAP_API_KEY);
+        if( defined('WP_GOOGLE_MAP_API_KEY') &&  acf_get_setting('google_api_key') !== WP_GOOGLE_MAP_API_KEY )
+            acf_update_setting('google_api_key', WP_GOOGLE_MAP_API_KEY);
 
         $acf_user_settings = $this->config->get('acf.user_settings', []);
 
@@ -309,9 +309,9 @@ class WPS_Advanced_Custom_Fields{
 
         if( in_array($field['type'], ['text','textarea','wysiwyg','inline_editor']) ){
 
-            if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY )
+            if( defined('WP_GOOGLE_TRANSLATE_KEY') && WP_GOOGLE_TRANSLATE_KEY )
                 echo '<a class="wps-translate wps-translate--google" title="'.__t('Translate with Google').'"></a>';
-            elseif( defined('DEEPL_KEY') && DEEPL_KEY )
+            elseif( defined('WP_DEEPL_KEY') && WP_DEEPL_KEY )
                 echo '<a class="wps-translate wps-translate--deepl" title="'.__t('Translate with Deepl').'"></a>';
         }
 
@@ -812,7 +812,7 @@ class WPS_Advanced_Custom_Fields{
 
             add_filter( 'allowed_block_types_all', [$this, 'allowedBlockTypes'], 99, 2 );
 
-            if( !is_main_site() )
+            if( !is_main_site() or (defined('WP_TRANSLATE_MAIN_SITE') && WP_TRANSLATE_MAIN_SITE) )
                 add_filter('acf/render_field', [$this, 'render_field']);
         }
     }

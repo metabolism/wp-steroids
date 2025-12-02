@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WordPress on Steroids
  * Description: Configure WordPress using yml and add amazing features
- * Version: 1.5.13
+ * Version: 1.5.14
  * Author: Metabolism
  */
 
@@ -84,11 +84,25 @@ class WPS{
             }
         }
 
-        if( !defined('HEADLESS') )
-            define('HEADLESS', $_config->get('headless', false) );
+        if( !defined('WP_HEADLESS') )
+            define('WP_HEADLESS', $_config->get('headless', false) );
 
-        if( !defined('URL_MAPPING') )
-            define('URL_MAPPING', $_config->get('headless.mapping', false) );
+        if( !defined('WP_URL_MAPPING') )
+            define('WP_URL_MAPPING', $_config->get('headless.mapping', false) );
+    }
+
+    /**
+     * Make it works on old configuration
+     *
+     * @return  void
+     */
+    function backwardCompatibility()
+    {
+        foreach (['HEADLESS', 'URL_MAPPING', 'BUILD_HOOK', 'GOOGLE_MAP_API_KEY', 'GOOGLE_TRANSLATE_KEY', 'DEEPL_KEY'] as $key){
+
+            if (defined($key) && !defined('WP_'.$key))
+                define('WP_'.$key, constant($key) );
+        }
     }
 
     /**
@@ -108,9 +122,11 @@ class WPS{
 
         define('WPS_PATH', __DIR__);
         define('WPS_PLUGIN_URL', plugin_dir_url(__FILE__));
-        define('WPS_VERSION', '1.5.13');
+        define('WPS_VERSION', '1.5.14');
 
         require __DIR__ . '/includes/vendor/autoload.php';
+
+        $this->backwardCompatibility();
 
         $this->loadAll('lib');
 

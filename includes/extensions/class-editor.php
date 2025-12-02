@@ -182,7 +182,7 @@ class WPS_Editor {
         if( !current_user_can('administrator') )
             remove_submenu_page('themes.php', 'themes.php');
 
-        if( HEADLESS && !URL_MAPPING ){
+        if( WP_HEADLESS && !WP_URL_MAPPING ){
 
             remove_submenu_page('options-general.php', 'options-reading.php');
             remove_submenu_page('options-general.php', 'options-permalink.php');
@@ -242,11 +242,11 @@ class WPS_Editor {
             'enable_translation' => false
         ];
 
-        if( !is_main_site() ){
+        if( !is_main_site() or (defined('WP_TRANSLATE_MAIN_SITE') && WP_TRANSLATE_MAIN_SITE) ){
 
-            if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY )
+            if( defined('WP_GOOGLE_TRANSLATE_KEY') && WP_GOOGLE_TRANSLATE_KEY )
                 $object['enable_translation'] = "google";
-            elseif( defined('DEEPL_KEY') && DEEPL_KEY )
+            elseif( defined('WP_DEEPL_KEY') && WP_DEEPL_KEY )
                 $object['enable_translation'] = "deepl";
         }
 
@@ -467,7 +467,7 @@ class WPS_Editor {
             }
         }
 
-        return implode(' ', $caps).$classes.(HEADLESS?' headless':'').(URL_MAPPING?' url-mapping':'');
+        return implode(' ', $caps).$classes.(WP_HEADLESS?' headless':'').(WP_URL_MAPPING?' url-mapping':'');
     }
 
     /**

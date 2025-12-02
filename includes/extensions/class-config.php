@@ -81,7 +81,7 @@ class WPS_Config {
 
                 $args = array_merge($default_args, $args);
 
-                if( HEADLESS && !URL_MAPPING )
+                if( WP_HEADLESS && !WP_URL_MAPPING )
                     $args['publicly_queryable'] = false;
 
                 $name = str_replace('-', ' ', str_replace('_', ' ', $args['labels']['singular_name']??$post_type));
@@ -406,7 +406,7 @@ class WPS_Config {
 
                 $args = array_merge($default_args, $args);
 
-                if( HEADLESS && !URL_MAPPING )
+                if( WP_HEADLESS && !WP_URL_MAPPING )
                     $args['publicly_queryable'] = false;
 
                 $name = str_replace('-', ' ', str_replace('_', ' ', $args['labels']['singular_name']??$taxonomy));
@@ -559,7 +559,7 @@ class WPS_Config {
 
     public function addRewriteRules(){
 
-        if( HEADLESS )
+        if( WP_HEADLESS )
             return;
 
         $taxonomies = $this->config->get('taxonomy', []);
@@ -1071,7 +1071,7 @@ class WPS_Config {
             add_filter('is_post_type_viewable', [$this, 'isPostTypeViewable'], 10 ,2);
             add_filter('query_vars', [$this, 'updateQueryVars']);
 
-            if( !HEADLESS || URL_MAPPING ){
+            if( !WP_HEADLESS || WP_URL_MAPPING ){
 
                 add_filter( 'post_type_link', [$this, 'updatePostTypePermalink'], 10, 2);
                 add_filter( 'term_link', [$this, 'updateTermPermalink'], 10, 2);
@@ -1096,7 +1096,7 @@ class WPS_Config {
         // When viewing admin
         if( is_admin() ) {
 
-            if( !HEADLESS || URL_MAPPING )
+            if( !WP_HEADLESS || WP_URL_MAPPING )
                 add_action( 'load-options-permalink.php', [$this, 'LoadPermalinks']);
         }
     }

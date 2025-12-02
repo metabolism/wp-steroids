@@ -68,9 +68,9 @@ class WPS_Translation {
 
         $text = str_replace("'", "`", $text);
 
-        if( defined('GOOGLE_TRANSLATE_KEY') && GOOGLE_TRANSLATE_KEY ){
+        if( defined('WP_GOOGLE_TRANSLATE_KEY') && WP_GOOGLE_TRANSLATE_KEY ){
 
-            $response = wp_remote_post('https://translation.googleapis.com/language/translate/v2?key='.GOOGLE_TRANSLATE_KEY, [
+            $response = wp_remote_post('https://translation.googleapis.com/language/translate/v2?key='.WP_GOOGLE_TRANSLATE_KEY, [
                 'body'=>[
                     'q'=>$text, 'format'=>$wysiwyg?'html':'text', 'target'=>$this->locale
                 ]
@@ -82,7 +82,7 @@ class WPS_Translation {
                 $translated_text = $body['data']['translations'][0]['translatedText']??false;
             }
         }
-        elseif( defined('DEEPL_KEY') && DEEPL_KEY ){
+        elseif( defined('WP_DEEPL_KEY') && WP_DEEPL_KEY ){
 
             $response = wp_remote_post('https://api-free.deepl.com/v2/translate',
                 [
@@ -93,7 +93,7 @@ class WPS_Translation {
                         'target_lang'=>$this->locale
                     ],
                     'headers'=>[
-                        'Authorization'=> 'DeepL-Auth-Key '.DEEPL_KEY
+                        'Authorization'=> 'DeepL-Auth-Key '.WP_DEEPL_KEY
                     ]
                 ]
             );

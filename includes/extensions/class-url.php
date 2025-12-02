@@ -24,8 +24,8 @@ class WPS_Url {
 	 */
 	public function applyUrlMapping($html){
 
-		$html = preg_replace('/<span id="sample-permalink"><a href="(.*)">(.*)<span/', '<span id="sample-permalink"><a href="'.URL_MAPPING.'$1">'.URL_MAPPING.'$2<span', $html);
-		$html = preg_replace('/<a id="sample-permalink" href="(.*)">(.*)<\/a>/', '<a id="sample-permalink" href="'.URL_MAPPING.'$1">'.URL_MAPPING.'$2</a>', $html);
+		$html = preg_replace('/<span id="sample-permalink"><a href="(.*)">(.*)<span/', '<span id="sample-permalink"><a href="'.WP_URL_MAPPING.'$1">'.WP_URL_MAPPING.'$2<span', $html);
+		$html = preg_replace('/<a id="sample-permalink" href="(.*)">(.*)<\/a>/', '<a id="sample-permalink" href="'.WP_URL_MAPPING.'$1">'.WP_URL_MAPPING.'$2</a>', $html);
 		return $html;
 	}
 
@@ -96,11 +96,11 @@ class WPS_Url {
 	 */
 	public function __construct(){
 
-		if( HEADLESS ){
+		if( WP_HEADLESS ){
 
 			add_action( 'wp_before_admin_bar_render', [$this, 'removeAdminBarLinks'] );
 
-			if( URL_MAPPING ){
+			if( WP_URL_MAPPING ){
 				add_filter('get_sample_permalink_html', [$this, 'applyUrlMapping'] );
 			}
 		}
