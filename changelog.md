@@ -1,3 +1,6 @@
+### 1.5.14
+- Taxonomy archive now use post type posts_per_page configuration as fallback
+
 ### 1.5.13
 - Fix canonical on archive page
 

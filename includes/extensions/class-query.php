@@ -46,45 +46,14 @@ class WPS_Query {
             if( !$query->get('post_status') && current_user_can('administrator') ){
 
                 $query->set('post_status', ['publish','draft','pending','private']);
-                $query->query['post_status'] =  ['publish','draft','pending','private'];
+                $query->query['post_status'] = ['publish','draft','pending','private'];
             }
 
             return;
         }
 
-        $object = $query->get_queried_object();
+        if( $query->is_tax && !get_query_var('post_type') ) {
 
-        if ( $query->is_archive && is_object($object) )
-        {
-            $class = get_class($object);
-
-            if( in_array($class, ['WP_Post_Type','WP_Term']) ){
-
-                $class = $class == 'WP_Post_Type' ? 'post_type' : 'taxonomy';
-                $name = $class == 'post_type' ? 'name' : 'taxonomy';
-
-                if( $ppp = $this->config->get($class.'.'.$object->$name.'.posts_per_page', false) ){
-
-                    $query->set( 'posts_per_page', $ppp );
-                    $query->query[ 'posts_per_page'] = $ppp;
-                }
-
-                if( $orderby = $this->config->get($class.'.'.$object->$name.'.orderby', false) ){
-
-                    $query->set( 'orderby', $orderby );
-                    $query->query[ 'orderby'] = $orderby;
-                }
-
-                if( $order = $this->config->get($class.'.'.$object->$name.'.order', false) ){
-
-                    $query->set( 'order', $order );
-                    $query->query[ 'order'] = $order;
-                }
-            }
-        }
-
-        if ( $query->is_tax && !get_query_var('post_type') )
-        {
             global $wp_taxonomies;
 
             $post_type = ( isset($object->taxonomy, $wp_taxonomies[$object->taxonomy] ) ) ? $wp_taxonomies[$object->taxonomy]->object_type :[];
@@ -93,10 +62,57 @@ class WPS_Query {
             $query->query['post_type'] = $post_type;
         }
 
-        if( $query->is_search ) {
+        $object = $query->get_queried_object();
 
-            if( $ppp = $this->config->get('search.posts_per_page', false) )
-                $query->set( 'posts_per_page', $ppp );
+        if ( $query->is_archive && is_object($object) ) {
+
+            $class = get_class($object);
+
+            if( in_array($class, ['WP_Post_Type','WP_Term']) ){
+
+                if( $class == 'WP_Post_Type' ){
+
+                    if( $ppp = $this->config->get('post_type.'.$object->name.'.posts_per_page', false) ){
+                        $query->set('posts_per_page', $ppp );
+                        $query->query['posts_per_page'] = $ppp;
+                    }
+
+                    if( $orderby = $this->config->get('post_type.'.$object->name.'.orderby', false) ){
+                        $query->set('orderby', $orderby );
+                        $query->query['orderby'] = $orderby;
+                    }
+
+                    if( $order = $this->config->get('post_type.'.$object->name.'.order', false) ){
+                        $query->set('order', $order );
+                        $query->query['order'] = $order;
+                    }
+                }
+                else{
+
+                    $post_type = get_query_var('post_type');
+                    $post_type = is_array($post_type)?$post_type[0]:$post_type;
+
+                    if( $ppp = $this->config->get('taxonomy.'.$object->taxonomy.'.posts_per_page', $this->config->get('post_type.'.$post_type.'.posts_per_page', false)) ){
+                        $query->set('posts_per_page', $ppp );
+                        $query->query['posts_per_page'] = $ppp;
+                    }
+
+                    if( $orderby = $this->config->get('taxonomy.'.$object->taxonomy.'.orderby', $this->config->get('post_type.'.$post_type.'.orderby', false)) ){
+                        $query->set('orderby', $orderby );
+                        $query->query['orderby'] = $orderby;
+                    }
+
+                    if( $order = $this->config->get('taxonomy.'.$object->taxonomy.'.order', $this->config->get('post_type.'.$post_type.'.order', false)) ){
+                        $query->set('order', $order );
+                        $query->query['order'] = $order;
+                    }
+                }
+            }
+        }
+
+        if( $query->is_search && $ppp = $this->config->get('search.posts_per_page', false) ) {
+
+            $query->set( 'posts_per_page', $ppp );
         }
 
         // opti
