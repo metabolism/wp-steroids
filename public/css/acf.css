@@ -5,7 +5,7 @@
 .acf-field input[type="week"], .acf-field textarea, .acf-field select{ font-size: 13px; }
 .acf-field .acf-label label, .post-attributes-label, .acf-flexible-content .layout .acf-fc-layout-handle span, #edittag .form-table th { font-weight: 500; }
 .acf-field .acf-label.acf-accordion-title label{ color: #1e1e1e }
-.acf-tab-group li a{ font-weight: normal; font-size: 13px }
+.acf-tab-group li a, .acf-table{ font-weight: normal; font-size: 13px }
 .acf-tab-group li.active a{ font-weight: 500 }
 .acf-true-false{ padding: 5px 0 }
 .acf-input-prepend, .acf-input-append{ border-color:#c4cdd5; font-size: 13px }
