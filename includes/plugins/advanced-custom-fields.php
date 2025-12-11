@@ -757,7 +757,7 @@ class WPS_Advanced_Custom_Fields{
     public function parseNodeAttributes($node_attributes)
     {
         $nodes = $this->config->get('acf.block.node', []);
-        ?>
+        if( !empty($nodes) ): ?>
         <script>
             acf.addFilter('acf_blocks_parse_node_attr', function (shortcut, nodeAttr) {
 
@@ -775,7 +775,7 @@ class WPS_Advanced_Custom_Fields{
                 return shortcut;
             });
         </script>
-        <?php
+        <?php endif;
     }
 
 
