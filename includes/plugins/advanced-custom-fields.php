@@ -754,6 +754,30 @@ class WPS_Advanced_Custom_Fields{
         return $classes;
     }
 
+    public function parseNodeAttributes($node_attributes)
+    {
+        $nodes = $this->config->get('acf.block.node', []);
+        ?>
+        <script>
+            acf.addFilter('acf_blocks_parse_node_attr', function (shortcut, nodeAttr) {
+
+                <?php foreach ($nodes as $node=>$values): ?>
+                <?php if (empty($values)): ?>
+                if (nodeAttr.name === '<?=$node?>') {
+                    return nodeAttr;
+                }
+                <?php else: ?>
+                if (nodeAttr.name === '<?=$node?>' && (0 <?php foreach ($values as $value): ?> || nodeAttr.value.includes('<?=$value?>')<?php endforeach;?>) ) {
+                    return nodeAttr;
+                }
+                <?php endif; ?>
+                <?php endforeach; ?>
+                return shortcut;
+            });
+        </script>
+        <?php
+    }
+
 
     /**
      * ACFPlugin constructor.
@@ -807,6 +831,8 @@ class WPS_Advanced_Custom_Fields{
             add_filter( 'acf/settings/show_admin', function() {
                 return current_user_can('administrator');
             });
+
+            add_action('acf/input/admin_footer', [$this, 'parseNodeAttributes']);
 
             add_filter( 'acf/location/match_rule', [$this, 'matchRules'], 10, 4);
             add_filter( 'acf/load_field_groups', [$this, 'translateGroupTitle'], 99 );

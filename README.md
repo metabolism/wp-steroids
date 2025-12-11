@@ -69,10 +69,15 @@ wordpress:
   gutenberg:
     replace_reset_styles: true
     remove_core_block: true
-    remove_plugin_block: false
+    remove_plugin_block:
+      - lloc/msls-widget-block
+      - yoast/faq-block
+      - yoast/how-to-block
+      - yoast-seo/breadcrumbs
     remove_core_block_patterns: true
     disable_classic_theme_styles: true
     remove_block_library: true
+    block_sorting: true
     load_remote_block_patterns: false
     block_editor_style: '/build/bundle.css'
     block_editor_script: '/blocks.js'
@@ -114,6 +119,7 @@ wordpress:
 
   ## Hide page from submenu
   remove_submenu_page:
+    - themes.php: site-editor.php
     - themes.php: site-editor.php?path=/patterns
   #  - themes.php: nav-menus.php
 
@@ -162,8 +168,8 @@ wordpress:
   support:
     - page #enable page
     #- post #enable post
-    - tag #enable tag taxonomy for post
-    - category #enable category taxonomy for post
+    #- tag #enable tag taxonomy for post
+    #- category #enable category taxonomy for post
 
   ## Add post type support
   ## https://developer.wordpress.org/reference/functions/post_type_supports/
@@ -174,7 +180,7 @@ wordpress:
   ## Add theme support
   ## https://developer.wordpress.org/reference/functions/add_theme_support/
   theme_support:
-    - disable-layout-styles
+    #- core-block-patterns
     - thumbnail #add thumbnails to post
     #- post-formats:
     #  - video
@@ -234,6 +240,12 @@ wordpress:
       gallery_height: 210
     block:
       api_version: 3
+      version: 3
+      node:
+        breakpoints:
+        class:
+          - p-vimeo
+          - p-youtube
     input:
       lock_max_length: false
     toolbars: #customize wysiwyg toolbar
@@ -395,6 +407,8 @@ wordpress:
   post_type: # https://developer.wordpress.org/reference/functions/register_post_type/
 
     page:
+      columns:
+        - thumbnail
       template:
         - - acf/hero
           - lock:
@@ -518,6 +532,7 @@ wordpress:
     ## Add page states like "homepage"
     #page_states:
     #archive_guide: 'Guide archive'
+    #404: '404'
 
   #################################
   ##    Database table viewer    ##
@@ -615,7 +630,7 @@ wordpress:
       - embed
       - trackback
       - comment
-  #    - feed
+      - feed
 
   ####################
   ##    Security    ##
