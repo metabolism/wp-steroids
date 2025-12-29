@@ -1,7 +1,27 @@
 ### 1.5.14
-- Taxonomy archive now use post type posts_per_page configuration as fallback
-- Added WP_ prefix to constants*
-- Removed sidebar resize
+- Taxonomy archives now use the post type `posts_per_page` configuration as a fallback.
+- Added the `_WP_` prefix to constants.
+- Removed sidebar resizing.
+- Added `acf.block.node` configuration to prevent React DOM parsing when using ACF Blocks v3.
+```yml
+  acf:
+    block:
+      api_version: 3
+      version: 3
+      node:
+        breakpoints:
+        class:
+          - p-vimeo
+          - p-youtube
+```
+This basically means: do not parse the `breakpoints` attribute and do not replace `class` with `className` for elements with the `p-vimeo` or `p-youtube` class.
+```html
+<swiper-container slides-per-view="1" space-between="10" breakpoints='{"768": {"slidesPerView": 4}}' overflow="visible">
+    <swiper-slide lazy="true">
+        ...
+    </swiper-slide>
+</swiper-container>
+```
 
 ### 1.5.13
 - Fix canonical on archive page
