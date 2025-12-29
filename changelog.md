@@ -1,5 +1,7 @@
 ### 1.5.14
 - Taxonomy archive now use post type posts_per_page configuration as fallback
+- Added WP_ prefix to constants*
+- Removed sidebar resize
 
 ### 1.5.13
 - Fix canonical on archive page

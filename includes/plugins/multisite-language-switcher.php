@@ -765,7 +765,7 @@ class WPS_Multisite_Language_Switcher {
                     if( is_admin_bar_showing() ) {
 
                         $ver = defined('MSLS_PLUGIN_VERSION') ? constant('MSLS_PLUGIN_VERSION') : false;
-                        wp_enqueue_style('msls-flags', MslsPlugin::plugins_url('css-flags/css/flag-icon.min.css'), [], $ver);
+                        wp_enqueue_style('msls-flags', MslsPlugin::plugins_url('assets/css-flags/css/flag-icon.min.css'), [], $ver);
                     }
                 });
 
