@@ -536,7 +536,7 @@ class WPS_Advanced_Custom_Fields{
 
         if( $this->config->get('gutenberg.block_sorting', false) ){
 
-            usort($blocks, function($a, $b) {
+            uasort($blocks, function($a, $b) {
                 return strcmp($a['title'], $b['title']);
             });
         }

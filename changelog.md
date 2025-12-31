@@ -1,3 +1,6 @@
+### 1.5.15
+- Fix a bug when using `fields` in block definition ( yml file )
+
 ### 1.5.14
 - Taxonomy archives now use the post type `posts_per_page` configuration as a fallback.
 - Added the `_WP_` prefix to constants.
