@@ -52,17 +52,20 @@ class WPS_Query {
             return;
         }
 
+        $object = $query->get_queried_object();
+
         if( $query->is_tax && !get_query_var('post_type') ) {
 
             global $wp_taxonomies;
 
-            $post_type = ( isset($object->taxonomy, $wp_taxonomies[$object->taxonomy] ) ) ? $wp_taxonomies[$object->taxonomy]->object_type :[];
+            $post_type = ( isset($object->taxonomy, $wp_taxonomies[$object->taxonomy] ) ) ? $wp_taxonomies[$object->taxonomy]->object_type : '';
 
-            $query->set('post_type', $post_type);
-            $query->query['post_type'] = $post_type;
+            if( !empty($post_type) ){
+
+                $query->set('post_type', $post_type);
+                $query->query['post_type'] = $post_type;
+            }
         }
-
-        $object = $query->get_queried_object();
 
         if ( $query->is_archive && is_object($object) ) {
 
