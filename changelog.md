@@ -1,3 +1,7 @@
+### 1.5.17
+- Performance: Replaced global post type and taxonomy re-registration during blog switches with targeted permalink filters.
+- SEO: Improved URL slug sanitization to remove leftover encoded characters and special symbols.
+
 ### 1.5.16
 - Fixed a bug where the **post type** was not set in the main query when requesting a **taxonomy**.
 

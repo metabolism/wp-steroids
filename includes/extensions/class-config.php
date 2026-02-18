@@ -163,7 +163,7 @@ class WPS_Config {
 
                 if( $args['has_archive'] ){
 
-                    $archive = get_option( $post_type. '_rewrite_archive' );
+                    $archive = $this->getArchiveSlug( $post_type );
 
                     if( !empty($archive) )
                         $args['has_archive'] = $archive;
@@ -359,6 +359,14 @@ class WPS_Config {
             $params['id'] = $id;
             register_sidebar($params);
         }
+    }
+
+    /**
+     * Preprocess slug
+     */
+    private function getArchiveSlug($post_type){
+
+        return get_option( $post_type. '_rewrite_archive' );
     }
 
     /**
@@ -907,6 +915,30 @@ class WPS_Config {
 
     /**
      * Update permalink if structure is custom
+     * @param $link
+     * @param $post_type
+     * @return string|string[]
+     */
+    public  function updatePostTypeArchivePermalink($link, $post_type){
+
+        if ( !ms_is_switched() )
+            return $link;
+
+        $target_slug = $this->getArchiveSlug( $post_type );
+
+        $blog_id = get_current_blog_id();
+        restore_current_blog();
+
+        $original_slug = $this->getArchiveSlug( $post_type );
+
+        switch_to_blog($blog_id);
+
+        return str_replace('/' . $original_slug, '/' . $target_slug, $link);
+    }
+
+
+    /**
+     * Update permalink if structure is custom
      * @param $post_link
      * @param $post
      * @return string|string[]
@@ -917,6 +949,21 @@ class WPS_Config {
 
             if( !is_post_type_viewable($post->post_type) )
                 return null;
+
+            if ( ms_is_switched() ) {
+
+                $target_slug = $this->getSlug( $post->post_type );
+
+                $blog_id = get_current_blog_id();
+                restore_current_blog();
+
+                $original_slug = $this->getSlug( $post->post_type );
+
+                switch_to_blog($blog_id);
+
+                if( !empty($original_slug) && !empty($target_slug) && $original_slug != $target_slug )
+                    $post_link = str_replace('/' . $original_slug . '/', '/' . $target_slug . '/', $post_link);
+            }
 
             preg_match_all('/\/{.+?}/', $post_link, $toks);
 
@@ -948,6 +995,21 @@ class WPS_Config {
     public  function updateTermPermalink($term_link, $term){
 
         if ( is_object( $term ) ){
+
+            if ( ms_is_switched() ) {
+
+                $target_slug = $this->getSlug( $term->taxonomy );
+
+                $blog_id = get_current_blog_id();
+                restore_current_blog();
+
+                $original_slug = $this->getSlug( $term->taxonomy );
+
+                switch_to_blog($blog_id);
+
+                if( !empty($original_slug) && !empty($target_slug) && $original_slug != $target_slug )
+                    $term_link = str_replace('/' . $original_slug . '/', '/' . $target_slug . '/', $term_link);
+            }
 
             preg_match_all('/\/{.+?}/', $term_link, $toks);
 
@@ -1073,8 +1135,9 @@ class WPS_Config {
 
             if( !WP_HEADLESS || WP_URL_MAPPING ){
 
-                add_filter( 'post_type_link', [$this, 'updatePostTypePermalink'], 10, 2);
-                add_filter( 'term_link', [$this, 'updateTermPermalink'], 10, 2);
+                add_filter('post_type_link', [$this, 'updatePostTypePermalink'], 10, 2);
+                add_filter('post_type_archive_link', [$this, 'updatePostTypeArchivePermalink'], 10, 2);
+                add_filter('term_link', [$this, 'updateTermPermalink'], 10, 2);
             }
 
             if( is_admin() ){
@@ -1084,14 +1147,7 @@ class WPS_Config {
             }
         });
 
-        add_action('switch_blog', function($new_blog_id, $prev_blog_id){
-
-            global $wp_rewrite;
-
-            if( $new_blog_id != $prev_blog_id && $wp_rewrite )
-                $this->configureContentType();
-
-        }, 10, 2);
+        add_action('clean_site_cache', [$this, 'configureContentType']);
 
         // When viewing admin
         if( is_admin() ) {

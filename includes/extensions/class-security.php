@@ -19,6 +19,19 @@ class WPS_Security {
     }
 
     /**
+     * Filter title to remove %
+     * @param $title
+     * @return string
+     */
+    public function sanitizeTitle( $title )
+    {
+        $title = preg_replace('/%[a-fA-F0-9]{2}/', '-', $title);
+        $title = preg_replace('/-{2,}/', '-', $title);
+
+        return trim($title, '-');
+    }
+
+    /**
      * Filter explicit wp class
      * @param $classes
      * @return array
@@ -349,6 +362,9 @@ class WPS_Security {
 
         //remove explicit wp class
         add_filter( 'body_class', [$this, 'filterClass'], 10, 2 );
+
+        //remove explicit wp class
+        add_filter( 'sanitize_title', [$this, 'sanitizeTitle'], 20 );
 
         //prevent .htaccess writing
         add_filter( 'flush_rewrite_rules_hard', '__return_false');
