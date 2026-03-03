@@ -157,12 +157,19 @@ class WPS_Menu {
      */
     public function addCustomFields($item_id, $menu_item)
     {
-        $value = get_post_meta( $item_id, '_menu_item_aria_label', true );
+        $aria_label = get_post_meta( $item_id, '_menu_item_aria_label', true );
+        $anchor = get_post_meta( $item_id, '_menu_item_anchor', true );
         ?>
         <p class="field-aria-label description">
             <label for="edit-menu-item-aria-label-<?=$item_id?>">
                 Aria label<br/>
-                <input type="text" id="edit-menu-item-aria-label-<?=$item_id?>" class="widefat edit-menu-item-attr-title" value="<?php echo esc_attr($value); ?>" name="menu-item-aria-label[<?=$item_id?>]">
+                <input type="text" id="edit-menu-item-aria-label-<?=$item_id?>" class="widefat edit-menu-item-attr-title" value="<?php echo esc_attr($aria_label); ?>" name="menu-item-aria-label[<?=$item_id?>]">
+            </label>
+        </p>
+        <p class="field-aria-label description">
+            <label for="edit-menu-item-anchor-<?=$item_id?>">
+                Anchor<br/>
+                <input type="text" id="edit-menu-item-anchor-<?=$item_id?>" class="widefat edit-menu-item-attr-title" value="<?php echo esc_attr($anchor); ?>" name="menu-item-anchor[<?=$item_id?>]">
             </label>
         </p>
         <?php
@@ -184,6 +191,16 @@ class WPS_Menu {
         } else {
 
             delete_post_meta( $menu_item_db_id, '_menu_item_aria_label' );
+        }
+
+        if ( isset( $_POST['menu-item-anchor'][$menu_item_db_id]  ) ) {
+
+            $sanitized_data = sanitize_title( $_POST['menu-item-anchor'][$menu_item_db_id] );
+            update_post_meta( $menu_item_db_id, '_menu_item_anchor', $sanitized_data );
+
+        } else {
+
+            delete_post_meta( $menu_item_db_id, '_menu_item_anchor' );
         }
     }
 
