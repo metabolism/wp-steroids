@@ -118,6 +118,9 @@ class WPS_Media {
     {
         $file = get_attached_file($post_id);
 
+        if( !is_file($file) )
+            return;
+
         $folder = dirname($file);
         $filename = basename($file);
         $pathinfo = pathinfo($filename);
