@@ -353,7 +353,7 @@ class WPS_Security {
      * Force https origin
      * @return bool
      */
-    protected function forceHttpsOrigin($origin){
+    public function forceHttpsOrigin($origin){
 
         if(str_contains($origin, '.local'))
             return $origin;
