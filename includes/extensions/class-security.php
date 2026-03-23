@@ -349,6 +349,18 @@ class WPS_Security {
         });
     }
 
+    /**
+     * Force https origin
+     * @return bool
+     */
+    protected function forceHttpsOrigin($origin){
+
+        if(str_contains($origin, '.local'))
+            return $origin;
+
+        return str_replace('http://', 'https://', $origin);
+    }
+
 
     /**
      * SecurityPlugin constructor.
@@ -385,6 +397,7 @@ class WPS_Security {
 
         add_filter( 'map_meta_cap', [$this, 'mapMetaCap'], 1, 3 );
         add_filter( 'x_redirect_by', '__return_false' );
+        add_filter('http_origin', [$this, 'forceHttpsOrigin']);
 
         if( is_admin() )
         {
