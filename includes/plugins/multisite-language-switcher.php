@@ -1,5 +1,6 @@
 <?php
 
+use lloc\Msls\MslsBlogCollection;
 use lloc\Msls\MslsPlugin;
 
 /**
@@ -785,12 +786,39 @@ class WPS_Multisite_Language_Switcher {
             add_action( 'admin_bar_menu', [$this, 'wp_admin_bar_my_sites_menu'], 10 );
 
             //todo: find why $url is buggy
-            add_filter( 'mlsl_output_get_alternate_links', function ($url, $blog){
+            add_filter( 'msls_output_get_alternate_links', function ($url, $blog){
 
-                if( $url && strpos($url, 'http') === false )
+                if( $url && !str_contains($url, 'http'))
                     return null;
 
                 return $url;
+            }, 10, 2);
+
+            add_filter( 'msls_output_get_alternate_links_default', function (){
+
+                $main_id = get_main_site_id();
+                $blog_details = get_blog_details($main_id);
+
+                return  sprintf( '<link rel="alternate" href="%1$s" hreflang="%2$s" />', esc_url( $blog_details->home ), 'x-default' );
+            });
+
+            add_filter( 'msls_output_get_alternate_links_arr', function ($arr){
+
+                $main_id = get_main_site_id();
+                $blog_details = get_blog_details($main_id);
+                $language = explode('_', MslsBlogCollection::get_blog_language( $main_id ));
+
+                foreach ($arr as $url){
+
+                    if( str_contains($url, $blog_details->home) ){
+
+                        $arr[] = str_replace('hreflang="'.$language[0].'"', 'hreflang="x-default"', $url);
+                        break;
+                    }
+                }
+
+                return $arr;
+
             }, 10, 2);
         }
     }
