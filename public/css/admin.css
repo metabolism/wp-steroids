@@ -116,6 +116,9 @@ input.large-text, textarea.large-text { width: 35.7rem }
     to { transform: rotate(360deg) }
 }
 
+#wp-admin-bar-build .ab-icon:before{ content: "\f111"; top: 2px; display: inline-block }
+#wp-admin-bar-build .loading .ab-icon:before{ animation: rotating 4s linear infinite }
+
 #msls.postbox .button-secondary{ display: none }
 .wp-editor-expand #wp-content-editor-tools{ border-bottom-color:#ccd0d4 }
 #post-status-info{ border-color:#ccd0d4!important }
