@@ -808,12 +808,15 @@ class WPS_Multisite_Language_Switcher {
                 $blog_details = get_blog_details($main_id);
                 $language = explode('_', MslsBlogCollection::get_blog_language( $main_id ));
 
-                foreach ($arr as $url){
+                if( $blog_details->path != '/' ){
 
-                    if( str_contains($url, $blog_details->home) ){
+                    foreach ($arr as $url){
 
-                        $arr[] = str_replace('hreflang="'.$language[0].'"', 'hreflang="x-default"', $url);
-                        break;
+                        if( str_contains($url, $blog_details->home) ){
+
+                            $arr[] = str_replace('hreflang="'.$language[0].'"', 'hreflang="x-default"', $url);
+                            break;
+                        }
                     }
                 }
 

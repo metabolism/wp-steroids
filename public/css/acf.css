@@ -37,6 +37,7 @@
 .acf-field-flexible-content .acf-field .acf-label label{ font-weight: 400; font-size: 12px }
 .acf-field-flexible-content .acf-field .acf-label.acf-accordion-title label{ font-weight: 500 }
 .select2-container.-acf .select2-selection, .acf-color-picker .wp-color-result { border-color: #c4cdd5; min-height: 30px }
+#your-profile .select2-container { max-width: 25em }
 .acf-gallery-sort{ display: none }
 .acf-gallery .acf-gallery-side-info{ width: calc(100% + 10px) }
 .editor-sidebar__panel .acf-gallery { overflow: hidden }
