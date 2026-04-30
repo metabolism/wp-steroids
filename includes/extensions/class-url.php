@@ -6,35 +6,35 @@
  */
 class WPS_Url {
 
-	/**
-	 * Remove link when there is no template support
-	 */
-	public function removeAdminBarLinks(){
+    /**
+     * Remove link when there is no template support
+     */
+    public function removeAdminBarLinks(){
 
-		global $wp_admin_bar;
-		$wp_admin_bar->remove_menu('view-site');
-		$wp_admin_bar->remove_menu('site-name');
-	}
-
-
-	/**
-	 * Remove link when there is no template support
-	 * @param $html
-	 * @return string|string[]|null
-	 */
-	public function applyUrlMapping($html){
-
-		$html = preg_replace('/<span id="sample-permalink"><a href="(.*)">(.*)<span/', '<span id="sample-permalink"><a href="'.WP_URL_MAPPING.'$1">'.WP_URL_MAPPING.'$2<span', $html);
-		$html = preg_replace('/<a id="sample-permalink" href="(.*)">(.*)<\/a>/', '<a id="sample-permalink" href="'.WP_URL_MAPPING.'$1">'.WP_URL_MAPPING.'$2</a>', $html);
-		return $html;
-	}
+        global $wp_admin_bar;
+        $wp_admin_bar->remove_menu('view-site');
+        $wp_admin_bar->remove_menu('site-name');
+    }
 
 
-	/**
-	 * Redirect admin after login
-	 * @return void
-	 */
-	public function redirectAdmin(){
+    /**
+     * Remove link when there is no template support
+     * @param $html
+     * @return string|string[]|null
+     */
+    public function applyUrlMapping($html){
+
+        $html = preg_replace('/<span id="sample-permalink"><a href="(.*)">(.*)<span/', '<span id="sample-permalink"><a href="'.WP_URL_MAPPING.'$1">'.WP_URL_MAPPING.'$2<span', $html);
+        $html = preg_replace('/<a id="sample-permalink" href="(.*)">(.*)<\/a>/', '<a id="sample-permalink" href="'.WP_URL_MAPPING.'$1">'.WP_URL_MAPPING.'$2</a>', $html);
+        return $html;
+    }
+
+
+    /**
+     * Redirect admin after login
+     * @return void
+     */
+    public function redirectAdmin(){
 
         global $_config;
 
@@ -52,7 +52,7 @@ class WPS_Url {
                 }, 10, 3);
             }
         }
-	}
+    }
 
     /**
      * @param $url
@@ -62,28 +62,30 @@ class WPS_Url {
      */
     function filterTermLink($url, $term, $taxonomy) {
 
+        global $wp_query;
+
         $taxonomy_object = get_taxonomy($taxonomy);
 
         if (!$taxonomy_object || count($taxonomy_object->object_type) <= 1 )
             return $url;
 
-        if( is_admin() ){
+        if( is_admin() )
+            $post_type = $_GET['post_type']??null;
+        else
+            $post_type = $wp_query->query['post_type']??null;
 
-            $post_type = $_GET['post_type'] ?? null;
+        if (!$post_type || !is_string($post_type) || !post_type_exists($post_type))
+            return $url;
 
-            if ($post_type && post_type_exists($post_type)) {
+        if ( $archive_link = get_post_type_archive_link($post_type) ){
 
-                if ( $url = get_post_type_archive_link($post_type) ){
+            if( !$taxonomy_object->rewrite ){
+                
+                return add_query_arg($taxonomy, $term->slug, $archive_link);
+            }
+            else{
 
-                    if( !$taxonomy_object->rewrite ){
-
-                        return add_query_arg($taxonomy, $term->slug, $url);
-                    }
-                    else{
-
-                        return $url.'/'.$taxonomy_object->rewrite['slug'].'/'.$term->slug;
-                    }
-                }
+                return $archive_link.'/'.$taxonomy_object->rewrite['slug'].'/'.$term->slug;
             }
         }
 
@@ -91,24 +93,24 @@ class WPS_Url {
     }
 
 
-	/**
-	 * UrlPlugin constructor.
-	 */
-	public function __construct(){
+    /**
+     * UrlPlugin constructor.
+     */
+    public function __construct(){
 
-		if( WP_HEADLESS ){
+        if( WP_HEADLESS ){
 
-			add_action( 'wp_before_admin_bar_render', [$this, 'removeAdminBarLinks'] );
+            add_action( 'wp_before_admin_bar_render', [$this, 'removeAdminBarLinks'] );
 
-			if( WP_URL_MAPPING ){
-				add_filter('get_sample_permalink_html', [$this, 'applyUrlMapping'] );
-			}
-		}
+            if( WP_URL_MAPPING ){
+                add_filter('get_sample_permalink_html', [$this, 'applyUrlMapping'] );
+            }
+        }
         else{
 
             add_filter( 'term_link', [$this, 'filterTermLink'], 10, 3);
         }
 
-		$this->redirectAdmin();
+        $this->redirectAdmin();
     }
 }
