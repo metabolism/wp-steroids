@@ -597,11 +597,29 @@ class WPS_Multisite_Language_Switcher {
         $posts = get_posts(['numberposts'=>-1, 'post_type'=>array_keys($post_types), 'fields'=>'ids']);
         $terms = get_terms(['taxonomy'=>array_keys($taxonomies), 'hide_empty'=>false, 'fields'=>'ids']);;
 
-        foreach($posts as $post_id)
-            update_option('msls_'.$post_id, [$lang=>$post_id]);
+        foreach($posts as $post_id){
 
-        foreach($terms as $term_id)
-            update_option('msls_term_'.$term_id, [$lang=>$term_id]);
+            $option = maybe_unserialize(get_option('msls_'.$post_id));
+
+            if(!is_array($option))
+                $option = [];
+
+            $option[$lang] = $post_id;
+
+            update_option('msls_'.$post_id, $option);
+        }
+
+        foreach($terms as $term_id){
+
+            $option = maybe_unserialize(get_option('msls_term_'.$term_id));
+
+            if(!is_array($option))
+                $option = [];
+
+            $option[$lang] = $term_id;
+
+            update_option('msls_term_'.$term_id, $option);
+        }
     }
 
     public function syncConfig(){
