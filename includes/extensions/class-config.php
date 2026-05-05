@@ -921,7 +921,7 @@ class WPS_Config {
      */
     public  function updatePostTypeArchivePermalink($link, $post_type){
 
-        if ( !ms_is_switched() )
+        if ( !is_multisite() || !ms_is_switched() )
             return $link;
 
         $target_slug = $this->getArchiveSlug( $post_type );
@@ -950,7 +950,7 @@ class WPS_Config {
             if( !is_post_type_viewable($post->post_type) )
                 return null;
 
-            if ( ms_is_switched() ) {
+            if ( is_multisite() && ms_is_switched() ) {
 
                 $target_slug = $this->getSlug( $post->post_type );
 
@@ -996,7 +996,7 @@ class WPS_Config {
 
         if ( is_object( $term ) ){
 
-            if ( ms_is_switched() ) {
+            if ( is_multisite() && ms_is_switched() ) {
 
                 $target_slug = $this->getSlug( $term->taxonomy );
 
