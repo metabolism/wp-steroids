@@ -972,7 +972,7 @@ class WPS_Config {
                 foreach ($toks[0] as $tok){
 
                     $taxonomy = str_replace('}', '', str_replace('/{', '', $tok));
-                    $terms = wp_get_object_terms( $post->ID, $taxonomy, ['fields'=>'slugs', 'number'=>1] );
+                    $terms = wp_get_object_terms( $post->ID, $taxonomy, ['fields'=>'slugs', 'orderby'=>'term_id', 'order'=>'ASC', 'number'=>1] );
 
                     if( !is_wp_error($terms) && count($terms) )
                         $post_link = str_replace( '{'.$taxonomy.'}', $terms[0], $post_link );
