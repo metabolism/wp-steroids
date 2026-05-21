@@ -812,6 +812,8 @@ class WPS_Multisite_Language_Switcher {
                 return $url;
             }, 10, 2);
 
+            add_filter( 'msls_output_get_alternate_links_default', '__return_empty_string');
+
             add_filter( 'msls_output_get_alternate_links_arr', function ($arr){
 
                 $main_id = get_main_site_id();
