@@ -812,14 +812,6 @@ class WPS_Multisite_Language_Switcher {
                 return $url;
             }, 10, 2);
 
-            add_filter( 'msls_output_get_alternate_links_default', function (){
-
-                $main_id = get_main_site_id();
-                $blog_details = get_blog_details($main_id);
-
-                return  sprintf( '<link rel="alternate" href="%1$s" hreflang="%2$s" />', esc_url( $blog_details->home ), 'x-default' );
-            });
-
             add_filter( 'msls_output_get_alternate_links_arr', function ($arr){
 
                 $main_id = get_main_site_id();
