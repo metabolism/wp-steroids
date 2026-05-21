@@ -33,8 +33,9 @@
 
 .headless #post-preview, .headless #wp-admin-bar-view{ display: none }
 #wp-admin-bar-debug{ pointer-events: none }
-.wps-build-badge img{ vertical-align: text-top; margin-left: 5px }
+#dashboard_right_now .sub{ padding: 10px }
 .post-count.dashicons-before:before{ color: #646970; padding: 0 5px 0 0 }
+#wps-build-badge{ display: block }
 .post-count.dashicons-before a:before{ display: none!important }
 
 /* Bugfix */

@@ -28,6 +28,15 @@ class WPS_Build {
 
 			}, 999 );
 		}
+
+        if( defined('WP_BUILD_BADGE') && WP_BUILD_BADGE ){
+
+            add_action( 'rightnow_end', function( $wp_admin_bar )
+            {
+                echo '<div class="wps-build-badge"><img src="'.WP_BUILD_BADGE.'&v='.uniqid().'" id="wps-build-badge"/></div>';
+
+            }, 999 );
+        }
     }
 
     /**
