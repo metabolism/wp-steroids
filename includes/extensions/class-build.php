@@ -33,7 +33,7 @@ class WPS_Build {
 
             add_action( 'rightnow_end', function( $wp_admin_bar )
             {
-                echo '<div class="wps-build-badge"><img src="'.WP_BUILD_BADGE.'&v='.uniqid().'" id="wps-build-badge"/></div>';
+                echo '<div class="wps-build-badge"><img src="'.WP_BUILD_BADGE.'&v='.uniqid().' data-url="'.WP_BUILD_BADGE.'" id="wps-build-badge"/></div>';
 
             }, 999 );
         }
