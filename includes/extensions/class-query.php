@@ -9,6 +9,27 @@ class WPS_Query {
     protected $config;
 
     /**
+     * Filter the terms args
+     *
+     * @param $args array
+     * @param $taxonomies string
+     * @return array
+     */
+    public function get_terms_args( $args, $taxonomies )
+    {
+        if ( isset($args['taxonomy']['post_type']) )
+            $args['post_types'] = [$args['taxonomy']['post_type']];
+
+        if ( isset($args['taxonomy']['post_types']) )
+            $args['post_types'] = $args['taxonomy']['post_types'];
+
+        if ( isset($args['taxonomy']['taxonomy']) )
+            $args['taxonomy'] = $args['taxonomy']['taxonomy'];
+
+        return $args;
+    }
+
+    /**
      * Filter the terms clauses
      *
      * @param $clauses array
@@ -272,6 +293,7 @@ class WPS_Query {
         add_action( 'init', [$this, 'fix_page_query']);
 
         add_filter( 'terms_clauses', [$this, 'terms_clauses'], 99999, 3);
+        add_filter( 'get_terms_args', [$this, 'get_terms_args'], 99999, 2);
         add_filter( 'wp_link_query_args', [$this, 'wp_link_query_args'] );
         add_filter( 'posts_orderby', [$this, 'add_sticky_posts'], 10, 2 );
     }
