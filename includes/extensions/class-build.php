@@ -7,7 +7,7 @@ class WPS_Build {
 
 
     /**
-     * Add maintenance button and checkbox
+     * Add a maintenance button and checkbox
      */
     public function addBuildButton()
     {
@@ -18,10 +18,18 @@ class WPS_Build {
 
 			add_action( 'admin_bar_menu', function( $wp_admin_bar )
 			{
+                $build_hook_url = apply_filters('wps_build_hook_url', WP_BUILD_HOOK);
+
+                $build_hook_message = defined('WP_BUILD_MESSAGE') ? WP_BUILD_MESSAGE : __('Launch build ?', 'wp-steroids');
+                $build_hook_message = apply_filters('wps_build_hook_message', $build_hook_message);
+
 				$args = [
 					'id'    => 'build',
 					'title' => '<span class="ab-icon"></span>'.__('Build', 'wp-steroids'),
-					'href'  => WP_BUILD_HOOK
+					'href'  => $build_hook_url,
+                    'meta' => [
+                        'title'=>$build_hook_message
+                    ]
 				];
 
 				$wp_admin_bar->add_node( $args );
@@ -33,7 +41,10 @@ class WPS_Build {
 
             add_action( 'rightnow_end', function( $wp_admin_bar )
             {
-                echo '<div class="wps-build-badge"><img src="'.WP_BUILD_BADGE.'&v='.uniqid().' data-url="'.WP_BUILD_BADGE.'" id="wps-build-badge"/></div>';
+                $build_badge_url = apply_filters('wps_build_badge_url', WP_BUILD_BADGE);
+                $build_badge_url_version = add_query_arg(['v'=>uniqid()], $build_badge_url);
+
+                echo '<div class="wps-build-badge"><img src="'.$build_badge_url_version.'" data-url="'.esc_url($build_badge_url).'" id="wps-build-badge"/></div>';
 
             }, 999 );
         }

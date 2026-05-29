@@ -136,23 +136,19 @@
 			e.preventDefault();
 			var $el = $(this);
 
-			$el.addClass('loading');
+			if( confirm($el.attr('title')) ){
 
-			$.get( $el.attr('href') ).then(function (){
+				$el.addClass('loading');
 
-				var refresh = setInterval(function (){
+				$.get( $el.attr('href') ).then(function (){
 
-					$('#wps-build-badge').attr('src', $('#wps-build-badge').data('url')+'&v='+Date.now())
+					setInterval(function (){
 
-				}, 1000);
+						$('#wps-build-badge').attr('src', $('#wps-build-badge').data('url')+'&v='+Date.now())
 
-				setTimeout(function (){
-
-					clearInterval(refresh);
-					$el.removeClass('loading');
-
-				}, 10000)
-			})
+					}, 2000);
+				})
+			}
 		})
 	}
 
