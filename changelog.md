@@ -2,7 +2,10 @@
 - Performance: Replaced global post type and taxonomy re-registration during blog switches with targeted permalink filters.
 - SEO: Improved URL slug sanitization to remove leftover encoded characters and special symbols.
 - Deepl : better html translation
+- Security : Force https except when using localhost.
 - Menu: Added support for anchor links in menu items.
+- Add build hook and badge filter
+- SEO : Better hreflang management
 
 ### 1.5.16
 - Fixed a bug where the **post type** was not set in the main query when requesting a **taxonomy**.
