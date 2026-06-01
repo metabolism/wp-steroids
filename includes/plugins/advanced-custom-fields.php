@@ -80,7 +80,12 @@ class WPS_Advanced_Custom_Fields{
     {
         if( function_exists('acf_add_options_page') )
         {
-            $args = ['autoload' => true, 'page_title' => __t('Options'), 'menu_slug' => 'acf-options'];
+            $args = [
+                    'autoload' => true,
+                    'page_title' => __t('Options'),
+                    'menu_slug' => 'acf-options',
+                    'capability' => 'edit_theme_options'
+            ];
 
             acf_add_options_page($args);
 
@@ -93,14 +98,24 @@ class WPS_Advanced_Custom_Fields{
 
                 if( is_array($args) ){
 
-                    $args = array_merge(['page_title'=>__t($args['title']??ucfirst($name)), 'menu_slug'=>$name, 'autoload'=>true], $args);
+                    $args = array_merge([
+                            'page_title'=>__t($args['title']??ucfirst($name)),
+                            'menu_slug'=>$name,
+                            'autoload'=>true,
+                            'capability' => 'edit_theme_options'
+                    ], $args);
                 }
                 else{
 
                     if( !empty($args) )
                         $name = $args;
 
-                    $args = ['page_title'=>__t(ucfirst($name)), 'menu_slug'=>sanitize_title($name), 'autoload'=>true];
+                    $args = [
+                            'page_title'=>__t(ucfirst($name)),
+                            'menu_slug'=>sanitize_title($name),
+                            'autoload'=>true,
+                            'capability' => 'edit_theme_options'
+                    ];
                 }
 
                 acf_add_options_sub_page($args);
@@ -663,7 +678,8 @@ class WPS_Advanced_Custom_Fields{
                         $page = [
                             'page_title' 	=> __t(ucfirst($name).' '.__t(strtolower($args['has_options']))),
                             'menu_title' 	=> __t($args['has_options']),
-                            'autoload'   	=> true
+                            'autoload'   	=> true,
+                            'capability' => 'edit_theme_options'
                         ];
                     }
                     else{
@@ -671,7 +687,8 @@ class WPS_Advanced_Custom_Fields{
                         $page = [
                             'page_title' 	=> __t(ucfirst($name).' '.__t('options')),
                             'menu_title' 	=> __t('Options'),
-                            'autoload'   	=> true
+                            'autoload'   	=> true,
+                            'capability' => 'edit_theme_options'
                         ];
                     }
 
