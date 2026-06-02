@@ -1,3 +1,7 @@
+### 1.5.18
+- SEO : Remove hreflang when translated page does not exist.
+- ACF : Options page now uses the correct "edit_theme_options" capability.
+
 ### 1.5.17
 - Performance: Replaced global post type and taxonomy re-registration during blog switches with targeted permalink filters.
 - SEO: Improved URL slug sanitization to remove leftover encoded characters and special symbols.
