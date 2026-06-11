@@ -1,15 +1,18 @@
 ### 1.5.18
-- SEO : Remove hreflang when translated page does not exist.
-- ACF : Options page now uses the correct "edit_theme_options" capability.
+- Bugfix: Fix minor issues with WP7 and ACF
+
+### 1.5.18
+- SEO: Remove hreflang when the translated page does not exist.
+- ACF: Options page now uses the correct "edit_theme_options" capability.
 
 ### 1.5.17
 - Performance: Replaced global post type and taxonomy re-registration during blog switches with targeted permalink filters.
 - SEO: Improved URL slug sanitization to remove leftover encoded characters and special symbols.
-- Deepl : better html translation
-- Security : Force https except when using localhost.
+- Deepl: better html translation
+- Security: Force https except when using localhost.
 - Menu: Added support for anchor links in menu items.
 - Add build hook and badge filter
-- SEO : Better hreflang management
+- SEO: Better hreflang management
 
 ### 1.5.16
 - Fixed a bug where the **post type** was not set in the main query when requesting a **taxonomy**.
