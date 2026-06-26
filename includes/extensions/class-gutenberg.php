@@ -34,7 +34,7 @@ class WPS_Gutenberg
 	 * @param $editor_context
 	 * @return int[]|string[]
 	 */
-	function removeCoreBlock($allowed_block_types, $editor_context ) {
+	function removeCoreBlocks($allowed_block_types, $editor_context ) {
 
         if( !is_array($allowed_block_types) )
             $allowed_block_types = WP_Block_Type_Registry::get_instance()->get_all_registered();
@@ -45,6 +45,25 @@ class WPS_Gutenberg
         }
 
 		return array_keys($allowed_block_types);
+	}
+
+	/**
+	 * @param $allowed_block_types
+	 * @param $editor_context
+	 * @return int[]|string[]
+	 */
+	function removePluginBlocks($allowed_block_types, $editor_context ) {
+
+        global $_config;
+        $to_remove = $_config->get('gutenberg.remove_plugin_block', []);
+
+        if( !is_array($allowed_block_types) ){
+
+            $allowed_block_types = WP_Block_Type_Registry::get_instance()->get_all_registered();
+            $allowed_block_types = array_keys($allowed_block_types);
+        }
+
+		return array_diff($allowed_block_types, $to_remove);
 	}
 
     /**
@@ -107,10 +126,13 @@ class WPS_Gutenberg
         if ( !$_config->get('gutenberg.load_remote_block_patterns', false) )
             add_action( 'should_load_remote_block_patterns', '__return_false' );
 
-		if( is_admin() ){
+        if ( $_config->get('gutenberg.remove_core_block', false) )
+            add_filter( 'allowed_block_types_all', [$this, 'removeCoreBlocks'], 25, 2 );
 
-			if ( $_config->get('gutenberg.remove_core_block', false) )
-                add_filter( 'allowed_block_types_all', [$this, 'removeCoreBlock'], 25, 2 );
+        if ( $_config->get('gutenberg.remove_plugin_block', false) )
+            add_filter( 'allowed_block_types_all', [$this, 'removePluginBlocks'], 25, 2 );
+
+		if( is_admin() ){
 
 			if ( $width = $_config->get('gutenberg.preview_width', false) ){
 
