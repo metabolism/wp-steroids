@@ -218,6 +218,10 @@ th#mslscol, td.mslscol.column-mslscol{ width: 1%; white-space: nowrap }
 #msls.postbox .inside li+li{ margin-top: 10px }
 
 /* Wicked folder */
+body.admin-color-modern{
+    --wf-folder-color:var(--wp-admin-theme-color);
+    --wf-folder-text-color:var(--wp-admin-theme-color);
+}
 ul.wicked-tree{ font-size: 14px }
 .wicked-folder-pane-toolbar-buttons button svg { width: 14px }
 .wicked-folder-pane-toolbar-buttons>div{ min-height: 38px }
