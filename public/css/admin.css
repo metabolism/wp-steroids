@@ -123,6 +123,8 @@ input.large-text, textarea.large-text { width: 35.7rem }
 #wp-admin-bar-build .ab-icon:before{ content: "\f111"; top: 2px; display: inline-block }
 #wp-admin-bar-build .loading .ab-icon:before{ animation: rotating 4s linear infinite }
 
+#wp-admin-bar-quick_links .ab-icon:before{ content: "\f103"; top: 2px; display: inline-block }
+
 #msls.postbox .button-secondary{ display: none }
 .wp-editor-expand #wp-content-editor-tools{ border-bottom-color:#ccd0d4 }
 #post-status-info{ border-color:#ccd0d4!important }

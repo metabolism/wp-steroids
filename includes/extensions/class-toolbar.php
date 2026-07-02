@@ -3,8 +3,51 @@
 /**
  * Class
  */
-class WPS_Build {
+class WPS_Toolbar {
 
+
+    /**
+     * Add a maintenance button and checkbox
+     */
+    public function addLinks()
+    {
+        if( !current_user_can('editor') && !current_user_can('administrator') )
+            return;
+
+        if( defined('WP_ADMIN_LINKS') && WP_ADMIN_LINKS ){
+
+            add_action( 'admin_bar_menu', function( $wp_admin_bar )
+            {
+                $links = explode(',', WP_ADMIN_LINKS);
+                $title = defined('WP_ADMIN_LINKS_TITLE')?WP_ADMIN_LINKS_TITLE:__('Quick links', 'wp-steroids');
+
+                $args = [
+                    'id'    => 'quick_links',
+                    'title' => '<span class="ab-icon"></span>'.$title,
+                ];
+
+                $wp_admin_bar->add_node( $args );
+
+                foreach( $links as $link ){
+
+                    $link = explode('|', trim($link));
+
+                    $args = [
+                        'parent' => 'quick_links',
+                        'id' => md5($link[0]),
+                        'title' => trim($link[1]??$link[0]),
+                        'href' => trim($link[0]),
+                        'meta' => [
+                            'target' => '_blank'
+                        ]
+                    ];
+
+                    $wp_admin_bar->add_node($args);
+                }
+
+            }, 999 );
+        }
+    }
 
     /**
      * Add a maintenance button and checkbox
@@ -51,13 +94,16 @@ class WPS_Build {
     }
 
     /**
-     * MaintenancePlugin constructor.
+     * WPS_Toolbar constructor.
      */
     public function __construct()
     {
         if( !is_admin() )
 			return;
 
-	    add_action( 'init', [$this, 'addBuildButton']);
+	    add_action( 'init', function (){
+            $this->addBuildButton();
+            $this->addLinks();
+        });
     }
 }
