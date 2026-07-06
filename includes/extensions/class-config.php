@@ -193,14 +193,14 @@ class WPS_Config {
                 if( isset($args['query_var']) && !$args['query_var'] ){
 
                     $args['show_in_nav_menus'] = false;
-                    $args['exclude_from_search'] = false;
+                    $args['exclude_from_search'] = true;
                 }
 
                 if( isset($args['publicly_queryable']) && !$args['publicly_queryable'] ){
 
                     $args['show_in_nav_menus'] = false;
                     $args['query_var'] = false;
-                    $args['exclude_from_search'] = false;
+                    $args['exclude_from_search'] = true;
                     $args['rewrite'] = false;
                 }
 
