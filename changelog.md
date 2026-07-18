@@ -1,5 +1,20 @@
-### 1.5.18
+### 1.5.19
 - Bugfix: Fix minor issues with WP7 and ACF
+- Feature: Add custom routes action support
+```yml
+custom_routes:
+  script: script.js
+```
+```php
+add_action('custom_route_script', function (){
+
+    header('Content-Type: application/javascript; charset=utf-8');
+
+    $context = Timber::context();
+
+    Timber::render('script.js.twig', $context);
+});
+```
 
 ### 1.5.18
 - SEO: Remove hreflang when the translated page does not exist.

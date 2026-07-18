@@ -56,7 +56,7 @@ class WPS{
     private function importConfig($resource){
 
         /**
-         * Wordpress configuration file
+         * WordPress configuration file
          */
 
         global $_config;

@@ -12,6 +12,7 @@ Supercharge WordPress with:
 * Maintenance mode
 * Backup download in dev mode
 * Build hook
+* Custom routes action
 * Disabled automatic updates
 * Enhanced security
 * Better GUID using RFC 4122 compliant UUID version 5
@@ -214,6 +215,10 @@ wordpress:
   ## Declare constant
   #define:
   #  disallow_file_edit: false
+  
+  ## Add custom routes
+  #custom_routes:
+  #  script: script.js
 
   #########################
   ##    Carbon fields    ##
