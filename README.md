@@ -161,6 +161,24 @@ wordpress:
 
   #editor_style: backoffice.css
 
+  ###########################
+  ##     User Profile      ##
+  ###########################
+
+  user_profile:
+    color_scheme: false
+    app_passwords: false
+    syntax_highlighting: false
+    comment_shortcuts: false
+    admin_bar_option: false
+    keyboard_shortcuts: false
+    contact_methods:
+      - facebook
+      - instagram
+      - linkedin
+      - twitter
+      - url
+
   ##################
   ##    System    ##
   ##################

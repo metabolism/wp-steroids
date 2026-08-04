@@ -1,9 +1,27 @@
+### 1.5.20
+- Feature: User profil cleaning options
+```yml
+  user_profile:
+    color_scheme: false
+    app_passwords: false
+    syntax_highlighting: false
+    comment_shortcuts: false
+    admin_bar_option: false
+    keyboard_shortcuts: false
+    contact_methods:
+      - facebook
+      - instagram
+      - linkedin
+      - twitter
+      - url
+```
+
 ### 1.5.19
 - Bugfix: Fix minor issues with WP7 and ACF
 - Feature: Add custom routes action support
 ```yml
-custom_routes:
-  script: script.js
+    custom_routes:
+      script: script.js
 ```
 ```php
 add_action('custom_route_script', function (){
@@ -26,7 +44,7 @@ add_action('custom_route_script', function (){
 - Deepl: better html translation
 - Security: Force https except when using localhost.
 - Menu: Added support for anchor links in menu items.
-- Add build hook and badge filter
+- Feature: build hook and badge filter
 - SEO: Better hreflang management
 
 ### 1.5.16
