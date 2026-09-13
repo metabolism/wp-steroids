@@ -70,45 +70,56 @@ class WPS_Translation {
 
         if( defined('WP_GOOGLE_TRANSLATE_KEY') && WP_GOOGLE_TRANSLATE_KEY ){
 
-            $params = [
-                'body'=>[
-                    'q'=>$text, 'format'=>$format, 'target'=>$this->locale
-                ]
+            $body = [
+                'q'=>$text,
+                'format'=>$format,
+                'target'=>$this->locale
             ];
 
-            $response = wp_remote_post('https://translation.googleapis.com/language/translate/v2?key='.WP_GOOGLE_TRANSLATE_KEY, $params);
+            $params = [
+                'headers' => [
+                    'Content-Type' => 'application/json; charset=utf-8',
+                    'X-goog-api-key' => WP_GOOGLE_TRANSLATE_KEY
+                ],
+                'body' => json_encode($body)
+            ];
+
+            $response = wp_remote_post('https://translation.googleapis.com/language/translate/v2', $params);
 
             if( !is_wp_error($response) ){
 
-                $body = json_decode($response['body'], true);
+                $body = json_decode(wp_remote_retrieve_body($response), true);
                 $translated_text = $body['data']['translations'][0]['translatedText']??false;
             }
         }
         elseif( defined('WP_DEEPL_KEY') && WP_DEEPL_KEY ){
 
-            $params = [
-                'body'=>[
-                    'text'=>$text,
-                    'preserve_formatting'=> true,
-                    'non_splitting_tags'=> true,
-                    'target_lang'=>$this->locale
-                ],
-                'headers'=>[
-                    'Authorization'=> 'DeepL-Auth-Key '.WP_DEEPL_KEY
-                ]
+            $body = [
+                'text'=>[$text],
+                'preserve_formatting'=> true,
+                'target_lang'=>$this->locale
             ];
 
             if( $format == 'html' ){
 
                 $params['body']['tag_handling'] = 'html';
-                $params['body']['tag_handling_version'] = 'v2';
+                $params['body']['split_sentences'] = 'nonewlines';
+                $params['body']['ignore_tags'] = ["br"];
             }
+
+            $params = [
+                'body'=>json_encode($body),
+                'headers'=>[
+                    'Authorization' => 'DeepL-Auth-Key '.WP_DEEPL_KEY,
+                    'Content-Type' => 'application/json'
+                ]
+            ];
 
             $response = wp_remote_post('https://api-free.deepl.com/v2/translate', $params);
 
             if( !is_wp_error($response) ){
 
-                $body = json_decode($response['body'], true);
+                $body = json_decode(wp_remote_retrieve_body($response), true);
                 $translated_text = $body['translations'][0]['text']??false;
             }
         }
