@@ -87,7 +87,8 @@ ul.category-tabs{ margin-bottom: 3px }
 .wp-tab-active, ul.add-menu-item-tabs li.tabs, ul.category-tabs li.tabs, .acf-tab-group li a, .nav-tab { border-radius: 3px 3px 0 0 }
 .postbox, .card, .accordion-container, .menu-edit{ border: 0!important; border-radius: 3px; box-shadow: 0 0 0 1px rgba(3,63,68,0.05), 0 1px 3px 0 rgba(63,63,68,0.15)!important; overflow: hidden }
 .postbox.seamless{ box-shadow: none!important }
-#major-publishing-actions{ background: none }
+#major-publishing-actions{ background: none; border-top: 0 }
+.postbox-header{ border-bottom-color: #eaecf0 }
 .menu-item-handle, .attachment-preview, .wp-core-ui select{ border-radius: 3px }
 
 input[type=color], input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month],
@@ -229,3 +230,14 @@ ul.wicked-tree .wicked-folder .wicked-icon svg { width: 18px!important }
     border-color: #e0e0e0; border-radius: 3px; border-bottom-width: 1px; margin-bottom: 10px;
     box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.03);
 }
+
+/* Taxonomy order */
+#cpt_info_box{ display: none }
+#order-terms, .wp-list-taxonomy {
+    box-shadow: 0 0 0 1px rgba(3, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15);
+}
+.wp-list-taxonomy thead tr { background: #f6f7f7 }
+#order-terms #nav-menu-header{ display: none }
+#order-terms #nav-menu-footer{ background: #f6f7f7; border:0; }
+#order-terms #post-body{ border: 0 }
+#order-terms #tto_sortable li > .item{ background: #f6f7f7; border: 1px solid #dcdcde; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04); }

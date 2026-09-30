@@ -17,7 +17,7 @@
 .acf-field.acf-accordion .acf-label{ margin-bottom: 0 }
 .acf-field.acf-accordion .acf-label.acf-accordion-title{ padding: 16px }
 .acf-accordion .acf-accordion-title svg.acf-accordion-icon{ right: 16px }
-.acf-field.acf-accordion{ border-top-color: #e0e0e0 }
+.acf-field.acf-accordion{ border-top: 1px solid #e0e0e0 }
 .acf-field.acf-accordion .acf-field-group{ padding: 0 }
 .acf-menu-item-fields .acf-field.acf-accordion .acf-field-group{ margin: 0 -12px }
 .acf-field.acf-accordion .acf-field-group .acf-fields.-border{ border: 0 }
@@ -56,6 +56,7 @@
 .acf-fields.acf-menu-item-fields>.acf-field+.acf-field{ margin-top: 10px }
 .acf-fields.acf-menu-item-fields>.acf-field.acf-accordion+.acf-field.acf-accordion{ margin-top: -6px!important }
 .acf-field.acf-accordion .acf-input.acf-accordion-content>.acf-fields.-clear{ padding: 0 12px }
+.acf-postbox.seamless>.acf-fields>.acf-accordion{ border-color: #e0e0e0 }
 
 @media screen and (max-width: 782px){
     .form-table>tbody>.acf-tab-wrap td{ padding-left: 0 }
