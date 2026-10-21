@@ -19,15 +19,30 @@ class WPS_Translation {
             $this->translateText($_POST['q']??'', $_POST['format']??'text');
         } );
 
-        $language = get_bloginfo('language');
-        $language  = explode('-', $language);
-        $this->locale = count($language) ? $language[0] : 'en';
-        $resource = WPS_YAML_TRANSLATION_FILES.'/wordpress.'.$this->locale.'.yaml';
+        add_action( 'init', function (){
 
-        if( !is_file($resource) )
-            return;
+            if( is_user_logged_in() && is_admin() ){
 
-        self::$translations = WPS_Yaml::load('wp_steroid_'.$this->locale, $resource);
+                $user_locale = get_user_locale();
+                $user_locale  = explode('_', $user_locale);
+
+                $this->locale = count($user_locale) ? $user_locale[0] : 'en';
+            }
+            else{
+
+                $language = get_bloginfo('language');
+                $language  = explode('-', $language);
+                $this->locale = count($language) ? $language[0] : 'en';
+            }
+
+            $resource = WPS_YAML_TRANSLATION_FILES.'/wordpress.'.$this->locale.'.yaml';
+
+            if( !is_file($resource) )
+                return;
+
+            self::$translations = WPS_Yaml::load('wp_steroid_'.$this->locale, $resource);
+
+        }, false, 2 );
 
         if( is_admin() ){
 
