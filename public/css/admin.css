@@ -33,7 +33,7 @@
 
 .headless #post-preview, .headless #wp-admin-bar-view{ display: none }
 #wp-admin-bar-debug{ pointer-events: none }
-#dashboard_right_now .sub{ padding: 10px }
+#dashboard_right_now .sub{ margin: -12px; margin-top: 10px; padding: 12px }
 .post-count.dashicons-before:before{ color: #646970; padding: 0 5px 0 0 }
 #wps-build-badge{ display: block }
 .post-count.dashicons-before a:before{ display: none!important }
@@ -63,6 +63,8 @@ svg.components-checkbox-control__checked, svg.components-checkbox-control__indet
 .wp-list-table.table-view-list{ table-layout: auto }
 .wp-list-table.table-view-list .column-description p{ overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical }
 .media-types-required-info{ display: none }
+.postbox .handle-order-higher, .postbox .handle-order-lower{ display: none!important; }
+.postbox-header .handle-actions{ margin-right: 10px }
 
 /* Quick redesign */
 #footer-thankyou{ display: none }

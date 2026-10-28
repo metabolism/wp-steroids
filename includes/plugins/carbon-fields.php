@@ -11,6 +11,9 @@ class WPS_Carbon_Fields{
     private $config;
 
     private $shared_fields;
+    private $registered_post_types;
+    private $registered_taxonomies;
+    private $registered_blocks;
 
     public function addContent(){
 
@@ -21,7 +24,7 @@ class WPS_Carbon_Fields{
 
     public function addGroupFields()
     {
-        foreach ( $this->config->get('post_type', []) as $post_type => $args ) {
+        foreach ( $this->registered_post_types as $post_type => $args ) {
 
             if( isset($args['fields']) ){
 
@@ -33,7 +36,7 @@ class WPS_Carbon_Fields{
             }
         }
 
-        foreach ( $this->config->get('taxonomy', []) as $taxonomy => $args ) {
+        foreach ( $this->registered_taxonomies as $taxonomy => $args ) {
 
             if( isset($args['fields']) ){
 
@@ -85,7 +88,7 @@ class WPS_Carbon_Fields{
             $this->callMethods($carbon_container, $option_args);
         }
 
-        foreach ( $this->config->get('post_type', []) as $post_type => $args )
+        foreach ( $this->registered_post_types as $post_type => $args )
         {
             if( $option_args = $args['has_options']??false ){
 
@@ -126,7 +129,7 @@ class WPS_Carbon_Fields{
 
         $upload_dir = wp_upload_dir();
 
-        foreach ( $this->config->get('block', []) as $block_name => $block_args )
+        foreach ( $this->registered_blocks as $block_name => $block_args )
         {
             $block = [
                 '$schema'           => 'https://schemas.wp.org/trunk/block.json',
@@ -323,6 +326,10 @@ class WPS_Carbon_Fields{
 
         $this->config = $_config;
         $this->shared_fields = $this->config->get('carbon_fields.shared_fields', []);
+
+        $this->registered_post_types = apply_filters('registered_post_types', $this->config->get('post_type', []));
+        $this->registered_taxonomies = apply_filters('registered_taxonomies', $this->config->get('taxonomy', []));
+        $this->registered_blocks = apply_filters('registered_blocks', $this->config->get('block', []));
 
         add_filter( 'carbon_fields_theme_options_container_admin_only_access', '__return_false' );
         add_filter( 'allowed_block_types_all', [$this, 'allowedBlockTypes'], 99, 2 );

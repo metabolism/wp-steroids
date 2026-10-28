@@ -12,6 +12,9 @@ class WPS_Config {
     protected $support;
     protected $loaded=false;
 
+    protected $registered_post_types=[];
+    protected $registered_taxonomies=[];
+
     /**
      * Get plural from name
      * @param $name
@@ -67,12 +70,10 @@ class WPS_Config {
 
         $current_blog_id = get_current_blog_id();
 
-        $registered_post_types = $this->config->get('post_type', []);
-
-        if( !is_array($registered_post_types) )
+        if( !is_array($this->registered_post_types) )
             return;
 
-        foreach ( $registered_post_types as $post_type => &$args )
+        foreach ( $this->registered_post_types as $post_type => &$args )
         {
             if( !in_array($post_type, ['post', 'page', 'edition', 'media']) )
             {
@@ -403,12 +404,10 @@ class WPS_Config {
             'show_admin_column' => true
         ];
 
-        $registered_taxonomies = $this->config->get('taxonomy', []);
-
-        if( !is_array($registered_taxonomies) )
+        if( !is_array($this->registered_taxonomies) )
             return;
 
-        foreach ( $registered_taxonomies as $taxonomy => &$args ) {
+        foreach ( $this->registered_taxonomies as $taxonomy => &$args ) {
 
             if( !in_array($taxonomy, ['category', 'tag', 'edition', 'theme', 'type']) ) {
 
@@ -570,11 +569,9 @@ class WPS_Config {
         if( WP_HEADLESS )
             return;
 
-        $taxonomies = $this->config->get('taxonomy', []);
+        if( is_array($this->registered_taxonomies) ){
 
-        if( is_array($taxonomies) ){
-
-            foreach ( $taxonomies as $taxonomy => $args ) {
+            foreach ( $this->registered_taxonomies as $taxonomy => $args ) {
 
                 if( $args['has_archive']??false ){
 
@@ -644,11 +641,9 @@ class WPS_Config {
             }
         }
 
-        $post_types = $this->config->get('post_type', []);
+        if( is_array($this->registered_post_types) ){
 
-        if( is_array($post_types) ){
-
-            foreach ( $this->config->get('post_type', []) as $post_type => $args )
+            foreach ( $this->registered_post_types as $post_type => $args )
             {
                 if( !($args['publicly_queryable']??true) )
                     continue;
@@ -753,11 +748,9 @@ class WPS_Config {
 
         add_settings_section('custom_post_type_rewrite', 'Custom post type', '__return_empty_string','permalink');
 
-        $registered_post_types = $this->config->get('post_type', []);
+        if( is_array($this->registered_post_types) ){
 
-        if( is_array($registered_post_types) ){
-
-            foreach ( $registered_post_types as $post_type=>$args ) {
+            foreach ( $this->registered_post_types as $post_type=>$args ) {
 
                 foreach( ['slug', 'archive'] as $type) {
 
@@ -796,11 +789,9 @@ class WPS_Config {
 
         add_settings_section('custom_taxonomy_rewrite', 'Custom taxonomy', '__return_empty_string','permalink');
 
-        $registered_taxonomies = $this->config->get('taxonomy', []);
+        if( is_array($this->registered_taxonomies) ){
 
-        if( is_array($registered_taxonomies) ){
-
-            foreach ( $registered_taxonomies as $taxonomy=>$args ) {
+            foreach ( $this->registered_taxonomies as $taxonomy=>$args ) {
 
                 foreach( ['slug', 'archive'] as $type) {
 
@@ -1113,6 +1104,10 @@ class WPS_Config {
 
         $this->config = $_config;
         $this->support = $this->config->get('support', []);
+
+        $this->registered_post_types = apply_filters('registered_post_types', $this->config->get('post_type', []));
+        $this->registered_taxonomies = apply_filters('registered_taxonomies', $this->config->get('taxonomy', []));
+
 
         if( $jpeg_quality = $this->config->get('image.compression', false) )
             add_filter( 'wp_editor_set_quality', function() use ($jpeg_quality){ return $jpeg_quality; });

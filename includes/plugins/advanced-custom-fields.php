@@ -9,6 +9,9 @@ class WPS_Advanced_Custom_Fields{
 
     /* @var Data $config */
     private $config;
+    private $registered_post_types;
+    private $registered_taxonomies;
+    private $registered_blocks;
 
 
     /**
@@ -38,21 +41,17 @@ class WPS_Advanced_Custom_Fields{
 
     public function addGroupFields()
     {
-        $post_types = $this->config->get('post_type', []);
+        if( is_array($this->registered_post_types) ){
 
-        if( is_array($post_types) ){
-
-            foreach ( $post_types as $post_type => $args ) {
+            foreach ( $this->registered_post_types as $post_type => $args ) {
 
                 $this->addFields($post_type, $args, 'group', 'post_type');
             }
         }
 
-        $taxonomies = $this->config->get('taxonomy', []);
+        if( is_array($this->registered_taxonomies) ){
 
-        if( is_array($taxonomies) ){
-
-            foreach ( $taxonomies as $taxonomy => $args ) {
+            foreach ( $this->registered_taxonomies as $taxonomy => $args ) {
 
                 $this->addFields($taxonomy, $args, 'group', 'taxonomy');
             }
@@ -495,9 +494,7 @@ class WPS_Advanced_Custom_Fields{
 
         $upload_dir = wp_upload_dir();
 
-        $blocks = $this->config->get('block', []);
-
-        foreach ( $blocks as $name => &$args ) {
+        foreach ( $this->registered_blocks as $name => &$args ) {
 
             $block = [
                 '$schema'           => 'https://schemas.wp.org/trunk/block.json',
@@ -551,12 +548,12 @@ class WPS_Advanced_Custom_Fields{
 
         if( $this->config->get('gutenberg.block_sorting', false) ){
 
-            uasort($blocks, function($a, $b) {
+            uasort($this->registered_blocks, function($a, $b) {
                 return strcmp($a['title'], $b['title']);
             });
         }
 
-        foreach ($blocks as $name => $args ) {
+        foreach ($this->registered_blocks as $name => $args ) {
 
             acf_register_block_type($args['block']);
 
@@ -660,12 +657,10 @@ class WPS_Advanced_Custom_Fields{
      */
     public function addPostTypesArchivePage()
     {
-        $registered_post_types = $this->config->get('post_type', []);
-
-        if( !is_array($registered_post_types) )
+        if( !is_array($this->registered_post_types) )
             return;
 
-        foreach ( $registered_post_types as $post_type => &$args )
+        foreach ( $this->registered_post_types as $post_type => &$args )
         {
             if( !in_array($post_type, ['post', 'page', 'edition']) )
             {
@@ -807,6 +802,9 @@ class WPS_Advanced_Custom_Fields{
         global $_config;
 
         $this->config = $_config;
+        $this->registered_post_types = apply_filters('registered_post_types', $this->config->get('post_type', []));
+        $this->registered_taxonomies = apply_filters('registered_taxonomies', $this->config->get('taxonomy', []));
+        $this->registered_blocks = apply_filters('registered_blocks', $this->config->get('block', []));
 
         add_filter('render_block_data', [$this, 'renderBlockData'], 10, 2);
         add_filter('block_categories_all', [$this, 'addBlockCategories'], 10, 2);
