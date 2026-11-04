@@ -191,6 +191,7 @@ class WPS_SVG {
 		add_filter( 'wp_get_attachment_image_src', array( $this, 'onePixelFix' ), 10, 4 );
 		add_filter( 'wp_handle_upload_prefilter', [$this, 'sanitizeSVG']);
 		add_filter( 'upload_mimes', [$this, 'uploadMimes']);
+		add_filter( 'acf/validate_is_image_attachment/vector_mime_types', [$this, 'uploadMimes']);
 		add_filter( 'file_is_displayable_image' , [$this, 'fileIsDisplayableImage'] , 10 , 2 );
 		add_filter( 'wp_get_attachment_metadata', [$this, 'metadataErrorFix'], 10, 2 );
 		add_filter( 'wp_check_filetype_and_ext', [$this, 'fixMimeTypeSvg'], 75, 4 );
