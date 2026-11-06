@@ -37,6 +37,9 @@ class WPS_Config {
      */
     public function configureContentType()
     {
+        $this->registered_post_types = apply_filters('registered_post_types', $this->config->get('post_type', []));
+        $this->registered_taxonomies = apply_filters('registered_taxonomies', $this->config->get('taxonomy', []));
+
         $this->addPostTypes();
         $this->addTaxonomies();
         $this->addRewriteRules();
@@ -1104,10 +1107,6 @@ class WPS_Config {
 
         $this->config = $_config;
         $this->support = $this->config->get('support', []);
-
-        $this->registered_post_types = apply_filters('registered_post_types', $this->config->get('post_type', []));
-        $this->registered_taxonomies = apply_filters('registered_taxonomies', $this->config->get('taxonomy', []));
-
 
         if( $jpeg_quality = $this->config->get('image.compression', false) )
             add_filter( 'wp_editor_set_quality', function() use ($jpeg_quality){ return $jpeg_quality; });

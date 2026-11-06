@@ -806,7 +806,7 @@ class WPS_Multisite_Language_Switcher {
             //todo: find why $url is buggy
             add_filter( 'msls_output_get_alternate_links', function ($url, $blog){
 
-                if( !is_front_page() && str_ends_with($url, $blog->domain.$blog->path) )
+                if( !is_front_page() && $url && str_ends_with($url, $blog->domain.$blog->path) )
                     return null;
 
                 if( $url && !str_contains($url, 'http'))
