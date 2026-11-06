@@ -660,7 +660,7 @@ class WPS_Advanced_Custom_Fields{
         if( !is_array($this->registered_post_types) )
             return;
 
-        foreach ( $this->registered_post_types as $post_type => &$args )
+        foreach ( $this->registered_post_types as $post_type => $args )
         {
             if( !in_array($post_type, ['post', 'page', 'edition']) )
             {

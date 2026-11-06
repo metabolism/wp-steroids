@@ -197,8 +197,9 @@ th.manage-column.column-thumbnail, td.thumbnail.column-thumbnail{ width: 1%; tex
 .form-table th{ font-weight: normal }
 
 /* Fix Gutenberg ACF */
+.edit-post-meta-boxes-area .postbox .handlediv{ width: 40px }
 .components-panel .edit-post-meta-boxes-area #poststuff h2.hndle{
-    padding: 0 16px; font-size: 13px; color: #1e1e1e; font-weight: 500; cursor: pointer;
+    padding: 0 16px; font-size: 13px; color: #1e1e1e; font-weight: 600; cursor: pointer;
 }
 .components-panel #side-sortables .acf-fields>.acf-field{ width: auto!important }
 .components-panel .postbox{ box-shadow: none!important; border-radius: 0 }
