@@ -107,14 +107,14 @@ class WPS_SVG {
 	 * @param $file
 	 * @return bool
 	 */
-	protected function sanitize($file ) {
+	protected function sanitize( $file ) {
 
-		$dirty = file_get_contents( $file );
+		if( !$dirty = file_get_contents( $file ) )
+            return false;
 
 		if ( $is_zipped = $this->is_gzipped( $dirty ) ) {
-			$dirty = gzdecode( $dirty );
 
-			if ( $dirty === false )
+			if( !$dirty = gzdecode( $dirty ) )
 				return false;
 		}
 
@@ -128,9 +128,7 @@ class WPS_SVG {
 		if ( $is_zipped )
 			$clean = gzencode( $clean );
 
-		file_put_contents( $file, $clean );
-
-		return true;
+		return file_put_contents( $file, $clean );
 	}
 
 	/**
@@ -153,9 +151,9 @@ class WPS_SVG {
 	public function sanitizeSVG($file ) {
 
 		if ( $file && isset($file['type']) && ($file['type'] === 'image/svg+xml' || $file['type'] === 'image/svg' )) {
-			if ( ! $this->sanitize( $file['tmp_name'] ) ) {
+
+			if ( ! $this->sanitize( $file['tmp_name'] ) )
 				$file['error'] = __( "Sorry, this file couldn't be sanitized so for security reasons wasn't uploaded", 'wp-steroids' );
-			}
 		}
 
 		return $file;

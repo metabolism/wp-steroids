@@ -16,7 +16,31 @@ class WPS_Translation {
     public function __construct()
     {
         add_action( 'wp_ajax_translate', function (){
-            $this->translateText($_POST['q']??'', $_POST['format']??'text');
+
+            if (!current_user_can('edit_posts'))
+                wp_send_json_error(['message' => 'Action not allowed'], 403);
+
+            $text = wp_unslash($_POST['q'] ?? '');
+            $format = $_POST['format'] ?? 'text';
+
+            if (!is_string($text) || trim($text) === '')
+                wp_send_json_error(['message' => 'Invalid text'], 400);
+
+            if (mb_strlen($text, 'UTF-8') > 10000)
+                wp_send_json_error(['message' => 'Max char 10000.'], 400);
+
+            if (!in_array($format, ['text', 'html'], true))
+                wp_send_json_error(['message' => 'Format invalid'], 400);
+
+            $key = 'wps_translate_rate_'.get_current_user_id();
+            $count = (int) get_transient($key);
+
+            if ($count >= 30)
+                wp_send_json_error(['message' => 'Flooding'], 429);
+
+            set_transient($key, $count + 1, 60);
+
+            $this->translateText($text, $format);
         } );
 
         add_action( 'init', function (){
@@ -117,9 +141,9 @@ class WPS_Translation {
 
             if( $format == 'html' ){
 
-                $params['body']['tag_handling'] = 'html';
-                $params['body']['split_sentences'] = 'nonewlines';
-                $params['body']['ignore_tags'] = ["br"];
+                $body['tag_handling'] = 'html';
+                $body['split_sentences'] = 'nonewlines';
+                $body['ignore_tags'] = ["br"];
             }
 
             $params = [

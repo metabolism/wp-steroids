@@ -22,7 +22,6 @@ Supercharge WordPress with:
 * WordPress bug fixes
 * Radio type for taxonomies
 * Multisite post deep copy (with multisite-language-switcher plugin)
-* Custom datatable support with view and delete actions in admin
 * Google Translate or DeepL integration
 * Optimizations
 
@@ -41,7 +40,6 @@ The YML file allows you to configure:
 * Page, post, and taxonomy templates
 * Page state
 * Post format
-* External table viewer
 * Advanced roles
 
 ## Documentation
@@ -557,36 +555,11 @@ wordpress:
     #archive_guide: 'Guide archive'
     #404: '404'
 
-  #################################
-  ##    Database table viewer    ##
-  #################################
-
-  #table:
-  #  newsletter:
-  #    page_title: Newsletter
-  #    menu_title: Newsletter
-  #    column_title: id
-  #    export: false
-  #    columns:
-  #      name: Name
-  #      email: Email
-  #      company: Company
-  #      type: Type
-  #  contact:
-  #    page_title: Contact
-  #    menu_title: Contact
-  #    column_title: id
-  #    columns:
-  #      name: Name
-  #      email: Email
-  #      company: Company
-  #      request: Request
-
   #############################################
   ##               Add Roles                 ##
   ##                                         ##
-  ##    To reload role please go to          ##
-  ##    /wp-admin/index.php?reload_role=1    ##
+  ##    To reload roles, use the buttons     ##
+  ##    on the Users administration page.    ##
   ##                                         ##
   #############################################
   #role:

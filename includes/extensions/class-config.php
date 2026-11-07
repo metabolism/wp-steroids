@@ -678,43 +678,6 @@ class WPS_Config {
         }
     }
 
-    /**
-     * Adds User role
-     * https://codex.wordpress.org/Function_Reference/add_role
-     */
-    public function addRoles()
-    {
-        if( is_admin() && current_user_can('administrator') && ($_GET['populate_roles']??false) ){
-
-            if ( !function_exists( 'populate_roles' ) )
-                require_once( ABSPATH . 'wp-admin/includes/schema.php' );
-
-            populate_roles();
-        }
-
-        foreach ( $this->config->get('role', []) as $role => $args )
-        {
-            if( is_admin() && current_user_can('administrator') && ($_GET['reload_role']??false) )
-                remove_role($role);
-
-            if( !empty($args['inherit']??'') ){
-
-                $inherited_role = get_role( $args['inherit'] );
-                $args['capabilities'] = array_merge($inherited_role->capabilities, $args['capabilities']??[]);
-            }
-
-            add_role($role, $args['display_name'], $args['capabilities']);
-        }
-
-        add_filter( 'editable_roles', function($all_roles){
-
-            if( !current_user_can('administrator') )
-                unset($all_roles['administrator']);
-
-            return $all_roles;
-        });
-    }
-
     public function LoadPermalinks(){
 
         $updated = false;
@@ -832,41 +795,6 @@ class WPS_Config {
             $wp_rewrite->flush_rules(false);
 
             do_action('reset_cache');
-        }
-    }
-
-
-    public function addTableViews()
-    {
-        foreach ( $this->config->get('table', []) as $name => $args )
-        {
-            $default_args = [
-                'page_title' => ucfirst($name),
-                'menu_title' => ucfirst($name),
-                'capability' => 'activate_plugins',
-                'singular'   => $name,
-                'menu_icon'  => 'editor-table',
-                'plural'     => $this->plural($name),
-                'per_page'   => 20,
-                'position'   => 30,
-                'export'     => true
-            ];
-
-            $args = array_merge($default_args, $args);
-            $args['menu_icon'] = 'dashicons-'.$args['menu_icon'];
-
-            $table = new WPS_List_Table($name, $args);
-
-            add_action('admin_menu', function() use($name, $table, $args) {
-
-                add_menu_page($args['page_title'], $args['menu_title'], $args['capability'], 'table_'.$name, function() use($table, $args)
-                {
-                    $table->init();
-                    $table->prepare_items();
-                    $table->display();
-
-                }, $args['menu_icon'], $args['position']);
-            });
         }
     }
 
@@ -1122,7 +1050,6 @@ class WPS_Config {
             $this->configureContentType();
 
             $this->addSidebars();
-            $this->addRoles();
 
             add_filter('is_post_type_viewable', [$this, 'isPostTypeViewable'], 10 ,2);
             add_filter('query_vars', [$this, 'updateQueryVars']);
@@ -1132,12 +1059,6 @@ class WPS_Config {
                 add_filter('post_type_link', [$this, 'updatePostTypePermalink'], 10, 2);
                 add_filter('post_type_archive_link', [$this, 'updatePostTypeArchivePermalink'], 10, 2);
                 add_filter('term_link', [$this, 'updateTermPermalink'], 10, 2);
-            }
-
-            if( is_admin() ){
-
-                if( current_user_can('editor') || current_user_can('administrator') )
-                    $this->addTableViews();
             }
         });
 

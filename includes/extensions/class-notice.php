@@ -5,7 +5,7 @@
  * Class
  */
 class WPS_Notice {
-    
+
     /**
      * Check symlinks and folders
      */
@@ -18,7 +18,7 @@ class WPS_Notice {
         
         global $wpdb, $table_prefix;
         
-        if( ($_GET['fix']??false) == 'database' ){
+        if( (($_GET['fix']??false) == 'database') && check_admin_referer('fix_database') ){
             
             $wpdb->update($table_prefix."options", ['option_value' => WP_SITEURL], ['option_name' => 'siteurl']);
             $wpdb->update($table_prefix."options", ['option_value' => WP_HOME], ['option_name' => 'home']);
@@ -43,7 +43,7 @@ class WPS_Notice {
             $errors[] = 'Site url host is different from current host, please check your database configuration';
         
         if( !empty($errors))
-            $errors[] = '<a href="?fix=database">Fix database now</a>';
+            $errors[] = '<a href="?fix=database&_wpnonce='.wp_create_nonce('fix_database').'">Fix database now</a>';
         
         if( !empty($errors) )
             echo '<div class="error"><p>'.implode('<br/>', $errors ).'</p></div>';

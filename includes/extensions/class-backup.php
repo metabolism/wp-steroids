@@ -89,30 +89,44 @@ class WPS_Backup {
     /**
      * Export database
      * @param $path
-     * @return bool|\WP_Error
+     * @param bool $global
+     * @return string|WP_Error
      */
-    private function dumpDatabase($path)
+    private function dumpDatabase($path, $global = false)
     {
+        $localname = 'db.sql';
+        $file = $path.'/'.$localname;
+
         try {
-            $localname = 'db.sql';
-            $file = $path.'/'.$localname;
+
+            global $wpdb;
 
             if( is_file($file) )
                 unlink($file);
 
-            $dump = new IMysqldump\Mysqldump('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, ['add-drop-table' => true]);
+            $settings = ['add-drop-table' => true];
+
+            if (is_multisite() && !$global)
+                $settings['include-tables'] = array_values($wpdb->tables('blog'));
+
+            $dump = new IMysqldump\Mysqldump('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $settings);
             $dump->start($file);
 
             if( is_file($file) ){
 
                 $this->zip->addFile($file, $localname);
                 $this->zip->setCompressionName($localname, \ZipArchive::CM_DEFAULT);
+
+                return $file;
             }
 
-            return true;
+            return new \WP_Error('mysqldump-error', 'Could not create database file');
         }
         catch (\Exception $e)
         {
+            if( is_file($file) )
+                unlink($file);
+
             return new \WP_Error('mysqldump-error', $e->getMessage());
         }
     }
@@ -130,7 +144,7 @@ class WPS_Backup {
 
         $this->zip = new \ZipArchive();
 
-        if ( !$this->zip->open( $destination, \ZipArchive::CREATE ) )
+        if ( $this->zip->open( $destination, \ZipArchive::CREATE ) !== true )
             return new \WP_Error('archive', 'Can\'t create archive file');
 
         return $this->zip;
@@ -143,6 +157,7 @@ class WPS_Backup {
      * @param $type
      * @param $filename
      * @return bool|string
+     * @throws \Random\RandomException
      */
     private function bundle($global, $type, $filename)
     {
@@ -150,36 +165,41 @@ class WPS_Backup {
 
         if ( current_user_can('administrator') && (!$global || is_super_admin()) )
         {
+            $db_file = false;
             $folder = wp_upload_dir();
             $rootPath = $folder['basedir'];
+            $backup_dir = sys_get_temp_dir().'/wps-backup-'.bin2hex(random_bytes(16));
 
-            $backup = $rootPath.'/'.$filename;
+            if (!mkdir($backup_dir, 0700))
+                wp_die('Unable to create backup directory');
 
-            $this->init($backup);
+            $backup = $backup_dir.'/'.$filename;
 
-            if( is_wp_error($this->zip) )
-                wp_die( $this->zip->get_error_message() );
+           $zip = $this->init($backup);
+
+            if( is_wp_error($zip) )
+                wp_die( $zip->get_error_message() );
 
             if( is_file($backup) )
                 return $backup;
 
-            if( $type == 'all' || $type == 'sql'){
+            if( in_array($type, ['all', 'sql']) ){
 
-                $db = $this->dumpDatabase($rootPath);
+                $db_file = $this->dumpDatabase($backup_dir, $global);
 
-                if( is_wp_error($db) )
-                    wp_die( $db->get_error_message() );
+                if( is_wp_error($db_file) )
+                    wp_die( $db_file->get_error_message() );
             }
 
             if( $type == 'all' || $type == 'uploads')
                 $this->dumpFolder($rootPath, ['wpallimport', 'cache', 'wpcf7_uploads', 'acf-thumbnails', 'wp-personal-data-exports'], '/(?!.*150x150).*-[0-9]+x[0-9]+(-c-default|-c-center)?\.[a-z]{3,4}$/');
 
-            $this->close();
+            $status = $this->close();
 
-            if( $type == 'all' || $type == 'sql')
-                unlink($rootPath.'/db.sql');
+            if( in_array($type, ['all', 'sql']) && is_file($db_file) )
+                unlink($db_file);
 
-            if( is_file($backup) )
+            if( $status && is_file($backup) )
                 return $backup;
             else
                 wp_die('Can\'t generate archive file');
@@ -193,6 +213,7 @@ class WPS_Backup {
      * Generate and download zip file
      * @param bool $global
      * @param string $type
+     * @throws \Random\RandomException
      */
     private function download($global=false, $type='all')
     {
@@ -229,8 +250,20 @@ class WPS_Backup {
      */
     private function stream($file)
     {
-        if( WPS_Stream::send($file) )
-            unlink($file);
+        try {
+
+            WPS_Stream::send($file);
+
+        } finally {
+
+            if (is_file($file))
+                unlink($file);
+
+            $directory = dirname($file);
+
+            if (is_dir($directory))
+                rmdir($directory);
+        }
     }
 
 
@@ -246,9 +279,9 @@ class WPS_Backup {
 			<tbody><tr>
 				<th scope="row"><h2>'.__('Backup', 'wp-steroids').'</h2></th>
 				<td>
-				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=all">'.__('Download All', 'wp-steroids').'</a>
-				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=sql">'.__('Download SQL', 'wp-steroids').'</a>
-				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=uploads">'.__('Download Uploads', 'wp-steroids').'</a>
+				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=all&_wpnonce='.wp_create_nonce('download_mu_backup').'">'.__('Download All', 'wp-steroids').'</a>
+				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=sql&_wpnonce='.wp_create_nonce('download_mu_backup').'">'.__('Download SQL', 'wp-steroids').'</a>
+				  <a class="button button-primary" href="'.get_admin_url().'?download_mu_backup&type=uploads&_wpnonce='.wp_create_nonce('download_mu_backup').'">'.__('Download Uploads', 'wp-steroids').'</a>
 				</td>
 			</tr>
 		</tbody></table>';
@@ -263,21 +296,21 @@ class WPS_Backup {
         if( !current_user_can('administrator') )
             return;
 
-        if( isset($_GET['download_backup']) )
+        if( isset($_GET['download_backup']) && check_admin_referer('download_backup') )
             $this->download(false, $_GET['type'] ?? 'all');
 
-        if( isset($_GET['download_mu_backup']) )
+        if( isset($_GET['download_mu_backup']) && check_admin_referer('download_mu_backup') )
             $this->download(true, $_GET['type'] ?? 'all');
 
         add_settings_field('download_backup', __('Database', 'wp-steroids'), function(){
 
-            echo '<a class="button button-primary" href="'.get_admin_url().'?download_backup&type=sql">'.__('Download backup', 'wp-steroids').'</a> ';
+            echo '<a class="button button-primary" href="'.get_admin_url().'?download_backup&type=sql&_wpnonce='.wp_create_nonce('download_backup').'">'.__('Download backup', 'wp-steroids').'</a> ';
 
         }, 'general');
 
         add_settings_field('download_backup', __('Uploads', 'wp-steroids'), function(){
 
-            echo '<a class="button button-primary" href="'.get_admin_url().'?download_backup&type=uploads">'.__('Download backup', 'wp-steroids').'</a>';
+            echo '<a class="button button-primary" href="'.get_admin_url().'?download_backup&type=uploads&_wpnonce='.wp_create_nonce('download_backup').'">'.__('Download backup', 'wp-steroids').'</a>';
 
         }, 'media');
     }

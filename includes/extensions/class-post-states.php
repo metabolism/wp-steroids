@@ -17,16 +17,39 @@ class WPS_Post_States {
     public function setPostStates() {
 
         $post_states = $this->config->get('page_states', []);
+        $has_right = current_user_can('manage_options') && wp_verify_nonce($_POST['_wpnonce']??false,'reading-options');
 
         foreach ($post_states as $post_state=>$label){
 
-            if( isset($_POST['page_on_'.$post_state]) ){
+            $page_on_post_state = 'page_on_'.$post_state;
 
-                update_option( 'page_on_'.$post_state, $_POST['page_on_'.$post_state] );
-                $this->post_states[$_POST['page_on_'.$post_state]] = __t($label);
+            if( isset($_POST[$page_on_post_state]) && $has_right ){
+
+                $post_id = absint($_POST[$page_on_post_state]);
+
+                if( $post_id && get_post($post_id) ){
+
+                    update_option( $page_on_post_state, $post_id );
+                    $this->post_states[$post_id] = __t($label);
+                }
+                else{
+
+                    delete_option($page_on_post_state);
+                }
             }
             else{
-                $this->post_states[get_option( 'page_on_'.$post_state)] = __t($label);
+
+                if( $post_id = get_option($page_on_post_state) ){
+
+                    if( get_post($post_id) ){
+
+                        $this->post_states[$post_id] = __t($label);
+                    }
+                    else{
+
+                        delete_option($page_on_post_state);
+                    }
+                }
             }
         }
     }

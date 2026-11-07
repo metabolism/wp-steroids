@@ -1,3 +1,5 @@
+### 1.6.0
+
 ### 1.5.20
 - Bugfix: Fixed minor issues with Deepl translations
 - Feature: User profil cleaning options

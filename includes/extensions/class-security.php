@@ -218,12 +218,12 @@ class WPS_Security {
         if( !current_user_can('administrator') )
             return;
 
-        if( isset($_GET['permissions']) )
+        if( isset($_GET['permissions']) && check_admin_referer('fix_permissions')  )
             $this->permissions($_GET['type'] ?? 'all');
 
         add_settings_field('fix_permissions', __('Permissions', 'wp-steroids'), function(){
 
-            echo '<a class="button button-primary" href="'.get_admin_url().'?permissions&type=uploads">'.__('Try to fix it', 'wp-steroids').'</a>';
+            echo '<a class="button button-primary" href="'.get_admin_url().'?permissions&type=uploads&_wpnonce='.wp_create_nonce('fix_permissions').'">'.__('Try to fix it', 'wp-steroids').'</a>';
 
         }, 'media');
     }
@@ -392,12 +392,12 @@ class WPS_Security {
             } );
         }
 
-        if( $this->config->get('security.disable_update', true) )
+        if( $this->config->get('security.disable_update', false) )
             $this->disableUpdate();
 
         add_filter( 'map_meta_cap', [$this, 'mapMetaCap'], 1, 3 );
         add_filter( 'x_redirect_by', '__return_false' );
-        add_filter('http_origin', [$this, 'forceHttpsOrigin']);
+        add_filter( 'http_origin', [$this, 'forceHttpsOrigin']);
 
         if( is_admin() )
         {
@@ -405,7 +405,7 @@ class WPS_Security {
             add_action( 'admin_init', [$this, 'adminInit'] );
             add_action( 'wp_handle_upload_prefilter', [$this, 'cleanFilename']);
 
-            if( $this->config->get('security.disable_update', true) ){
+            if( $this->config->get('security.disable_update', false) ){
 
                 add_filter( 'update_right_now_text', '__return_empty_string' );
                 add_action( 'admin_head', [$this, 'hideUpdateNotice'], 1 );

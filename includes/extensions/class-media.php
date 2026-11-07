@@ -263,14 +263,14 @@ class WPS_Media {
             return $attachment_ID;
 
         $attr = [
-            'post_mime_type' => $attachment->post_mime_type,
-            'filename'       => $attachment->guid,
-            'post_title'     => $attachment->post_title,
-            'post_status'    => $attachment->post_status,
-            'post_parent'    => 0,
-            'post_content'   => $attachment->post_content,
-            'guid'           => $attachment->guid,
-            'post_date'      => $attachment->post_date
+                'post_mime_type' => $attachment->post_mime_type,
+                'filename'       => $attachment->guid,
+                'post_title'     => $attachment->post_title,
+                'post_status'    => $attachment->post_status,
+                'post_parent'    => 0,
+                'post_content'   => $attachment->post_content,
+                'guid'           => $attachment->guid,
+                'post_date'      => $attachment->post_date
         ];
 
         $file = get_attached_file( $attachment_ID );
@@ -300,17 +300,17 @@ class WPS_Media {
                 {
                     // check if a post with the same file exist
                     $attachment = get_posts(['post_type'=>'attachment','fields'=>'ids',
-                        'meta_query' => [
-                            'relation' => 'AND',
-                            [
-                                'key'     => '_wp_attached_file',
-                                'value'   => $attachment_metadata['file']
-                            ],
-                            [
-                                'key'     => '_wp_original_attachment_id',
-                                'compare' => 'NOT EXISTS'
+                            'meta_query' => [
+                                    'relation' => 'AND',
+                                    [
+                                            'key'     => '_wp_attached_file',
+                                            'value'   => $attachment_metadata['file']
+                                    ],
+                                    [
+                                            'key'     => '_wp_original_attachment_id',
+                                            'compare' => 'NOT EXISTS'
+                                    ]
                             ]
-                        ]
                     ]);
 
                     if( !count($attachment) )
@@ -422,7 +422,7 @@ class WPS_Media {
         {
             echo '<tr>
 				<th scope="row">'.__('Generated thumbnails', 'wp-steroids').'</th>
-				<td><a class="button button-primary" href="'.get_admin_url().'?clear_all_thumbnails">Remove '.count($thumbnails).' image(s)</a></td>
+				<td><a class="button button-primary" href="'.get_admin_url().'?clear_all_thumbnails&_wpnonce='.wp_create_nonce('clear_all_thumbnails').'">Remove '.count($thumbnails).' image(s)</a></td>
 			</tr>';
         }
 
@@ -430,7 +430,7 @@ class WPS_Media {
 
             echo '<tr>
 				<th scope="row">'.__('Multisite', 'wp-steroids').'</th>
-				<td><a class="button button-primary" href="'.get_admin_url().'?syncronize_images">Synchronize images</a></td>
+				<td><a class="button button-primary" href="'.get_admin_url().'?syncronize_images&_wpnonce='.wp_create_nonce('syncronize_images').'">Synchronize images</a></td>
 			</tr>';
         }
 
@@ -446,13 +446,13 @@ class WPS_Media {
         if( !current_user_can('administrator') )
             return;
 
-        if( isset($_GET['clear_thumbnails']) )
+        if( isset($_GET['clear_thumbnails']) && check_admin_referer('clear_thumbnails') )
             $this->clearThumbnails();
 
-        if( isset($_GET['clear_all_thumbnails']) )
+        if( isset($_GET['clear_all_thumbnails']) && check_admin_referer('clear_all_thumbnails') )
             $this->clearThumbnails(true);
 
-        if( isset($_GET['syncronize_images']) )
+        if( isset($_GET['syncronize_images'])&& check_admin_referer('syncronize_images') )
             $this->syncMedia();
 
         // Remove generated thumbnails option
@@ -461,7 +461,7 @@ class WPS_Media {
             $thumbnails = $this->getThumbnails();
 
             if( count($thumbnails) )
-                echo '<a class="button button-primary" href="'.get_admin_url().'?clear_thumbnails">'.__('Remove', 'wp-steroids').' '.count($thumbnails).' image(s)</a>';
+                echo '<a class="button button-primary" href="'.get_admin_url().'?clear_thumbnails&_wpnonce='.wp_create_nonce('clear_thumbnails').'">'.__('Remove', 'wp-steroids').' '.count($thumbnails).' image(s)</a>';
             else
                 echo __('Nothing to remove', 'wp-steroids');
 
@@ -742,12 +742,12 @@ class WPS_Media {
         if($post->post_mime_type === 'image/png'){
 
             $actions['convert'] = sprintf(
-                '<a href="%s" class="submitconvert aria-button-if-js"%s aria-label="%s">%s</a>',
-                wp_nonce_url( "post.php?action=convert&amp;post=$post->ID", 'convert-post_' . $post->ID ),
-                '',
-                /* translators: %s: Attachment title. */
-                esc_attr( sprintf( __( 'Convert &#8220;%s&#8221;', 'wp-steroids' ), $post->post_title ) ),
-                __( 'Convert to jpg', 'wp-steroids' )
+                    '<a href="%s" class="submitconvert aria-button-if-js"%s aria-label="%s">%s</a>',
+                    wp_nonce_url( "post.php?action=convert&amp;post=$post->ID", 'convert-post_' . $post->ID ),
+                    '',
+                    /* translators: %s: Attachment title. */
+                    esc_attr( sprintf( __( 'Convert &#8220;%s&#8221;', 'wp-steroids' ), $post->post_title ) ),
+                    __( 'Convert to jpg', 'wp-steroids' )
             );
         }
 
@@ -756,12 +756,12 @@ class WPS_Media {
         if( empty($metadata) ){
 
             $actions['fix_metadata'] = sprintf(
-                '<a href="%s" class="submitregenerate aria-button-if-js"%s aria-label="%s">%s</a>',
-                wp_nonce_url( "post.php?action=regenerate_metadata&amp;post=$post->ID", 'fix_metadata-post_' . $post->ID ),
-                '',
-                /* translators: %s: Attachment title. */
-                esc_attr( sprintf( __( 'Regenerate metadata &#8220;%s&#8221;', 'wp-steroids' ), $post->post_title ) ),
-                __( 'Regenerate metadata', 'wp-steroids' )
+                    '<a href="%s" class="submitregenerate aria-button-if-js"%s aria-label="%s">%s</a>',
+                    wp_nonce_url( "post.php?action=regenerate_metadata&amp;post=$post->ID", 'fix_metadata-post_' . $post->ID ),
+                    '',
+                    /* translators: %s: Attachment title. */
+                    esc_attr( sprintf( __( 'Regenerate metadata &#8220;%s&#8221;', 'wp-steroids' ), $post->post_title ) ),
+                    __( 'Regenerate metadata', 'wp-steroids' )
             );
         }
 
@@ -778,12 +778,12 @@ class WPS_Media {
         if($post->post_mime_type === 'image/png'){
 
             $html .= sprintf(
-                '<a href="%s" class="submitconvert aria-button-if-js"%s aria-label="%s">%s</a>',
-                wp_nonce_url( "post.php?action=convert&amp;post=$post->ID", 'convert-post_' . $post->ID ),
-                '',
-                /* translators: %s: Attachment title. */
-                esc_attr( sprintf( __( 'Convert &#8220;%s&#8221;', 'wp-steroids' ), $post->post_title ) ),
-                __( 'Convert to jpg', 'wp-steroids' )
+                    '<a href="%s" class="submitconvert aria-button-if-js"%s aria-label="%s">%s</a>',
+                    wp_nonce_url( "post.php?action=convert&amp;post=$post->ID", 'convert-post_' . $post->ID ),
+                    '',
+                    /* translators: %s: Attachment title. */
+                    esc_attr( sprintf( __( 'Convert &#8220;%s&#8221;', 'wp-steroids' ), $post->post_title ) ),
+                    __( 'Convert to jpg', 'wp-steroids' )
             );
         }
 
@@ -850,9 +850,9 @@ class WPS_Media {
             Use xxx-hd.jpg, xxx-cmyk.jpg, or xxx-cmjn.jpg to skip resizing.
         </p>
         <?php if ($max_size): ?>
-        <p>
-            Maximum upload image file size: <?=$max_size?>Mb.
-        </p>
+            <p>
+                Maximum upload image file size: <?=$max_size?>Mb.
+            </p>
         <?php
         endif;
     }
@@ -865,12 +865,12 @@ class WPS_Media {
         $file = get_attached_file($post_id);
         $post = get_post($post_id);
 
-        if (!empty($file)) {
+        if (check_admin_referer('fix_metadata-post_' . $post_id) && !empty($file)) {
 
-            if( $post->post_mime_type == 'image/svg' || $post->post_mime_type == 'image/svg+xml' )
-            {
+            if( $post->post_mime_type == 'image/svg' || $post->post_mime_type == 'image/svg+xml' ) {
+
                 $image_meta = [
-                    'filesize' => wp_filesize($file)
+                        'filesize' => wp_filesize($file)
                 ];
             }
             else{
@@ -878,11 +878,11 @@ class WPS_Media {
                 $imagesize = wp_getimagesize( $file );
 
                 $image_meta = [
-                    'width' => $imagesize[0],
-                    'height' => $imagesize[1],
-                    'filesize' => wp_filesize($file),
-                    'file' => _wp_relative_upload_path($file),
-                    'sizes' => []
+                        'width' => $imagesize[0],
+                        'height' => $imagesize[1],
+                        'filesize' => wp_filesize($file),
+                        'file' => _wp_relative_upload_path($file),
+                        'sizes' => []
                 ];
 
                 $exif_meta = wp_read_image_metadata( $file );
@@ -896,11 +896,11 @@ class WPS_Media {
                 if( is_readable($thumbnail) ){
 
                     $image_meta['sizes']['thumbnail'] = [
-                        'file' => $pathinfo['basename'],
-                        'width' => 150,
-                        'height' => 150,
-                        'mime-type' => $imagesize['mime'],
-                        'filesize' => wp_filesize($thumbnail)
+                            'file' => $pathinfo['basename'],
+                            'width' => 150,
+                            'height' => 150,
+                            'mime-type' => $imagesize['mime'],
+                            'filesize' => wp_filesize($thumbnail)
                     ];
                 }
             }
@@ -927,7 +927,7 @@ class WPS_Media {
         $path = get_attached_file( $post_id );
         $url = wp_get_attachment_url( $post_id );
 
-        if( $new_path = $this->convertToJpg($path) ){
+        if( check_admin_referer('convert-post_' . $post_id) && $new_path = $this->convertToJpg($path) ){
 
             $old_name = basename( $path );
             $new_name = basename( $new_path );
@@ -1007,10 +1007,10 @@ class WPS_Media {
         $select .= '</select>';
 
         $form_fields['crop'] = array(
-            'value' => $field_value ? $field_value : '',
-            'label' => __t( 'Crop' ),
-            'input'  => 'select',
-            'select'  => $select
+                'value' => $field_value ? $field_value : '',
+                'label' => __t( 'Crop' ),
+                'input'  => 'select',
+                'select'  => $select
         );
 
         return $form_fields;
@@ -1061,7 +1061,7 @@ class WPS_Media {
         return $data;
     }
 
-/**
+    /**
      * Constructor
      */
     public function __construct()

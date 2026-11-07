@@ -25,14 +25,14 @@ class WPS_Transients {
         if( !current_user_can('administrator') )
             return;
 
-        if( isset($_GET['clean_transients']) )
+        if( isset($_GET['clean_transients']) && check_admin_referer('clean_transients') )
             $this->clean($_GET['clean_transients']);
 
         add_settings_field('clean_transients', __('Transients', 'wp-steroids'), function(){
 
-            echo '<a class="button button-primary" href="'.get_admin_url(null, 'options-general.php').'?clean_transients=feed">'.__('Clean feed', 'wp-steroids').'</a> ';
-            echo '<a class="button button-primary" href="'.get_admin_url(null, 'options-general.php').'?clean_transients=browser">'.__('Clean browser', 'wp-steroids').'</a> ';
-            echo '<a class="button button-primary" href="'.get_admin_url(null, 'options-general.php').'?clean_transients=wp_remote_block_patterns">'.__('Clean remove block patterns', 'wp-steroids').'</a> ';
+            echo '<a class="button button-primary" href="'.get_admin_url(null, 'options-general.php').'?clean_transients=feed&_wpnonce='.wp_create_nonce('clean_transients').'">'.__('Clean feed', 'wp-steroids').'</a> ';
+            echo '<a class="button button-primary" href="'.get_admin_url(null, 'options-general.php').'?clean_transients=browser&_wpnonce='.wp_create_nonce('clean_transients').'">'.__('Clean browser', 'wp-steroids').'</a> ';
+            echo '<a class="button button-primary" href="'.get_admin_url(null, 'options-general.php').'?clean_transients=wp_remote_block_patterns&_wpnonce='.wp_create_nonce('clean_transients').'">'.__('Clean remove block patterns', 'wp-steroids').'</a> ';
 
         }, 'general');
     }

@@ -75,12 +75,95 @@ class WPS_User {
         add_action('admin_head-profile.php', [$this, 'render_custom_user_profile_css']);
     }
 
+    /**
+     * Handle Actions
+     * https://codex.wordpress.org/Function_Reference/add_role
+     */
+    public function handleActions(){
+
+        if( !is_admin() || !current_user_can('administrator') )
+            return;
+
+        $action = $_GET['action'] ?? '';
+
+        if (!in_array($action, ['wps_user_reload', 'wps_user_populate'], true))
+            return;
+
+        if (!check_admin_referer($action))
+            return;
+
+        if( $action == 'wps_user_populate' ){
+
+            if ( !function_exists( 'populate_roles' ) )
+                require_once( ABSPATH . 'wp-admin/includes/schema.php' );
+
+            populate_roles();
+        }
+
+        if( $action == 'wps_user_reload' ){
+
+            foreach ( $this->config->get('role', []) as $role => $args ) {
+
+                remove_role($role);
+
+                if( !empty($args['inherit']??'') ){
+
+                    $inherited_role = get_role( $args['inherit'] );
+                    $args['capabilities'] = array_merge($inherited_role->capabilities, $args['capabilities']??[]);
+                }
+
+                add_role($role, $args['display_name'], $args['capabilities']);
+            }
+        }
+
+        if( str_starts_with($_GET['action']??'', 'wps_user_') ){
+
+            wp_redirect(admin_url('users.php'));
+            exit;
+        }
+    }
+
+    public function roleToolbarButtons($toolbar)
+    {
+        global $pagenow;
+
+        if ($pagenow !== 'users.php' || !current_user_can('administrator'))
+            return;
+
+        $actions = [
+            'reload' => 'Reload user roles',
+            'populate' => 'Populate roles',
+        ];
+
+        foreach ($actions as $operation => $label) {
+            $toolbar->add_node([
+                'id' => 'wps-roles-'.$operation,
+                'title' => $label,
+                'href' => add_query_arg([
+                    'action' => 'wps_user_'.$operation,
+                    '_wpnonce' => wp_create_nonce('wps_user_'.$operation),
+                    'operation' => $operation,
+                ], admin_url('users.php')),
+            ]);
+        }
+    }
+
     public function __construct(){
 
         global $_config;
 
         $this->config = $_config;
 
-        add_action( 'admin_init', [$this, 'init'] );
+        add_action('admin_bar_menu', [$this, 'roleToolbarButtons'], 100);
+        add_action('admin_init', [$this, 'init'] );
+        add_action('init', [$this, 'handleActions']);
+
+        add_filter('editable_roles', function($all_roles){
+
+            if( !current_user_can('administrator') )
+                unset($all_roles['administrator']);
+
+            return $all_roles;
+        });
     }
 }

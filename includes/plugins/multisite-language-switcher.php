@@ -31,26 +31,37 @@ class WPS_Multisite_Language_Switcher {
             $current_site_id = get_current_blog_id();
 
             // switch to origin blog
-            switch_to_blog($_GET['blog_id']);
+            $origin_blog_id = absint($_GET['blog_id']);
+            $tag_id = absint($_GET['tag_ID']);
+
+            if( !get_site($origin_blog_id) || !check_admin_referer('wps_clone_tag_'.$origin_blog_id.'_'.$tag_id) )
+                return;
+
+            switch_to_blog($origin_blog_id);
 
             // get the original $term
-            $term = get_term($_GET['tag_ID']);
+            $term = get_term($tag_id);
 
-            if( !is_wp_error($term) ) {
+            if( $term && !is_wp_error($term) ) {
 
                 //get original translations
-                $translations = get_option('msls_term_'.$_GET['tag_ID'],[]);
+                $translations = get_option('msls_term_'.$tag_id,[]);
 
                 // get the original meta
-                $meta = get_term_meta($_GET['tag_ID']);
+                $meta = get_term_meta($tag_id);
 
                 // get the original language
                 $language = self::getLocale();
 
-                $translations[$language] = $_GET['tag_ID'];
+                $translations[$language] = $tag_id;
 
                 // return to target blog
                 restore_current_blog();
+
+                $taxonomy = get_taxonomy($term->taxonomy);
+
+                if (!$taxonomy || !current_user_can($taxonomy->cap->manage_terms))
+                    wp_die('Unauthorized cloning');
 
                 //filter parent
                 $parent = $this->getOriginalId($current_site_id, $main_site_id, $term->parent, 'taxonomy');
@@ -161,37 +172,48 @@ class WPS_Multisite_Language_Switcher {
             $main_site_id = get_main_network_id();
             $current_site_id = get_current_blog_id();
 
+            $origin_blog_id = absint($_GET['blog_id']);
+            $post_id = absint($_GET['post_id']);
+
+            if( !get_site($origin_blog_id) || !check_admin_referer('wps_clone_post_'.$origin_blog_id.'_'.$post_id) )
+                return;
+
             // switch to origin blog
-            switch_to_blog($_GET['blog_id']);
+            switch_to_blog($origin_blog_id);
 
             // get the original post
-            $post = get_post($_GET['post_id'], ARRAY_A);
+            $post = get_post($post_id, ARRAY_A);
 
-            // get the original terms
-            $taxonomies = get_object_taxonomies( $post['post_type']);
-            $terms = wp_get_post_terms($_GET['post_id'], $taxonomies);
+            if( $post && current_user_can('read_post', $post_id) ) {
 
-            if( !is_wp_error($post) ) {
+                // get the original terms
+                $taxonomies = get_object_taxonomies( $post['post_type']);
+                $terms = wp_get_post_terms($post_id, $taxonomies);
 
                 //remove tags and parent
                 unset($post['tags_input']);
 
                 //get original translations
-                $translations = get_option('msls_'.$_GET['post_id'],[]);
+                $translations = get_option('msls_'.$post_id, []);
 
                 // get the original meta
-                $meta = get_post_meta($_GET['post_id']);
+                $meta = get_post_meta($post_id);
 
                 // get the original language, fallback to en
                 $language = self::getLocale();
 
-                $translations[$language] = $_GET['post_id'];
+                $translations[$language] = $post_id;
 
                 // empty id field, to tell WordPress that this will be a new post
                 $post['ID'] = '';
 
                 // return to target blog
                 restore_current_blog();
+
+                $post_type = get_post_type_object($post['post_type']);
+
+                if (!$post_type || !current_user_can($post_type->cap->create_posts))
+                    wp_die('Unauthorized cloning.');
 
                 //filter parent
                 $post['post_parent'] = $this->getOriginalId($current_site_id, $main_site_id, $post['post_parent'], 'post_object');
@@ -240,9 +262,9 @@ class WPS_Multisite_Language_Switcher {
                     $post['post_content'] = serialize_blocks($blocks);
                 }
 
-                $inserted_post_id = wp_insert_post($post);
+                $inserted_post_id = wp_insert_post($post, true);
 
-                if (is_wp_error($inserted_post_id))
+                if ( is_wp_error($inserted_post_id) )
                     wp_die($inserted_post_id->get_error_message());
 
                 // update raw content
@@ -455,18 +477,24 @@ class WPS_Multisite_Language_Switcher {
 
         if( isset($args['taxonomy']) || isset($_GET['tag_ID']) ) {
 
+            $nonce = wp_create_nonce('wps_clone_tag_'.$current_blog->blog_id.'_'.$args['msls_id']);
+
             $path = add_query_arg([
-                'clone' => 'true',
-                'blog_id' => $current_blog->blog_id,
-                'tag_ID' => $args['msls_id']
+                    'clone' => true,
+                    '_wpnonce' => $nonce,
+                    'blog_id' => $current_blog->blog_id,
+                    'tag_ID' => $args['msls_id']
             ], $path);
         }
         elseif( isset($args['post_type']) || isset($_GET['post']) ) {
 
+            $nonce = wp_create_nonce('wps_clone_post_'.$current_blog->blog_id.'_'.$args['msls_id']);
+
             $path = add_query_arg([
-                'clone' => 'true',
-                'blog_id' => $current_blog->blog_id,
-                'post_id' => $args['msls_id']
+                    'clone' => true,
+                    '_wpnonce' => $nonce,
+                    'blog_id' => $current_blog->blog_id,
+                    'post_id' => $args['msls_id']
             ], $path);
         }
 
@@ -492,41 +520,41 @@ class WPS_Multisite_Language_Switcher {
         $lang = explode('_', $blogname);
 
         $wp_admin_bar->add_node(
-            array(
-                'id'    => 'languages',
-                'parent' => 'top-secondary',
-                'title' => '<span class="flag-icon flag-icon-'.$lang[0].'"></span>'.__( strtoupper($lang[0]) ),
-                'href'  => $my_sites_url,
-            )
+                array(
+                        'id'    => 'languages',
+                        'parent' => 'top-secondary',
+                        'title' => '<span class="flag-icon flag-icon-'.$lang[0].'"></span>'.__( strtoupper($lang[0]) ),
+                        'href'  => $my_sites_url,
+                )
         );
 
         if ( current_user_can( 'manage_network' ) ) {
             $wp_admin_bar->add_group(
-                array(
-                    'parent' => 'languages',
-                    'id'     => 'languages-super-admin',
-                )
+                    array(
+                            'parent' => 'languages',
+                            'id'     => 'languages-super-admin',
+                    )
             );
 
             $wp_admin_bar->add_node(
-                array(
-                    'parent' => 'languages-super-admin',
-                    'id'     => 'languages-admin',
-                    'title'  => __( 'Network Admin' ),
-                    'href'   => network_admin_url(),
-                )
+                    array(
+                            'parent' => 'languages-super-admin',
+                            'id'     => 'languages-admin',
+                            'title'  => __( 'Network Admin' ),
+                            'href'   => network_admin_url(),
+                    )
             );
         }
 
         // Add site links.
         $wp_admin_bar->add_group(
-            array(
-                'parent' => 'languages',
-                'id'     => 'languages-list',
-                'meta'   => array(
-                    'class' => current_user_can( 'manage_network' ) ? 'ab-sub-secondary' : '',
-                ),
-            )
+                array(
+                        'parent' => 'languages',
+                        'id'     => 'languages-list',
+                        'meta'   => array(
+                                'class' => current_user_can( 'manage_network' ) ? 'ab-sub-secondary' : '',
+                        ),
+                )
         );
 
         $current_blog_id = get_current_blog_id();
@@ -550,23 +578,23 @@ class WPS_Multisite_Language_Switcher {
                 if ( is_admin() ) {
 
                     $wp_admin_bar->add_node(
-                        array(
-                            'parent' => 'languages-list',
-                            'id'     => $menu_id,
-                            'title'  => $title,
-                            'href'   => admin_url()
-                        )
+                            array(
+                                    'parent' => 'languages-list',
+                                    'id'     => $menu_id,
+                                    'title'  => $title,
+                                    'href'   => admin_url()
+                            )
                     );
 
                 } else {
 
                     $wp_admin_bar->add_node(
-                        array(
-                            'parent' => 'languages-list',
-                            'id'     => $menu_id,
-                            'title'  => $title,
-                            'href'   => home_url(),
-                        )
+                            array(
+                                    'parent' => 'languages-list',
+                                    'id'     => $menu_id,
+                                    'title'  => $title,
+                                    'href'   => home_url(),
+                            )
                     );
                 }
 

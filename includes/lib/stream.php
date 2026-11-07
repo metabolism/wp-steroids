@@ -5,29 +5,56 @@ class WPS_Stream {
 
     public static function send($file)
     {
-        if( !is_file($file) )
+        if( !is_file($file) || !is_readable($file) || headers_sent() )
             return false;
+
+        $input = fopen($file, 'rb');
+
+        if( $input === false )
+            return false;
+
+        $size = fstat($input)['size'];
+
+        // A buffered response would otherwise retain the whole download in memory.
+        while( ob_get_level() > 0 ){
+
+            if( !@ob_end_clean() ){
+                fclose($input);
+                return false;
+            }
+        }
 
         header('Content-Description: File Transfer');
         header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename='.basename($file));
+        header('Content-Disposition: attachment; filename="'.str_replace(['"', "\r", "\n"], '', basename($file)).'"');
         header('Content-Transfer-Encoding: binary');
         header('Expires: 0');
-        header('CacheHelper-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Pragma: public');
-        header('Content-Length: ' . filesize($file));
+        header('Cache-Control: private, no-store, no-transform');
+        header('Pragma: no-cache');
+        header('Content-Length: ' . $size);
 
         ignore_user_abort(true);
 
-        $myInputStream = fopen($file, 'rb');
-        $myOutputStream = fopen('php://output', 'wb');
+        $sent = 0;
 
-        stream_copy_to_stream($myInputStream, $myOutputStream);
+        try {
+            while( !feof($input) ){
 
-        fclose($myOutputStream);
-        fclose($myInputStream);
+                $chunk = fread($input, 1024 * 1024);
 
-        return true;
+                if( $chunk === false || ($chunk === '' && !feof($input)) )
+                    return false;
+
+                $sent += strlen($chunk);
+                echo $chunk;
+                flush();
+            }
+
+            return $sent === $size;
+        }
+        finally {
+            fclose($input);
+        }
     }
 }
 

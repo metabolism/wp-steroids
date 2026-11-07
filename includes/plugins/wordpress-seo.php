@@ -39,10 +39,10 @@ class WPS_Wordpress_Seo
 		$role_object = get_role( 'editor' );
 
 		if( !$role_object->has_cap('wpseo_edit_advanced_metadata') )
-			$role_object->add_cap( 'editor', 'wpseo_edit_advanced_metadata' );
+			$role_object->add_cap( 'wpseo_edit_advanced_metadata' );
 
 		if( !$role_object->has_cap('wpseo_manage_options') )
-			$role_object->add_cap( 'editor', 'wpseo_manage_options' );
+			$role_object->add_cap( 'wpseo_manage_options' );
 	}
 
 
