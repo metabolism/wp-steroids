@@ -100,6 +100,8 @@ class WPS_Media {
                     if( !empty($results) )
                         wp_update_attachment_metadata($results[0]['post_id'], $data);
                 }
+
+                restore_current_blog();
             }
         }
 
@@ -229,7 +231,7 @@ class WPS_Media {
                 }
 
                 foreach( $replaces as $old => $new ){
-
+                    //Replace is ok because we are changing only the extension png -> jpg, same length
                     $wpdb->query("UPDATE {$wpdb->posts} SET post_content = REPLACE( post_content, '/{$old}', '/{$new}') WHERE post_content LIKE '%/{$old}%'");
                     $wpdb->query("UPDATE {$wpdb->postmeta} SET meta_value = REPLACE( meta_value, '/{$old}', '/{$new}') WHERE meta_value LIKE '%/{$old}%'");
                     $wpdb->query("UPDATE {$wpdb->options} SET option_value = REPLACE( option_value, '/{$old}', '/{$new}') WHERE option_value LIKE '%/{$old}%'");
@@ -823,9 +825,10 @@ class WPS_Media {
         if( imagejpeg( $bg, $tmpPath, $upload_compression ) ){
 
             $editor = wp_get_image_editor($tmpPath);
-            $editor->save($newPath, 'image/jpg');
+            $status = $editor->save($newPath, 'image/jpg');
 
-            return $newPath;
+            if( !is_wp_error( $status ) )
+                return $newPath;
         }
 
         return false;

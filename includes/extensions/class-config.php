@@ -678,15 +678,39 @@ class WPS_Config {
         }
     }
 
+    /**
+     * @param $path
+     * @return string
+     */
+    private function sanitize_path($path)
+    {
+        if( !is_string($path))
+            return '';
+
+        $path = explode('/', $path);
+
+        foreach($path as &$part){
+            if( str_starts_with($part, '%') && str_ends_with($part, '%'))
+                $part = '%'.sanitize_title($part).'%';
+            else
+                $part = sanitize_title($part);
+        }
+
+        return implode('/', $path);
+    }
+
     public function LoadPermalinks(){
 
         $updated = false;
 
+        if( !empty( $_POST ) )
+            check_admin_referer('update-permalink');
+
         add_settings_section('page_rewrite', '', '__return_empty_string','permalink');
 
-        if( isset( $_POST['page_rewrite_slug'] ) ) {
+        if( !empty( $_POST['page_rewrite_slug']??'' ) ) {
 
-            update_option( 'page_rewrite_slug', $_POST['page_rewrite_slug'], true );
+            update_option( 'page_rewrite_slug', $this->sanitize_path($_POST['page_rewrite_slug']), true );
             $updated = true;
         }
 
@@ -699,9 +723,9 @@ class WPS_Config {
 
         add_settings_section('search_rewrite', '', '__return_empty_string','permalink');
 
-        if( isset( $_POST['search_rewrite_slug'] ) && !empty($_POST['search_rewrite_slug']) ) {
+        if( !empty( $_POST['search_rewrite_slug']??'' ) ) {
 
-            update_option( 'search_rewrite_slug', $_POST['search_rewrite_slug'], true );
+            update_option( 'search_rewrite_slug', $this->sanitize_path($_POST['search_rewrite_slug']), true );
             $updated = true;
         }
 
@@ -726,7 +750,7 @@ class WPS_Config {
 
                         if( !empty($_POST[$key]??'') ) {
 
-                            update_option( $key, $_POST[$key], true );
+                            update_option( $key, $this->sanitize_path($_POST[$key]), true );
                             $updated = true;
                         }
 
@@ -767,7 +791,7 @@ class WPS_Config {
 
                         if( !empty($_POST[$key]??'') ) {
 
-                            update_option( $key, $_POST[$key], true );
+                            update_option( $key, $this->sanitize_path($_POST[$key]), true );
                             $updated = true;
                         }
 
@@ -1064,11 +1088,7 @@ class WPS_Config {
 
         add_action('clean_site_cache', [$this, 'configureContentType']);
 
-        // When viewing admin
-        if( is_admin() ) {
-
-            if( !WP_HEADLESS || WP_URL_MAPPING )
-                add_action( 'load-options-permalink.php', [$this, 'LoadPermalinks']);
-        }
+        if( !WP_HEADLESS || WP_URL_MAPPING )
+            add_action( 'load-options-permalink.php', [$this, 'LoadPermalinks']);
     }
 }
