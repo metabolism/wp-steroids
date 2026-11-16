@@ -186,6 +186,12 @@ class WPS_Security {
 
             return $headers;
         });
+
+        add_action( 'wp_enqueue_scripts', function (){
+
+            wp_dequeue_style( 'wp-block-styles-placeholder' );
+            wp_dequeue_style( 'wp-global-styles-placeholder' );
+        }, 99);
     }
 
 
